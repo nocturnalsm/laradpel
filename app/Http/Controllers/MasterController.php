@@ -23,6 +23,9 @@ use App\Models\Gudang;
 use App\Models\Customer;
 use App\Models\JenisTruk;
 use App\Models\Ekspedisi;
+use App\Models\KodeAcc;
+use App\Models\KodeParty;
+use App\Models\Party;
 
 class MasterController extends Controller
 {
@@ -293,6 +296,48 @@ class MasterController extends Controller
 		$dataTable = datatables()->of($dataSource);
 		return $dataTable->toJson();
 	}
+	public function kodeacc(Request $request)
+	{
+		$breadcrumb[] = Array("link" => "../", "text" => "Home");
+		$breadcrumb[] = Array("text" => "Kode Acc");
+		return view("master.kodeacc", ["breads" => $breadcrumb,
+        								   "columns" => Array("Kode","Uraian")]);
+	}
+	public function getdata_kodeacc(Request $request)
+	{
+		$dataSource = DB::table("kode_acc")->select('KODEACC_ID','KODE','URAIAN');
+		$dataTable = datatables()->of($dataSource);
+		return $dataTable->toJson();
+	}
+	public function kodeparty(Request $request)
+	{
+		$breadcrumb[] = Array("link" => "../", "text" => "Home");
+		$breadcrumb[] = Array("text" => "Kode Party");
+		return view("master.kodeparty", ["breads" => $breadcrumb,
+        								   "columns" => Array("Kode","Uraian")]);
+	}
+	public function getdata_kodeparty(Request $request)
+	{
+		$dataSource = DB::table("kode_party")->select('KODEPARTY_ID','KODE','URAIAN');
+		$dataTable = datatables()->of($dataSource);
+		return $dataTable->toJson();
+	}
+	public function party(Request $request)
+	{
+		$breadcrumb[] = Array("link" => "../", "text" => "Home");
+		$breadcrumb[] = Array("text" => "Party");
+		$kodeParty = DB::table("kode_party")->select('KODEPARTY_ID','URAIAN')->get();
+		return view("master.party", ["breads" => $breadcrumb, "kodeParty" => $kodeParty,
+        								   "columns" => Array("Kode Party","No ID", "Nama", "Alamat")]);
+	}
+	public function getdata_party(Request $request)
+	{
+		$dataSource = DB::table("party")
+									  ->join("kode_party", "party.KODE_PARTY", "=", "kode_party.KODEPARTY_ID")
+										->select('PARTY_ID','KODE_PARTY','URAIAN', 'NO_IDENTITAS', 'NAMA', 'ALAMAT');
+		$dataTable = datatables()->of($dataSource);
+		return $dataTable->toJson();
+	}
 	public function crud(Request $request)
 	{
 		$action = $request->input("action");
@@ -498,6 +543,39 @@ class MasterController extends Controller
 							}
 							else if ($input["input-action"] == "delete"){
 								$result = Ekspedisi::drop($input["id"]);
+							}
+							break;
+					case "kodeacc":
+							if ($input["input-action"] == "add"){
+								$result = KodeAcc::add($input);
+							}
+							else if ($input["input-action"] == "edit"){
+								$result = KodeAcc::edit($input);
+							}
+							else if ($input["input-action"] == "delete"){
+								$result = KodeAcc::drop($input["id"]);
+							}
+							break;
+					case "kodeparty":
+							if ($input["input-action"] == "add"){
+								$result = KodeParty::add($input);
+							}
+							else if ($input["input-action"] == "edit"){
+								$result = KodeParty::edit($input);
+							}
+							else if ($input["input-action"] == "delete"){
+								$result = KodeParty::drop($input["id"]);
+							}
+							break;
+					case "party":
+							if ($input["input-action"] == "add"){
+								$result = Party::add($input);
+							}
+							else if ($input["input-action"] == "edit"){
+								$result = Party::edit($input);
+							}
+							else if ($input["input-action"] == "delete"){
+								$result = Party::drop($input["id"]);
 							}
 							break;
 				}

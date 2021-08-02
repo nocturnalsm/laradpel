@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRefJenisTrukTable extends Migration
+class CreateKodeAccTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateRefJenisTrukTable extends Migration
      */
     public function up()
     {
-        /*Schema::create('ref_jenis_truk', function (Blueprint $table) {
-            $table->increments("JENISTRUK_ID");
-            $table->string("JENIS_TRUK");
-        });*/
+        Schema::create('kode_acc', function (Blueprint $table) {
+            $table->increments("KODEACC_ID");
+            $table->string("KODE", 20);
+            $table->string("URAIAN", 100);
+        });
     }
 
     /**
@@ -26,6 +27,6 @@ class CreateRefJenisTrukTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ref_jenis_truk');
+        Schema::dropIfExists('kode_acc');
     }
 }

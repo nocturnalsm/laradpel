@@ -13,13 +13,13 @@ class CreateEkspedisiTable extends Migration
      */
     public function up()
     {
-        Schema::create('ekspedisi', function (Blueprint $table) {
+        /*Schema::create('ekspedisi', function (Blueprint $table) {
             $table->bigIncrements("EKSPEDISI_ID");
             $table->string("NAMA");
             $table->string("ALAMAT");
             $table->string("TELEPON", 50);
             $table->string("KODE", 20);
-        });
+        });*/
     }
 
     /**

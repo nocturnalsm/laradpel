@@ -179,7 +179,6 @@ class TransaksiGudang extends Model
                     }
                 }
             }
-            $arrDetail = Array();
 
             if (is_array($detail) && count($detail) > 0){
                 foreach ($detail as $item){

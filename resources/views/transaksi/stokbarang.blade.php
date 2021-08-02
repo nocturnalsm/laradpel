@@ -78,6 +78,7 @@
                         <th>Opsi</th>
                         <th>Kode Barang</th>
                         <th>Kode Produk</th>
+                        <th>Importir</th>
                         <th>Customer</th>
                         <th>Faktur</th>
                         <th>No.Aju</th>
@@ -116,12 +117,14 @@
             return symbol + negative + (j ? i.substr(0, j) + thousand : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousand) + (places ? decimal + Math.abs(number - i).toFixed(places).slice(2) : "");
         };
         var columns = [ {target: 0, data: null},
-        {target: 1, data: "KODEBARANG"}, {target: 2, data: "kode"},  {target: 3, data: "CUSTOMER"@cannot('customer.view') ,visible:  false @endif},
-        {target: 4, data: "FAKTUR"}, {target: 5, data: "NOAJU"}, {target: 6, data: "HPP"},
-        {target: 7, data: "satuanmasuk"},
-        {target: 8, data: "satuankeluar"},
-        {target: 9, data: "satuansakhir"},
-        {target: 10, data: "satuan"}
+        {target: 1, data: "KODEBARANG"}, {target: 2, data: "kode"},
+        {target: 3, data: "IMPORTIR"},
+        {target: 4, data: "CUSTOMER"@cannot('customer.view') ,visible:  false @endif},
+        {target: 5, data: "FAKTUR"}, {target: 6, data: "NOAJU"}, {target: 7, data: "HPP"},
+        {target: 8, data: "satuanmasuk"},
+        {target: 9, data: "satuankeluar"},
+        {target: 10, data: "satuansakhir"},
+        {target: 11, data: "satuan"}
         ];
 
         var printvalues  = function(jmlkemasan, jmlsatuan, kemasan, satuan){
@@ -162,10 +165,10 @@
                 col = 1;
                 @endcan
                 $('td:eq(0)', row).html('<a title="Detail" class="showdetail"><i class="fa fa-plus-circle"></i></a>');
-                $('td:eq(' + (5+col) +')', row).html(parseFloat(data.HPP).formatMoney(2,"",",","."));
-                $('td:eq(' + (6+col) +')', row).html(parseFloat(data.satuanmasuk).formatMoney(2,"",",","."));
-                $('td:eq(' + (7+col) +')', row).html(parseFloat(data.satuankeluar).formatMoney(2,"",",","."));
-                $('td:eq(' + (8+col) +')', row).html(parseFloat(data.satuansakhir).formatMoney(2,"",",","."));
+                $('td:eq(' + (6+col) +')', row).html(parseFloat(data.HPP).formatMoney(2,"",",","."));
+                $('td:eq(' + (7+col) +')', row).html(parseFloat(data.satuanmasuk).formatMoney(2,"",",","."));
+                $('td:eq(' + (8+col) +')', row).html(parseFloat(data.satuankeluar).formatMoney(2,"",",","."));
+                $('td:eq(' + (9+col) +')', row).html(parseFloat(data.satuansakhir).formatMoney(2,"",",","."));
             }
         });
         $("#preview").on("click", function(){

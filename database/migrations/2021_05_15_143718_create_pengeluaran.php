@@ -13,7 +13,7 @@ class CreatePengeluaran extends Migration
      */
     public function up()
     {
-          Schema::create('tbl_header_pengeluaran', function (Blueprint $table) {
+          /*Schema::create('tbl_header_pengeluaran', function (Blueprint $table) {
               $table->bigIncrements("ID");
               $table->unsignedInteger("ID_HEADER")->index();
               $table->date("TGL_KIRIM")->nullable();
@@ -30,7 +30,7 @@ class CreatePengeluaran extends Migration
               $table->string("SOPIR")->nullable();
               $table->decimal("JMLROLL")->nullable();
               $table->date("TGL_KELUAR")->nullable();
-          });
+          });*/
     }
 
     /**

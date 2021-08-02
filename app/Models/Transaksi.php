@@ -20,6 +20,9 @@ use App\Models\Pembeli;
 use App\Models\Quota;
 use App\Models\RealisasiQuota;
 use App\Models\Pembayaran;
+use App\Models\KodeAcc;
+use App\Models\Party;
+use App\Models\MutasiKas;
 
 function nullval($value)
 {
@@ -1843,7 +1846,7 @@ class Transaksi extends Model
         }
 
         $saldo1 = DB::table(DB::raw("konversistok tk"))
-                    ->selectRaw("tb.ID, tb.KODEBARANG, tk.PRODUK_ID, th.CUSTOMER, th.NOAJU,"
+                    ->selectRaw("tb.ID, tb.KODEBARANG, tk.PRODUK_ID, th.IMPORTIR, th.CUSTOMER, th.NOAJU,"
                             ."IF(th.FAKTUR = 'A', 'Semua', IF(th.FAKTUR = 'P', 'Sebagian', "
                             ."IF (th.FAKTUR = 'T', 'Tidak', ''))) AS FAKTUR, th.NDPBM,"
                             ."tb.HARGA*th.NDPBM+tk.TAX as HPP, "
@@ -1858,7 +1861,7 @@ class Transaksi extends Model
                     ->whereRaw("USERGUDANG IS NULL");
 
         $saldo2 = DB::table(DB::raw("tbl_detail_invoice do"))
-                    ->selectRaw("tb.ID, tb.KODEBARANG, tk.PRODUK_ID, th.CUSTOMER, th.NOAJU, "
+                    ->selectRaw("tb.ID, tb.KODEBARANG, tk.PRODUK_ID, th.IMPORTIR, th.CUSTOMER, th.NOAJU, "
                             ."IF(th.FAKTUR = 'A', 'Semua', IF(th.FAKTUR = 'P', 'Sebagian', "
                             ."IF (th.FAKTUR = 'T', 'Tidak', ''))) AS FAKTUR, th.NDPBM,"
                             ."tb.HARGA*th.NDPBM+tk.TAX as HPP,"
@@ -1877,7 +1880,8 @@ class Transaksi extends Model
         $sub = $saldo1->unionAll($saldo2);
 
         $data = DB::query()->fromSub($sub, "t")
-                    ->selectRaw("t.ID, t.KODEBARANG, p.kode, c.nama_customer AS CUSTOMER, t.NDPBM, t.FAKTUR, "
+                    ->selectRaw("t.ID, t.KODEBARANG, p.kode, i.nama as IMPORTIR, "
+                               ."c.nama_customer AS CUSTOMER, t.NDPBM, t.FAKTUR, "
                                ."t.NOAJU, t.HPP, "
                                ."SUM(IFNULL(t.satuanmasuk,0)) as satuanmasuk,"
                                ."SUM(IFNULL(t.satuankeluar,0)) As satuankeluar,"
@@ -1885,9 +1889,11 @@ class Transaksi extends Model
                                ."t.satuan")
                     ->join(DB::raw("produk p"), "p.id","=","t.produk_id")
                     ->join(DB::raw("plbbandu_app15.tb_customer c"), "c.id_customer", "=", "t.CUSTOMER")
+                    ->join(DB::raw("importir i"), "i.IMPORTIR_ID","=","t.IMPORTIR")
                     ->orderBy("t.KODEBARANG");
 
-        $data = $data->groupBy("t.ID", "t.KODEBARANG", "p.kode", "c.nama_customer", "t.NDPBM", "t.FAKTUR", "t.NOAJU",
+        $data = $data->groupBy("t.ID", "t.KODEBARANG", "p.kode", "i.nama", "c.nama_customer",
+                               "t.NDPBM", "t.FAKTUR", "t.NOAJU",
                                "t.HPP", "t.satuan");
         if (trim($dari2) != "" && trim($sampai2) != ''){
             $data = $data->havingRaw("SUM(IFNULL(t.satuanmasuk,0)) - SUM(IFNULL(t.satuankeluar,0)) BETWEEN {$dari2} AND {$sampai2}");
@@ -2364,5 +2370,197 @@ class Transaksi extends Model
             DB::table("tbl_detail_invoice")->where("ID_HEADER", $id)->delete();
             DB::table("tbl_header_invoice")->where("ID", $id)->delete();
         }
+    }
+    public static function deleteMutasiKas($id)
+    {
+        MutasiKas::where("ID", $id)->delete();
+        DB::table("mutasikas_detail")
+            ->where("ID_HEADER", $id)
+            ->delete();
+    }
+    public static function browseMutasiKas($customer, $kategori1, $isikategori1, $kategori2, $dari2, $sampai2)
+    {
+        $array1 = Array("No Job" => "JOB_ORDER", "No Dok" => "NO_DOK");
+        $array2 = Array("Tanggal Tiba" => "TGL_TIBA",
+                        "Tanggal Job" => "TGL_JOB");
+        $where = " 1 = 1";
+        if ($kategori1 != ""){
+            if (trim($isikategori1) == ""){
+                $where  .=  " AND (" .$array1[$kategori1] ." IS NULL OR " .$array1[$kategori1] ." = '')";
+            }
+            else {
+                $where  .=  " AND (" .$array1[$kategori1] ." LIKE '%" .$isikategori1 ."%')";
+            }
+
+        }
+        if ($kategori2 != ""){
+            if (trim($dari2) == "" && trim($sampai2) == ""){
+                $where  .=  " AND (" .$array2[$kategori2] ." IS NULL OR " .$array2[$kategori2] ." = '')";
+            }
+            else {
+                if (trim($dari2) == ""){
+                    $dari2 = "0000-00-00";
+                }
+                if (trim($sampai2) == ""){
+                    $sampai2 = "9999-99-99";
+                }
+                $where  .=  " AND (" .$array2[$kategori2] ." BETWEEN '" .Date("Y-m-d", strtotime($dari2)) ."'
+                                            AND '" .Date("Y-m-d", strtotime($sampai2)) ."')";
+            }
+        }
+        if (trim($customer) != ""){
+            $where .= " AND CUSTOMER = '" .$customer ."'";
+        }
+
+        $data = DB::table(DB::raw("job_order h"))
+                    ->selectRaw("h.ID, NOAJU, NOPEN, JOB_ORDER, NO_DOK,"
+                            ."i.nama_customer AS NAMACUSTOMER, "
+                            ."(SELECT IFNULL(SUM(NOMINAL+PPN),0) FROM job_order_detail jd "
+                            ."WHERE jd.ID_HEADER = h.ID) AS TOTAL_BILLING, "
+                            ."(SELECT IFNULL(SUM(NOMINAL),0) FROM pembayaran_detail pd "
+                            ."INNER JOIN pembayaran p ON pd.ID_HEADER = p.ID "
+                            ."WHERE pd.JOB_ORDER_ID = h.ID AND DK = 'D') AS TOTAL_BIAYA, "
+                            ."(SELECT IFNULL(SUM(NOMINAL),0) FROM pembayaran_detail pd "
+                            ."INNER JOIN pembayaran p ON pd.ID_HEADER = p.ID "
+                            ."WHERE pd.JOB_ORDER_ID = h.ID AND DK = 'K') AS TOTAL_PAYMENT,"
+                            ."IFNULL(DATE_FORMAT(TGL_TIBA, '%d-%m-%Y'),'') AS TGL_TIBA,"
+                            ."IFNULL(DATE_FORMAT(TGL_SPPB, '%d-%m-%Y'),'') AS TGL_SPPB,"
+                            ."IFNULL(DATE_FORMAT(TGL_JOB, '%d-%m-%Y'), '') AS TGL_JOB,"
+                            ."IFNULL(DATE_FORMAT(TGL_NOPEN, '%d-%m-%Y'),'') AS TGL_NOPEN")
+                    ->leftJoin(DB::raw("tb_customer i"), "h.CUSTOMER", "=", "i.id_customer")
+                    ->orderBy("JOB_ORDER");
+        if (trim($where) != ""){
+            $data = $data->whereRaw($where);
+        }
+        return $data->get();
+    }
+    public static function arusKas($customer, $kategori1, $isikategori1, $kategori2, $dari2, $sampai2)
+    {
+        $array1 = Array("No Job" => "JOB_ORDER", "No Dok" => "NO_DOK");
+        $array2 = Array("Tanggal Transaksi" => "TANGGAL",
+                        "Tanggal Job" => "TGL_JOB");
+        $where = " 1 = 1";
+        if ($kategori1 != ""){
+            if (trim($isikategori1) == ""){
+                $where  .=  " AND (" .$array1[$kategori1] ." IS NULL OR " .$array1[$kategori1] ." = '')";
+            }
+            else {
+                $where  .=  " AND (" .$array1[$kategori1] ." LIKE '%" .$isikategori1 ."%')";
+            }
+
+        }
+        if ($kategori2 != ""){
+            if (trim($dari2) == "" && trim($sampai2) == ""){
+                $where  .=  " AND (" .$array2[$kategori2] ." IS NULL OR " .$array2[$kategori2] ." = '')";
+            }
+            else {
+                if (trim($dari2) == ""){
+                    $dari2 = "0000-00-00";
+                }
+                if (trim($sampai2) == ""){
+                    $sampai2 = "9999-99-99";
+                }
+                $where  .=  " AND (" .$array2[$kategori2] ." BETWEEN '" .Date("Y-m-d", strtotime($dari2)) ."'
+                                            AND '" .Date("Y-m-d", strtotime($sampai2)) ."')";
+            }
+        }
+        if (trim($customer) != ""){
+            $where .= " AND CUSTOMER = '" .$customer ."'";
+        }
+
+        $data = DB::table(DB::raw("pembayaran_detail d"))
+                    ->selectRaw("p.ID, JOB_ORDER, NO_DOK, t.URAIAN AS TRANSAKSI, DK, NOMINAL,"
+                            ."IFNULL(DATE_FORMAT(TANGGAL, '%d-%m-%Y'),'') AS TANGGAL,"
+                            ."IFNULL(DATE_FORMAT(TGL_JOB, '%d-%m-%Y'), '') AS TGL_JOB")
+                    ->join(DB::raw("pembayaran p"), "p.ID","=","d.ID_HEADER")
+                    ->join(DB::raw("job_order h"), "h.ID", "=", "d.JOB_ORDER_ID")
+                    ->join(DB::raw("ref_kode_transaksi t"), "t.KODETRANSAKSI_ID", "=", "d.KODE_TRANSAKSI")
+                    ->join(DB::raw("tb_customer i"), "h.CUSTOMER", "=", "i.id_customer")
+                    ->orderBy("TANGGAL");
+        if (trim($where) != ""){
+            $data = $data->whereRaw($where);
+        }
+        return $data->get();
+    }
+    public static function getMutasiKas($id = "")
+    {
+        if ($id == ""){
+            $header = new MutasiKas;
+            $detail = [];
+        }
+        else {
+            $header = DB::table(DB::raw("mutasikas h"))
+                        ->selectRaw("h.*, (SELECT IFNULL(SUM(NOMINAL),0) FROM mutasikas_detail d "
+                                   ."WHERE d.ID_HEADER = h.ID AND DK = 'D') AS TOTAL_DEBET,"
+                                   ."(SELECT IFNULL(SUM(NOMINAL),0) FROM mutasikas_detail d "
+                                   ."WHERE d.ID_HEADER = h.ID AND DK = 'K') AS TOTAL_KREDIT")
+                        ->leftJoin(DB::raw("rekening rek"), "h.REKENING_ID","=", "rek.REKENING_ID")
+                        ->leftJoin(DB::raw("importir i"), "h.IMPORTIR_ID","=","i.IMPORTIR_ID")
+                        ->where("id", $id);
+            if ($header->exists()){
+                $header = $header->first();
+            }
+            else {
+                return false;
+            }
+            $detail = DB::table(DB::raw("mutasikas_detail db"))
+                        ->selectRaw("db.*, (SELECT URAIAN FROM kode_acc where "
+                                   ."kode_acc.KODEACC_ID = db.KODEACC_ID) AS KODE_ACC, "
+                                   ."party.NAMA, kode_party.URAIAN AS KODE_PARTY")
+                        ->leftJoinSub(DB::table("party")
+                                        ->join("kode_party", "party.KODEPARTY_ID", "=", "kode_party.KODEPARTY_ID")
+                                        ->select("party.PARTY_ID", "party.NAMA","kode_party.URAIAN", "party.KODEPARTY_ID")
+                                        ->orderBy("PARTY_ID"), "party",
+                                        function($join){
+                                            $join->on("party.PARTY_ID","=","db.PARTY_ID");
+                                        })                        
+                        ->where("db.ID_HEADER", $id)
+                        ->get();
+        }
+        if ($header){
+            $header->TANGGAL = $header->TANGGAL == "" ? "" : Date("d-m-Y", strtotime($header->TANGGAL));
+        }
+        return Array("header" => $header, "detail" => $detail);
+    }
+    public static function saveMutasiKas($header, $detail)
+    {
+        $arrHeader = Array("TANGGAL" => trim($header["tanggal"]) == "" ? Date("Y-m-d") : Date("Y-m-d", strtotime($header["tanggal"])),
+                           "IMPORTIR_ID" => $header["importir"], "REKENING_ID" => $header["rekening"]
+                         );
+
+        if (trim($header["idtransaksi"]) == ""){
+            $idtransaksi = DB::table("mutasikas")->insertGetId($arrHeader);
+        }
+        else {
+            $idtransaksi = $header["idtransaksi"];
+            DB::table("mutasikas")->where("ID", $idtransaksi)->update($arrHeader);
+            DB::table("mutasikas_detail")->where("ID_HEADER", $idtransaksi)->delete();
+        }
+        $arrDetail = Array();
+        if (is_array($detail) && count($detail) > 0){
+            foreach ($detail as $item){
+                $arrDetail[] = Array("ID_HEADER" => $idtransaksi,
+                                    "KODEACC_ID" => $item["KODEACC_ID"],
+                                    "PARTY_ID" => $item["PARTY_ID"],
+                                    "REMARKS" => trim($item["REMARKS"]),
+                                    "NO_DOK" => strtoupper(trim($item["NO_DOK"])),
+                                    "TGL_DOK" => Date("Y-m-d", strtotime($item["TGL_DOK"])),
+                                    "NOMINAL" => $item["NOMINAL"] != "" ? str_replace(",","",$item["NOMINAL"]) : 0,
+                                    "DK" => $item["DK"]
+                                    );
+            }
+            DB::table("mutasikas_detail")->insert($arrDetail);
+        }
+    }
+    public static function getKodeAcc()
+    {
+        return KodeAcc::orderBy("URAIAN")->get();
+    }
+    public static function getParty()
+    {
+        return Party::join("kode_party", "party.KODE_PARTY","=","kode_party.KODEPARTY_ID")
+                      ->select("PARTY_ID","kode_party.URAIAN","party.NAMA")
+                      ->orderBy("kode_party.URAIAN", "asc")
+                      ->orderBy("party.NAMA", "asc")->get();
     }
 }

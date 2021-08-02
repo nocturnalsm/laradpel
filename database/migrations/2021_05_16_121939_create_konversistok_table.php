@@ -13,7 +13,7 @@ class CreateKonversistokTable extends Migration
      */
     public function up()
     {
-        Schema::create('konversistok', function (Blueprint $table) {
+        /*Schema::create('konversistok', function (Blueprint $table) {
             $table->bigIncrements("ID");
             $table->unsignedInteger("KODEBARANG")->index();
             $table->unsignedInteger("PRODUK_ID")->index();
@@ -21,7 +21,7 @@ class CreateKonversistokTable extends Migration
             $table->unsignedInteger("SATUAN_ID")->nullable();
             $table->date("TGL_KONVERSI")->nullable();
             $table->decimal("TAX")->nullable();
-        });
+        });*/
     }
 
     /**

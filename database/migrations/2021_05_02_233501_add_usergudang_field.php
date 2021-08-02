@@ -13,9 +13,10 @@ class AddUsergudangField extends Migration
      */
     public function up()
     {
+      /*
       Schema::table('tbl_penarikan_header', function (Blueprint $table) {
           $table->char('USERGUDANG', 1)->default("T");
-      });
+      });*/
     }
 
     /**

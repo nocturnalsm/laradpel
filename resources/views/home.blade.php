@@ -161,6 +161,15 @@
                     @can('master.ekspedisi.browse')
                     <a class="list-group-item list-group-item-action" href="./master/ekspedisi">Referensi Ekspedisi</a>
                     @endcan
+                    @can('master.kodeacc.browse')
+                    <a class="list-group-item list-group-item-action" href="./master/kodeacc">Referensi Kode Acc</a>
+                    @endcan
+                    @can('master.kodeparty.browse')
+                    <a class="list-group-item list-group-item-action" href="./master/kodeparty">Referensi Kode Party</a>
+                    @endcan
+                    @can('master.party.browse')
+                    <a class="list-group-item list-group-item-action" href="./master/party">Referensi Party</a>
+                    @endcan
                 </ul>
             </div>
         </div>

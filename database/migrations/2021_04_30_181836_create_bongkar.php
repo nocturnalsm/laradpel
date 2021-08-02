@@ -13,6 +13,7 @@ class CreateBongkar extends Migration
      */
     public function up()
     {
+        /*
         Schema::create('tbl_header_bongkar', function (Blueprint $table) {
             $table->bigIncrements("ID");
             $table->unsignedInteger("ID_HEADER")->index();
@@ -29,6 +30,7 @@ class CreateBongkar extends Migration
             $table->decimal("JMLKEMASANBONGKAR")->nullable();
             $table->decimal("JMLSATHARGABONGKAR")->nullable();
         });
+        */
     }
 
     /**

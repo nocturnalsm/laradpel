@@ -13,6 +13,7 @@ class KontainerMasuk extends Migration
      */
     public function up()
     {
+      /*
       Schema::create('kontainer_masuk', function (Blueprint $table) {
           $table->bigIncrements("ID");
           $table->string('NO_KONTAINER', 20);
@@ -20,6 +21,7 @@ class KontainerMasuk extends Migration
           $table->unsignedInteger('GUDANG_ID')->nullable();
           $table->date('TGL_MASUK')->nullable();
       });
+      */
     }
 
     /**

@@ -51,7 +51,7 @@
                         <div class="col-md-9">
                         <select class="form-control form-control-sm" id="party" name="party">
                             @foreach($party as $kode)
-                            <option kodeparty="{{ $kode->URAIAN }}" value="{{ $kode->PARTY_ID }}">{{ $kode->URAIAN }} - {{ $kode->NAMA }}</option>
+                            <option kodeparty="{{ $kode->URAIAN }}" nama="{{ $kode->NAMA }}" value="{{ $kode->PARTY_ID }}">{{ $kode->URAIAN }} - {{ $kode->NAMA }}</option>
                             @endforeach
                         </select>
                         </div>
@@ -163,7 +163,7 @@
                                     <div class="col primary-color text-white py-2 px-4">
                                         Detail Pembayaran
                                     </div>
-                                    @can('pembayaran.transaksi')
+                                    @can('mutasikas.transaksi')
                                     <div class="col primary-color text-white text-right p-2" style="text-decoration:underline">
                                         <a href="#modaldetail" data-toggle="modal" class="text-white" id="adddetail">Tambah Detail</a>
                                     </div>
@@ -183,7 +183,7 @@
                                                     <th>Tgl Dok</th>
                                                     <th>Remarks</th>
                                                     <th>Upload</th>
-                                                    @can('pembayaran.transaksi')
+                                                    @can('mutasikas.transaksi')
                                                     <th>Opsi</th>
                                                     @endcan
                                                 </tr>
@@ -241,7 +241,8 @@
             {
                 $(row).attr("id-transaksi", data.ID);
                 $('td:eq(0)', row).html(parseFloat(data.NOMINAL).formatMoney(2,"",",","."));
-                @can('pembayaran.transaksi')
+                $('td:eq(0)', row).html();
+                @can('mutasikas.transaksi')
                 $('td:eq(9)', row).html('<a href="#modaldetail" class="edit" data-toggle="modal" id="' + data.ID +
                                         '"><i class="fa fa-edit"></i></a>' +
                                         '&nbsp;&nbsp;<a class="del" id="' + data.ID + '"><i class="fa fa-trash"></i></a>'
@@ -279,14 +280,14 @@
             { target: 8,
                 data: null
             },
-            @can('pembayaran.transaksi')
+            @can('mutasikas.transaksi')
             { target: 9,
                 data: null
             }
             @endcan
             ],
         })
-        @can('pembayaran.transaksi')
+        @can('mutasikas.transaksi')
         function count_total(){
           var totaldebet = 0;
           var totalkredit = 0;
@@ -310,8 +311,8 @@
             var kodeacc_id = $("#kodeacc option:selected").val();
             var kodeacc = $("#kodeacc option:selected").html();
             var party_id = $("#party option:selected").val();
-            var kode_party = $("#party option:selected").attr("URAIAN");
-            var party = $("#party option:selected").attr("NAMA");
+            var kode_party = $("#party option:selected").attr("kodeparty");
+            var party = $("#party option:selected").attr("nama");
             var nodok = $("#nodok").val();
             var tgldok = $("#tgldok").val();
             var remarks = $("#remarks").val();
@@ -332,7 +333,7 @@
             else if (act == "edit"){
                 var id = $("#iddetail").val();
                 var idx = $("#idxdetail").val();
-                tabel.row(idx).data({ID: id, KODEACC_ID: kodeacc_id, KODE_PARTY: kodeparty, KODE_ACC: kodeacc, NO_DOK: nodok, TGL_DOK: tgldok, REMARKS: remarks, NOMINAL: nominal, PARTY_ID: party_id, PARTY: party, DK: dk}).draw();
+                tabel.row(idx).data({ID: id, KODEACC_ID: kodeacc_id, KODE_PARTY: kode_party, KODE_ACC: kodeacc, NO_DOK: nodok, TGL_DOK: tgldok, REMARKS: remarks, NOMINAL: nominal, PARTY_ID: party_id, PARTY: party, DK: dk}).draw();
                 $("#modaldetail").modal("hide");
             }
             count_total();
@@ -445,7 +446,7 @@
                             setTimeout(function(){
                                 $("#modal").modal("hide");
                             }, 10000);
-                            window.location.href = "/transaksi/pembayaran";
+                            window.location.href = "/transaksi/mutasikas";
                         }
                     }
                 })

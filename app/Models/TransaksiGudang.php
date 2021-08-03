@@ -733,6 +733,15 @@ class TransaksiGudang extends Model
     public static function saveKontainerMasuk($input)
     {
         if (isset($input['idkontainer'])){
+            $header_id = DB::table("tbl_penarikan_kontainer")
+                           ->where("ID", $input["idkontainer"])
+                           ->select("ID_HEADER")
+                           ->first();
+            if ($header_id){
+                DB::table("tbl_penarikan_header")
+                   ->where("ID", $header_id->ID_HEADER)
+                   ->update(["TGL_KELUAR" => Date("Y-m-d", strtotime($input["tglkeluar"]))]);
+            }
             $id = DB::table("kontainer_masuk")
                     ->updateOrInsert(
                         ["NO_KONTAINER" => $input['idkontainer']],

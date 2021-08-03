@@ -2378,11 +2378,10 @@ class Transaksi extends Model
             ->where("ID_HEADER", $id)
             ->delete();
     }
-    public static function browseMutasiKas($customer, $kategori1, $isikategori1, $kategori2, $dari2, $sampai2)
+    public static function browseMutasiKas($importir, $kategori1, $isikategori1, $kategori2, $isikategori2, $kategori3, $dari3, $sampai3)
     {
-        $array1 = Array("No Job" => "JOB_ORDER", "No Dok" => "NO_DOK");
-        $array2 = Array("Tanggal Tiba" => "TGL_TIBA",
-                        "Tanggal Job" => "TGL_JOB");
+        $array1 = Array("Kode Acc" => "acc.URAIAN", "Kode Party" => "kparty.URAIAN", "No Rekening" => "NO_REKENING");
+        $array2 = Array("Tanggal Mutasi" => "TANGGAL");
         $where = " 1 = 1";
         if ($kategori1 != ""){
             if (trim($isikategori1) == ""){
@@ -2394,88 +2393,44 @@ class Transaksi extends Model
 
         }
         if ($kategori2 != ""){
-            if (trim($dari2) == "" && trim($sampai2) == ""){
-                $where  .=  " AND (" .$array2[$kategori2] ." IS NULL OR " .$array2[$kategori2] ." = '')";
+            if (trim($isikategori2) == ""){
+                $where  .=  " AND (" .$array1[$kategori2] ." IS NULL OR " .$array1[$kategori2] ." = '')";
             }
             else {
-                if (trim($dari2) == ""){
-                    $dari2 = "0000-00-00";
-                }
-                if (trim($sampai2) == ""){
-                    $sampai2 = "9999-99-99";
-                }
-                $where  .=  " AND (" .$array2[$kategori2] ." BETWEEN '" .Date("Y-m-d", strtotime($dari2)) ."'
-                                            AND '" .Date("Y-m-d", strtotime($sampai2)) ."')";
-            }
-        }
-        if (trim($customer) != ""){
-            $where .= " AND CUSTOMER = '" .$customer ."'";
-        }
-
-        $data = DB::table(DB::raw("job_order h"))
-                    ->selectRaw("h.ID, NOAJU, NOPEN, JOB_ORDER, NO_DOK,"
-                            ."i.nama_customer AS NAMACUSTOMER, "
-                            ."(SELECT IFNULL(SUM(NOMINAL+PPN),0) FROM job_order_detail jd "
-                            ."WHERE jd.ID_HEADER = h.ID) AS TOTAL_BILLING, "
-                            ."(SELECT IFNULL(SUM(NOMINAL),0) FROM pembayaran_detail pd "
-                            ."INNER JOIN pembayaran p ON pd.ID_HEADER = p.ID "
-                            ."WHERE pd.JOB_ORDER_ID = h.ID AND DK = 'D') AS TOTAL_BIAYA, "
-                            ."(SELECT IFNULL(SUM(NOMINAL),0) FROM pembayaran_detail pd "
-                            ."INNER JOIN pembayaran p ON pd.ID_HEADER = p.ID "
-                            ."WHERE pd.JOB_ORDER_ID = h.ID AND DK = 'K') AS TOTAL_PAYMENT,"
-                            ."IFNULL(DATE_FORMAT(TGL_TIBA, '%d-%m-%Y'),'') AS TGL_TIBA,"
-                            ."IFNULL(DATE_FORMAT(TGL_SPPB, '%d-%m-%Y'),'') AS TGL_SPPB,"
-                            ."IFNULL(DATE_FORMAT(TGL_JOB, '%d-%m-%Y'), '') AS TGL_JOB,"
-                            ."IFNULL(DATE_FORMAT(TGL_NOPEN, '%d-%m-%Y'),'') AS TGL_NOPEN")
-                    ->leftJoin(DB::raw("tb_customer i"), "h.CUSTOMER", "=", "i.id_customer")
-                    ->orderBy("JOB_ORDER");
-        if (trim($where) != ""){
-            $data = $data->whereRaw($where);
-        }
-        return $data->get();
-    }
-    public static function arusKas($customer, $kategori1, $isikategori1, $kategori2, $dari2, $sampai2)
-    {
-        $array1 = Array("No Job" => "JOB_ORDER", "No Dok" => "NO_DOK");
-        $array2 = Array("Tanggal Transaksi" => "TANGGAL",
-                        "Tanggal Job" => "TGL_JOB");
-        $where = " 1 = 1";
-        if ($kategori1 != ""){
-            if (trim($isikategori1) == ""){
-                $where  .=  " AND (" .$array1[$kategori1] ." IS NULL OR " .$array1[$kategori1] ." = '')";
-            }
-            else {
-                $where  .=  " AND (" .$array1[$kategori1] ." LIKE '%" .$isikategori1 ."%')";
+                $where  .=  " AND (" .$array1[$kategori2] ." LIKE '%" .$isikategori2 ."%')";
             }
 
         }
-        if ($kategori2 != ""){
-            if (trim($dari2) == "" && trim($sampai2) == ""){
-                $where  .=  " AND (" .$array2[$kategori2] ." IS NULL OR " .$array2[$kategori2] ." = '')";
+        if ($kategori3 != ""){
+            if (trim($dari3) == "" && trim($sampai3) == ""){
+                $where  .=  " AND (" .$array2[$kategori3] ." IS NULL OR " .$array2[$kategori3] ." = '')";
             }
             else {
-                if (trim($dari2) == ""){
-                    $dari2 = "0000-00-00";
+                if (trim($dari3) == ""){
+                    $dari3 = "0000-00-00";
                 }
-                if (trim($sampai2) == ""){
-                    $sampai2 = "9999-99-99";
+                if (trim($sampai3) == ""){
+                    $sampai3 = "9999-99-99";
                 }
-                $where  .=  " AND (" .$array2[$kategori2] ." BETWEEN '" .Date("Y-m-d", strtotime($dari2)) ."'
-                                            AND '" .Date("Y-m-d", strtotime($sampai2)) ."')";
+                $where  .=  " AND (" .$array2[$kategori3] ." BETWEEN '" .Date("Y-m-d", strtotime($dari3)) ."'
+                                            AND '" .Date("Y-m-d", strtotime($sampai3)) ."')";
             }
         }
-        if (trim($customer) != ""){
-            $where .= " AND CUSTOMER = '" .$customer ."'";
+        if (trim($importir) != ""){
+            $where .= " AND IMPORTIR_ID = '" .$importir ."'";
         }
 
-        $data = DB::table(DB::raw("pembayaran_detail d"))
-                    ->selectRaw("p.ID, JOB_ORDER, NO_DOK, t.URAIAN AS TRANSAKSI, DK, NOMINAL,"
-                            ."IFNULL(DATE_FORMAT(TANGGAL, '%d-%m-%Y'),'') AS TANGGAL,"
-                            ."IFNULL(DATE_FORMAT(TGL_JOB, '%d-%m-%Y'), '') AS TGL_JOB")
-                    ->join(DB::raw("pembayaran p"), "p.ID","=","d.ID_HEADER")
-                    ->join(DB::raw("job_order h"), "h.ID", "=", "d.JOB_ORDER_ID")
-                    ->join(DB::raw("ref_kode_transaksi t"), "t.KODETRANSAKSI_ID", "=", "d.KODE_TRANSAKSI")
-                    ->join(DB::raw("tb_customer i"), "h.CUSTOMER", "=", "i.id_customer")
+        $data = DB::table(DB::raw("mutasikas_detail d"))
+                    ->selectRaw("p.ID, i.NAMA AS IMPORTIR, rek.NO_REKENING, NO_DOK, "
+                            ."acc.URAIAN AS KODE_ACC, DK, NOMINAL, kparty.URAIAN AS KODE_PARTY, party.NAMA AS PARTY,"
+                            ."IFNULL(DATE_FORMAT(TANGGAL, '%d-%m-%Y'),'') AS TANGGAL, REMARKS, "
+                            ."IFNULL(DATE_FORMAT(TGL_DOK, '%d-%m-%Y'), '') AS TGL_DOK")
+                    ->join(DB::raw("mutasikas p"), "p.ID","=","d.ID_HEADER")
+                    ->leftJoin(DB::raw("kode_acc acc"), "acc.KODEACC_ID", "=", "d.KODEACC_ID")
+                    ->leftJoin("party", "party.PARTY_ID", "=", "d.PARTY_ID")
+                    ->leftJoin(DB::raw("kode_party kparty"), "party.KODE_PARTY", "=", "kparty.KODEPARTY_ID")
+                    ->leftJoin(DB::raw("rekening rek"), "rek.REKENING_ID", "=", "p.REKENING_ID")
+                    ->join(DB::raw("importir i"), "p.IMPORTIR_ID", "=", "i.IMPORTIR_ID")
                     ->orderBy("TANGGAL");
         if (trim($where) != ""){
             $data = $data->whereRaw($where);
@@ -2504,12 +2459,12 @@ class Transaksi extends Model
                 return false;
             }
             $detail = DB::table(DB::raw("mutasikas_detail db"))
-                        ->selectRaw("db.*, (SELECT URAIAN FROM kode_acc where "
+                        ->selectRaw("db.*, DATE_FORMAT(TGL_DOK, '%d-%m-%Y') AS TGL_DOK, (SELECT URAIAN FROM kode_acc where "
                                    ."kode_acc.KODEACC_ID = db.KODEACC_ID) AS KODE_ACC, "
-                                   ."party.NAMA, kode_party.URAIAN AS KODE_PARTY")
+                                   ."party.NAMA as PARTY, party.URAIAN AS KODE_PARTY")
                         ->leftJoinSub(DB::table("party")
-                                        ->join("kode_party", "party.KODEPARTY_ID", "=", "kode_party.KODEPARTY_ID")
-                                        ->select("party.PARTY_ID", "party.NAMA","kode_party.URAIAN", "party.KODEPARTY_ID")
+                                        ->join("kode_party", "party.KODE_PARTY", "=", "kode_party.KODEPARTY_ID")
+                                        ->select("party.PARTY_ID", "party.NAMA","kode_party.URAIAN", "party.KODE_PARTY")
                                         ->orderBy("PARTY_ID"), "party",
                                         function($join){
                                             $join->on("party.PARTY_ID","=","db.PARTY_ID");

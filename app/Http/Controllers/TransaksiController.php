@@ -1277,6 +1277,20 @@ class TransaksiController extends Controller {
 					$id = Transaksi::saveTransaksiBC($header);
 				}
 			}
+			else if ($type == "mutasikas"){
+				if ($postheader){
+					$detail = $request->input("detail");
+					parse_str($postheader, $header);
+					//$postfiles = $request->input('files');
+					$id = Transaksi::saveMutasiKas($header, $detail /*, $postfiles*/);
+				}
+				else {
+					$id = $request->input("delete");
+					if ($id && $id != ""){
+						Transaksi::deleteMutasiKas($id);
+					}
+				}
+			}
 			DB::commit();
 			$message["result"] = $id;
 		}
@@ -3006,31 +3020,32 @@ class TransaksiController extends Controller {
 				];
 			return view("transaksi.mutasikas", $data);
 	}
-	public function browseMutasi(Request $request)
-  {
-		if(!auth()->user()->can('transaksi.browse')){
+	public function browseMutasiKas(Request $request)
+  	{
+		if(!auth()->user()->can('mutasikas.browse')){
 			abort(403, 'User does not have the right roles.');
 		}
 		$filter = $request->input("filter");
 		if ($filter && $filter == "1"){
-			$postCustomer = $request->input("customer");
+			$postImportir = $request->input("importir");
 			$postKategori1 = $request->input("kategori1");
 			$isikategori1 = $request->input("isikategori1");
 			$postKategori2 = $request->input("kategori2");
-			$dari2 = $request->input("dari2");
-			$sampai2 = $request->input("sampai2");
+			$isikategori2 = $request->input("isikategori2");
+			$postKategori3 = $request->input("kategori3");
+			$dari3 = $request->input("dari3");
+			$sampai3 = $request->input("sampai3");
 
-			$data = Transaksi::browse($postCustomer, $postKategori1,
-																	$isikategori1, $postKategori2, $dari2, $sampai2);
+			$data = Transaksi::browseMutasiKas($postImportir, $postKategori1, $isikategori1, $postKategori2, $isikategori2, $postKategori3, $dari3, $sampai3);
 			if ($data){
 				$export = $request->input("export");
 				if ($export == "1"){
 					$spreadsheet = new Spreadsheet();
 					$sheet = $spreadsheet->getActiveSheet();
-					$sheet->setCellValue('A1', 'CUSTOMER');
-					if ($postCustomer && trim($postCustomer) != ""){
-						$customer = Customer::where("id_customer", $postCustomer);
-						$sheet->setCellValue('C1', $customer->first()->nama_customer);
+					$sheet->setCellValue('A1', 'IMPORTIR');
+					if ($postImportir && trim($postImportir) != ""){
+						$importir = Importir::where("IMPORTIR_ID", $postImportir);
+						$sheet->setCellValue('C1', $importir->first()->NAMA);
 					}
 					else {
 						$sheet->setCellValue('C1', "Semua");
@@ -3044,41 +3059,44 @@ class TransaksiController extends Controller {
 					if ($postKategori2 && trim($postKategori2) != ""){
 						$lastrow += 1;
 						$sheet->setCellValue('A' .$lastrow, $postKategori2);
-						$sheet->setCellValue('C' .$lastrow, $dari2 == "" ? "-" : Date("d M Y", strtotime($dari2)));
+						$sheet->setCellValue('C' .$lastrow, $isikategori2);
+					}
+					if ($postKategori3 && trim($postKategori3) != ""){
+						$lastrow += 1;
+						$sheet->setCellValue('A' .$lastrow, $postKategori3);
+						$sheet->setCellValue('C' .$lastrow, $dari3 == "" ? "-" : Date("d M Y", strtotime($dari3)));
 						$sheet->setCellValue('D' .$lastrow, "sampai");
-						$sheet->setCellValue('E' .$lastrow, $sampai2 == "" ? "-" : Date("d M Y", strtotime($sampai2)));
+						$sheet->setCellValue('E' .$lastrow, $sampai3 == "" ? "-" : Date("d M Y", strtotime($sampai3)));
 					}
 
 					$lastrow += 2;
-					$sheet->setCellValue('A' .$lastrow, 'Job Order');
-					$sheet->setCellValue('B' .$lastrow, 'Tgl Job');
-					$sheet->setCellValue('C' .$lastrow, 'No Dok');
-					$sheet->setCellValue('D' .$lastrow, 'Customer');
-					$sheet->setCellValue('E' .$lastrow, 'Tgl Tiba');
-					$sheet->setCellValue('F' .$lastrow, 'No Aju');
-					$sheet->setCellValue('G' .$lastrow, 'Nopen');
-			    $sheet->setCellValue('H' .$lastrow, 'Tgl Nopen');
-			    $sheet->setCellValue('I' .$lastrow, 'Tgl SPPB');
-			    $sheet->setCellValue('J' .$lastrow, 'Ttl Biaya');
-					$sheet->setCellValue('K' .$lastrow, 'Ttl Billing');
-					$sheet->setCellValue('L' .$lastrow, 'Ttl Payment');
+					$sheet->setCellValue('A' .$lastrow, 'Tgl Mutasi');
+					$sheet->setCellValue('B' .$lastrow, 'Importir');
+					$sheet->setCellValue('C' .$lastrow, 'Rekening');
+					$sheet->setCellValue('D' .$lastrow, 'Nominal');
+					$sheet->setCellValue('E' .$lastrow, 'D/K');
+					$sheet->setCellValue('F' .$lastrow, 'Kode Acc');
+					$sheet->setCellValue('G' .$lastrow, 'Kode Party');
+					$sheet->setCellValue('H' .$lastrow, 'Party');
+					$sheet->setCellValue('I' .$lastrow, 'No Dok');
+					$sheet->setCellValue('J' .$lastrow, 'Tgl Dok');
+					$sheet->setCellValue('K' .$lastrow, 'Remarks');
 
 					foreach ($data as $dt){
 						$lastrow += 1;
-						$sheet->setCellValue('A' .$lastrow, $dt->JOB_ORDER);
-						$sheet->setCellValue('B' .$lastrow, $dt->TGL_JOB);
-						$sheet->setCellValue('C' .$lastrow, $dt->NO_DOK);
-						$sheet->setCellValue('D' .$lastrow, $dt->NAMACUSTOMER);
-						$sheet->setCellValue('E' .$lastrow, $dt->TGL_TIBA);
-						$sheet->setCellValue('F' .$lastrow, $dt->NOAJU);
-						$sheet->setCellValue('G' .$lastrow, $dt->NOPEN);
-						$sheet->setCellValue('H' .$lastrow, $dt->TGL_NOPEN);
-						$sheet->setCellValue('I' .$lastrow, $dt->TGL_SPPB);
-						$sheet->setCellValue('J' .$lastrow, $dt->TOTAL_BIAYA);
-						$sheet->setCellValue('K' .$lastrow, $dt->TOTAL_BILLING);
-						$sheet->setCellValue('L' .$lastrow, $dt->TOTAL_PAYMENT);
+						$sheet->setCellValue('A' .$lastrow, $dt->TANGGAL);
+						$sheet->setCellValue('B' .$lastrow, $dt->IMPORTIR);
+						$sheet->setCellValue('C' .$lastrow, $dt->NO_REKENING);
+						$sheet->setCellValue('D' .$lastrow, $dt->NOMINAL);
+						$sheet->setCellValue('E' .$lastrow, $dt->DK);
+						$sheet->setCellValue('F' .$lastrow, $dt->KODE_ACC);
+						$sheet->setCellValue('G' .$lastrow, $dt->KODE_PARTY);
+						$sheet->setCellValue('H' .$lastrow, $dt->PARTY);
+						$sheet->setCellValue('I' .$lastrow, $dt->NO_DOK);
+						$sheet->setCellValue('J' .$lastrow, $dt->TGL_DOK);
+						$sheet->setCellValue('K' .$lastrow, $dt->REMARKS);
 					}
-					return $this->exportXls($spreadsheet, "browse");
+					return $this->exportXls($spreadsheet, "browse_mutasi");
 				}
 				else {
 					return response()->json($data);
@@ -3091,12 +3109,12 @@ class TransaksiController extends Controller {
 		}
 		else {
 			$breadcrumb[] = Array("link" => "../", "text" => "Home");
-			$breadcrumb[] = Array("text" => "Browse Job Order");
-			$customer = Customer::select("id_customer","nama_customer")->get();
-			return view("transaksi.browse",["breads" => $breadcrumb,
-										"datacustomer" => $customer,
-										"datakategori1" => Array("No Job","No Dok"),
-										"datakategori2" => Array("Tanggal Job","Tanggal Tiba")
+			$breadcrumb[] = Array("text" => "Browse Mutasi Kas");
+			$importir = Importir::select("IMPORTIR_ID","NAMA")->get();
+			return view("transaksi.browsemutasikas",["breads" => $breadcrumb,
+										"dataimportir" => $importir,
+										"datakategori1" => Array("Kode Acc", "Kode Party", "No Rekening"),
+										"datakategori2" => Array("Tanggal Mutasi")
 										]);
 		}
 	}

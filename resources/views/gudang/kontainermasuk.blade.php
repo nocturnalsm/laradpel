@@ -24,28 +24,28 @@
                     </div>
                     <div class="form-row pt-2 pb-4">
                       <label class="col-md-2">No Aju</label>
-                      <div class="col-md-2">
+                      <div class="col-md-2 mb-2">
                           <span id="noaju"></span>
                       </div>
                       <label class="col-md-2">Nopen</label>
-                      <div class="col-md-2">
+                      <div class="col-md-2 mb-2">
                           <span id="nopen"></span>
                       </div>
                       <label class="col-md-2">Tanggal</label>
-                      <div class="col-md-2">
+                      <div class="col-md-2 mb-2">
                           <span id="tglform"></span>
                       </div>
                     </div>
                     <form id="formkontainer" method="POST">
                     <div class="form-row">
-                      <label class="col-md-2">No Pol</label>
-                      <div class="col-md-3">
+                      <label class="col-md-2 col-sm-12">No Pol</label>
+                      <div class="col-md-3 col-sm-12">
                           <input type="text" class="form-control" name="nopol" id="nopol" value="">
                       </div>
                     </div>
                     <div class="form-row">
-                      <label class="col-md-2">Gudang</label>
-                      <div class="col-md-4">
+                      <label class="col-md-2 col-sm-12">Gudang</label>
+                      <div class="col-md-4 col-sm-12">
                           <select class="form-control form-control" id="gudang" name="gudang">
                               <option value=""></option>
                               @foreach($datagudang as $gud)
@@ -55,9 +55,15 @@
                       </div>
                     </div>
                     <div class="form-row">
-                      <label class="col-md-2">Tgl Masuk</label>
-                      <div class="col-md-3">
+                      <label class="col-md-2 col-sm-12">Tgl Masuk</label>
+                      <div class="col-md-3 col-sm-12">
                           <input type="text" autocomplete="off" class="datepicker form-control" name="tglmasuk" id="tglmasuk" value="">
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <label class="col-md-2 col-sm-12">Tgl Keluar</label>
+                      <div class="col-md-3 col-sm-12">
+                          <input type="text" autocomplete="off" class="datepicker form-control" name="tglkeluar" id="tglkeluar" value="">
                       </div>
                     </div>
                     <input type="hidden" name="idkontainer" id="idkontainer" value="">
@@ -97,15 +103,16 @@
                           $("#noaju").html(response.NOAJU);
                           $("#nopen").html(response.NOPEN);
                           $("#tglform").html(response.TGL_NOPEN);
+                          $("#tglkeluar").val(response.TGL_KELUAR);
                           if (typeof response.detail != 'undefined'){
                               $("#nopol").val(response.detail.NOPOL);
                               $("#gudang").val(response.detail.GUDANG_ID);
-                              $("#tglmasuk").val(response.detail.TGL_MASUK);
+                              $("#tglmasuk").val(response.detail.TGL_MASUK);                              
                           }
                           else {
                               $("#nopol").val("");
                               $("#gudang").val("");
-                              $("#tglmasuk").val("");
+                              $("#tglmasuk").val("");                              
                           }
                           $("#savebutton").removeClass("disabled");
                           $("#cancelbutton").removeClass("disabled");

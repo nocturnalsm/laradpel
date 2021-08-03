@@ -2588,13 +2588,14 @@ class GudangController extends Controller {
 			if ($request->ajax()){
 					if (isset($request->nokontainer)){
 							$data = DB::table(DB::raw("tbl_penarikan_header h"))
-												->select(DB::raw("k.ID"),"NOAJU","NOPEN","TGL_NOPEN", DB::raw("i.NAMA AS NAMAIMPORTIR"))
+												->select(DB::raw("k.ID"),"NOAJU","NOPEN","TGL_NOPEN", "h.TGL_KELUAR", DB::raw("i.NAMA AS NAMAIMPORTIR"))
 												->join(DB::raw("tbl_penarikan_kontainer k"), "h.ID","=","k.ID_HEADER")
 												->join(DB::raw("importir i"), "h.IMPORTIR","=","i.IMPORTIR_ID")
 												->where("NOMOR_KONTAINER", $request->nokontainer);
 							if ($data->exists()){
 									$data = $data->first();
 									$data->TGL_NOPEN = $data->TGL_NOPEN == '' ? "" : Date("d-m-Y", strtotime($data->TGL_NOPEN));
+									$data->TGL_KELUAR = $data->TGL_KELUAR == '' ? "" : Date("d-m-Y", strtotime($data->TGL_KELUAR));
 									$detail = DB::table(DB::raw("kontainer_masuk k"))
 															->select("NOPOL","GUDANG_ID",DB::raw("DATE_FORMAT(TGL_MASUK, '%d-%m-%Y') AS TGL_MASUK"))
 															->where("NO_KONTAINER", $data->ID);

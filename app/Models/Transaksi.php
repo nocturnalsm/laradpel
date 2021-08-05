@@ -2417,7 +2417,7 @@ class Transaksi extends Model
             }
         }
         if (trim($importir) != ""){
-            $where .= " AND IMPORTIR_ID = '" .$importir ."'";
+            $where .= " AND i.IMPORTIR_ID = '" .$importir ."'";
         }
 
         $data = DB::table(DB::raw("mutasikas_detail d"))
@@ -2468,7 +2468,7 @@ class Transaksi extends Model
                                         ->orderBy("PARTY_ID"), "party",
                                         function($join){
                                             $join->on("party.PARTY_ID","=","db.PARTY_ID");
-                                        })                        
+                                        })
                         ->where("db.ID_HEADER", $id)
                         ->get();
         }

@@ -55,15 +55,15 @@
                       </div>
                     </div>
                     <div class="form-row">
-                      <label class="col-md-2 col-sm-12">Tgl Masuk</label>
-                      <div class="col-md-3 col-sm-12">
-                          <input type="text" autocomplete="off" class="datepicker form-control" name="tglmasuk" id="tglmasuk" value="">
-                      </div>
-                    </div>
-                    <div class="form-row">
                       <label class="col-md-2 col-sm-12">Tgl Keluar</label>
                       <div class="col-md-3 col-sm-12">
                           <input type="text" autocomplete="off" class="datepicker form-control" name="tglkeluar" id="tglkeluar" value="">
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <label class="col-md-2 col-sm-12">Tgl Masuk</label>
+                      <div class="col-md-3 col-sm-12">
+                          <input type="text" autocomplete="off" class="datepicker form-control" name="tglmasuk" id="tglmasuk" value="">
                       </div>
                     </div>
                     <input type="hidden" name="idkontainer" id="idkontainer" value="">
@@ -107,12 +107,12 @@
                           if (typeof response.detail != 'undefined'){
                               $("#nopol").val(response.detail.NOPOL);
                               $("#gudang").val(response.detail.GUDANG_ID);
-                              $("#tglmasuk").val(response.detail.TGL_MASUK);                              
+                              $("#tglmasuk").val(response.detail.TGL_MASUK);
                           }
                           else {
                               $("#nopol").val("");
                               $("#gudang").val("");
-                              $("#tglmasuk").val("");                              
+                              $("#tglmasuk").val("");
                           }
                           $("#savebutton").removeClass("disabled");
                           $("#cancelbutton").removeClass("disabled");

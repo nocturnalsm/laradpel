@@ -2496,10 +2496,10 @@ class Transaksi extends Model
             foreach ($detail as $item){
                 $arrDetail[] = Array("ID_HEADER" => $idtransaksi,
                                     "KODEACC_ID" => $item["KODEACC_ID"],
-                                    "PARTY_ID" => $item["PARTY_ID"],
+                                    "PARTY_ID" => isset($item["PARTY_ID"]) ? $item['PARTY_ID'] : NULL,
                                     "REMARKS" => trim($item["REMARKS"]),
                                     "NO_DOK" => strtoupper(trim($item["NO_DOK"])),
-                                    "TGL_DOK" => Date("Y-m-d", strtotime($item["TGL_DOK"])),
+                                    "TGL_DOK" => trim($item["TGL_DOK"]) != "" ? Date("Y-m-d", strtotime($item["TGL_DOK"])) : NULL,
                                     "NOMINAL" => $item["NOMINAL"] != "" ? str_replace(",","",$item["NOMINAL"]) : 0,
                                     "DK" => $item["DK"]
                                     );

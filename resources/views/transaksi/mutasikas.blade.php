@@ -71,7 +71,8 @@
                     <div class="form-row mb-1">
                         <label class="col-form-label col-md-3">Remarks</label>
                         <div class="col-md-9 pt-2">
-                            <input {{ $readonly }} type="text" id="remarks" name="remarks" class="form-control form-control-sm validate">
+                            <textarea {{ $readonly }} rows="4" type="text" id="remarks" name="remarks" class="form-control form-control-sm validate">
+                            </textarea>
                         </div>
                     </div>
                 </form>
@@ -311,8 +312,15 @@
             var kodeacc_id = $("#kodeacc option:selected").val();
             var kodeacc = $("#kodeacc option:selected").html();
             var party_id = $("#party option:selected").val();
-            var kode_party = $("#party option:selected").attr("kodeparty");
-            var party = $("#party option:selected").attr("nama");
+            var party_selected = $("#party option:selected");
+            if (party_selected.length > 0){
+                var kode_party = $(party_selected).attr("kodeparty");
+                var party = $(party_selected).attr("nama");
+            }
+            else {
+                var kode_party = "";
+                var party = "";
+            }
             var nodok = $("#nodok").val();
             var tgldok = $("#tgldok").val();
             var remarks = $("#remarks").val();

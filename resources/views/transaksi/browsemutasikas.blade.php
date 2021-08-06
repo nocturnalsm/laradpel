@@ -13,7 +13,9 @@
                         <label class="col-md-2">Importir</label>
                         <div class="col-md-3">
                             <select class="form-control form-control-sm" id="importir" name="importir">
+                                @if(count($dataimportir) != 1)
                                 <option value="">Semua</option>
+                                @endif
                                 @foreach($dataimportir as $imp)
                                 <option value="{{ $imp->IMPORTIR_ID }}">{{ $imp->NAMA }}</option>
                                 @endforeach
@@ -25,7 +27,7 @@
                             Kategori
                         </div>
                         <div class="col-md-3">
-                            <select class="form-control form-control-sm" id="kategori1" name="kategori1">
+                            <select class="kategori form-control form-control-sm" id="kategori1" name="kategori1">
                                 <option value=""></option>
                                 @foreach($datakategori1 as $kat)
                                 <option value="{{ $kat }}">{{ $kat }}</option>
@@ -34,7 +36,8 @@
                         </div>
                         <label class="px-sm-3 col-sm-1">Nilai</label>
                         <div class="col-md-5">
-                            <input type="text" id="isikategori1_text" name="isikategori1" class="form-control form-control-sm" style="display:inline;width: 120px">
+                            <select class="kategori_value form-control form-control-sm" id="isikategori1_text" name="isikategori1">                                
+                            </select>
                         </div>
                     </div>
                     <div class="row">
@@ -42,7 +45,7 @@
                             Kategori
                         </div>
                         <div class="col-md-3">
-                            <select class="form-control form-control-sm" id="kategori2" name="kategori2">
+                            <select class="kategori form-control form-control-sm" id="kategori2" name="kategori2">
                                 <option value=""></option>
                                 @foreach($datakategori1 as $kat)
                                 <option value="{{ $kat }}">{{ $kat }}</option>
@@ -51,7 +54,8 @@
                         </div>
                         <label class="px-sm-3 col-sm-1">Nilai</label>
                         <div class="col-md-5">
-                            <input type="text" id="isikategori2_text" name="isikategori2" class="form-control form-control-sm" style="display:inline;width: 120px">
+                            <select class="kategori_value form-control form-control-sm" id="isikategori2_text" name="isikategori2">                                
+                            </select>
                         </div>
                     </div>
                     <div class="row">
@@ -126,7 +130,7 @@
         			j = (j = i.length) > 3 ? j % 3 : 0;
         	return symbol + negative + (j ? i.substr(0, j) + thousand : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousand) + (places ? decimal + Math.abs(number - i).toFixed(places).slice(2) : "");
         };
-        var columns = [{target: 0, data: null, orderable: false}, {target: 1, data: "TANGGAL"},
+        var columns = [{target: 0, data: null, orderable: false @cannot('mutasikas.transaksi') , visible: false @endcannot }, {target: 1, data: "TANGGAL"},
         {target: 2, data: "IMPORTIR"}, {target: 3, data: "NO_REKENING"},
         {target: 4, data: "NOMINAL"},
         {target: 5, data: "DK"},
@@ -158,8 +162,12 @@
             rowCallback: function(row, data)
             {
                 $(row).attr("id-transaksi", data[0]);
+                var nominal_col = 3
+                @can('mutasikas.transaksi')                
                 $('td:eq(0)', row).html('<a title="Edit" href="/transaksi/mutasikas/' + data.ID + '"><i class="fa fa-edit"></i></a>');
-                $("td:eq(4)", row).html(parseFloat(data.NOMINAL).formatMoney(2));
+                nominal_col = 4;
+                @endcannot
+                $("td:eq(" + nominal_col +")", row).html(parseFloat(data.NOMINAL).formatMoney(2));
             },
             columnDefs: [
                 { "orderable": false, "targets": 0 }
@@ -187,6 +195,42 @@
         })
         $("#export").on("click", function(){
             $("#form").submit();
+        })
+        $(".kategori").on("change", function(){
+            var select = $(this).find("option:selected");
+            var value = "";
+            if ($(select).length > 0){
+                value = $(select).val();
+            }
+            var select_values = $(select).closest(".row").find(".kategori_value");
+            var options_html = "";
+            if (value == "Kode Acc"){                
+                var source = @json($kodeacc);
+                options = JSON.parse(source);                
+                for(var i in options){
+                    options_html += '<option value="' + options[i].KODEACC_ID +'">' + options[i].URAIAN +'</option>';
+                }                
+            }
+            else if (value == "Kode Party"){                
+                var source = @json($kodeparty);
+                options = JSON.parse(source);                
+                for(var i in options){
+                    options_html += '<option value="' + options[i].KODEPARTY_ID +'">' + options[i].KODE +'</option>';
+                }                
+            }
+            else if (value == "No Rekening"){                
+                var source = @json($rekening);
+                options = JSON.parse(source);                
+                for(var i in options){
+                    options_html += '<option value="' + options[i].REKENING_ID +'">' 
+                                 + options[i].BANK + ' - '  + options[i].NO_REKENING +'</option>';
+                }                
+            }
+            else if (value == "D/K"){
+                options_html = '<option value="D">D</option>' +
+                               '<option value="K">K</option>';
+            }
+            $(select_values).html(options_html);
         })
     })
 </script>

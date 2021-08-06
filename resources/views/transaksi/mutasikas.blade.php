@@ -40,8 +40,20 @@
                         <label class="col-form-label col-md-3" for="kodetransaksi">Kode Acc</label>
                         <div class="col-md-9">
                         <select class="form-control form-control-sm" id="kodeacc" name="kodeacc">
+                            <option value=""></option>
                             @foreach($kodeacc as $kode)
                             <option value="{{ $kode->KODEACC_ID }}">{{ $kode->URAIAN }}</option>
+                            @endforeach
+                        </select>
+                        </div>
+                    </div>
+                    <div class="form-row mb-1">
+                        <label class="col-form-label col-md-3" for="party">Kode Party</label>
+                        <div class="col-md-9">
+                        <select class="form-control form-control-sm" id="kodeparty" name="kodeparty">
+                            <option value=""></option>
+                            @foreach($kodeparty as $kode)
+                            <option value="{{ $kode->KODEPARTY_ID }}">{{ $kode->URAIAN }}</option>
                             @endforeach
                         </select>
                         </div>
@@ -50,9 +62,7 @@
                         <label class="col-form-label col-md-3" for="party">Party</label>
                         <div class="col-md-9">
                         <select class="form-control form-control-sm" id="party" name="party">
-                            @foreach($party as $kode)
-                            <option kodeparty="{{ $kode->URAIAN }}" nama="{{ $kode->NAMA }}" value="{{ $kode->PARTY_ID }}">{{ $kode->URAIAN }} - {{ $kode->NAMA }}</option>
-                            @endforeach
+                            <option value=""></option>
                         </select>
                         </div>
                     </div>
@@ -211,6 +221,9 @@
 <script>
     var detail = @json($detail);
     datadetail = JSON.parse(detail);
+    var party = @json($party);
+    dataparty = JSON.parse(party);
+    console.log(dataparty);
     $(function(){
 
         Number.prototype.formatMoney = function(places, symbol, thousand, decimal) {
@@ -311,16 +324,10 @@
         $("#savedetail").on("click", function(){
             var kodeacc_id = $("#kodeacc option:selected").val();
             var kodeacc = $("#kodeacc option:selected").html();
+            var kodeparty_id = $("#kodeparty option:selected").val();
+            var kodeparty = $("#kodeparty option:selected").html();
             var party_id = $("#party option:selected").val();
-            var party_selected = $("#party option:selected");
-            if (party_selected.length > 0){
-                var kode_party = $(party_selected).attr("kodeparty");
-                var party = $(party_selected).attr("nama");
-            }
-            else {
-                var kode_party = "";
-                var party = "";
-            }
+            var party = $("#party option:selected").html();
             var nodok = $("#nodok").val();
             var tgldok = $("#tgldok").val();
             var remarks = $("#remarks").val();
@@ -329,9 +336,10 @@
             var act = $("#form").attr("act");
 
             if (act == "add"){
-                tabel.row.add({KODEACC_ID: kodeacc_id, KODE_ACC: kodeacc, KODE_PARTY: kode_party, NO_DOK: nodok, TGL_DOK: tgldok, REMARKS: remarks, NOMINAL: nominal, PARTY_ID: party_id, PARTY: party, DK: dk}).draw();
+                tabel.row.add({KODEACC_ID: kodeacc_id, KODE_ACC: kodeacc, KODE_PARTY: kodeparty, KODEPARTY_ID: kodeparty_id, NO_DOK: nodok, TGL_DOK: tgldok, REMARKS: remarks, NOMINAL: nominal, PARTY_ID: party_id, PARTY: party, DK: dk}).draw();
                 $("#nodok").val("");
                 $("#kodeacc").val("");
+                $("#kodeparty").val("");
                 $("#party").val("");
                 $("#nominal").val("");
                 $("#tgldok").val("");
@@ -341,7 +349,7 @@
             else if (act == "edit"){
                 var id = $("#iddetail").val();
                 var idx = $("#idxdetail").val();
-                tabel.row(idx).data({ID: id, KODEACC_ID: kodeacc_id, KODE_PARTY: kode_party, KODE_ACC: kodeacc, NO_DOK: nodok, TGL_DOK: tgldok, REMARKS: remarks, NOMINAL: nominal, PARTY_ID: party_id, PARTY: party, DK: dk}).draw();
+                tabel.row(idx).data({ID: id, KODEACC_ID: kodeacc_id, KODE_PARTY: kodeparty, KODEPARTY_ID: kodeparty_id, KODE_ACC: kodeacc, NO_DOK: nodok, TGL_DOK: tgldok, REMARKS: remarks, NOMINAL: nominal, PARTY_ID: party_id, PARTY: party, DK: dk}).draw();
                 $("#modaldetail").modal("hide");
             }
             count_total();
@@ -350,6 +358,7 @@
         $("#adddetail").on("click", function(){
             $("#nodok").val("");
             $("#kodeacc").val("");
+            $("#kodeparty").val("");
             $("#party").val("");
             $("#nominal").val("");
             $("#tgldok").val("");
@@ -366,6 +375,8 @@
             $("#nodok").val(row[0].NO_DOK);
             $("#tgldok").val(row[0].TGL_DOK);
             $("#kodeacc").val(row[0].KODEACC_ID);
+            $("#kodeparty").val(row[0].KODEPARTY_ID);
+            $("#kodeparty").trigger("change");
             $("#party").val(row[0].PARTY_ID);
             $("#nominal").val(row[0].NOMINAL);
             $("#remarks").val(row[0].REMARKS);
@@ -383,6 +394,20 @@
             }
             var index = tabel.row(row).remove().draw();
             count_total();
+        })
+        $("#kodeparty").on("change", function(){
+            var value = $(this).val();            
+            if (value == ""){
+                $("#party").html('<option value=""></option>');
+            }
+            else {
+                var party = dataparty[value];
+                var html = '<option value=""></option>';
+                for(var i in party){
+                    html += '<option value="' + party[i].PARTY_ID + '">' + party[i].NAMA + '</option>';
+                }
+                $("#party").html(html);
+            }
         })
         $("#btnsimpan").on("click", function(){
 

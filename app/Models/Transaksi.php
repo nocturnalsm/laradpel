@@ -2380,7 +2380,7 @@ class Transaksi extends Model
     }
     public static function browseMutasiKas($importir, $kategori1, $isikategori1, $kategori2, $isikategori2, $kategori3, $dari3, $sampai3)
     {
-        $array1 = Array("Kode Acc" => "acc.URAIAN", "Kode Party" => "kparty.URAIAN", "No Rekening" => "NO_REKENING");
+        $array1 = Array("Kode Acc" => "acc.KODEACC_ID", "Kode Party" => "kparty.KODEPARTY_ID", "No Rekening" => "rek.REKENING_ID", "D/K" => "DK");
         $array2 = Array("Tanggal Mutasi" => "TANGGAL");
         $where = " 1 = 1";
         if ($kategori1 != ""){
@@ -2388,7 +2388,7 @@ class Transaksi extends Model
                 $where  .=  " AND (" .$array1[$kategori1] ." IS NULL OR " .$array1[$kategori1] ." = '')";
             }
             else {
-                $where  .=  " AND (" .$array1[$kategori1] ." LIKE '%" .$isikategori1 ."%')";
+                $where  .=  " AND (" .$array1[$kategori1] ." = '" .$isikategori1 ."')";
             }
 
         }
@@ -2397,7 +2397,7 @@ class Transaksi extends Model
                 $where  .=  " AND (" .$array1[$kategori2] ." IS NULL OR " .$array1[$kategori2] ." = '')";
             }
             else {
-                $where  .=  " AND (" .$array1[$kategori2] ." LIKE '%" .$isikategori2 ."%')";
+                $where  .=  " AND (" .$array1[$kategori2] ." = '" .$isikategori2 ."')";
             }
 
         }
@@ -2428,7 +2428,7 @@ class Transaksi extends Model
                     ->join(DB::raw("mutasikas p"), "p.ID","=","d.ID_HEADER")
                     ->leftJoin(DB::raw("kode_acc acc"), "acc.KODEACC_ID", "=", "d.KODEACC_ID")
                     ->leftJoin("party", "party.PARTY_ID", "=", "d.PARTY_ID")
-                    ->leftJoin(DB::raw("kode_party kparty"), "party.KODE_PARTY", "=", "kparty.KODEPARTY_ID")
+                    ->leftJoin(DB::raw("kode_party kparty"), "d.KODEPARTY_ID", "=", "kparty.KODEPARTY_ID")
                     ->leftJoin(DB::raw("rekening rek"), "rek.REKENING_ID", "=", "p.REKENING_ID")
                     ->join(DB::raw("importir i"), "p.IMPORTIR_ID", "=", "i.IMPORTIR_ID")
                     ->orderBy("TANGGAL");
@@ -2459,16 +2459,10 @@ class Transaksi extends Model
                 return false;
             }
             $detail = DB::table(DB::raw("mutasikas_detail db"))
-                        ->selectRaw("db.*, DATE_FORMAT(TGL_DOK, '%d-%m-%Y') AS TGL_DOK, (SELECT URAIAN FROM kode_acc where "
-                                   ."kode_acc.KODEACC_ID = db.KODEACC_ID) AS KODE_ACC, "
-                                   ."party.NAMA as PARTY, party.URAIAN AS KODE_PARTY")
-                        ->leftJoinSub(DB::table("party")
-                                        ->join("kode_party", "party.KODE_PARTY", "=", "kode_party.KODEPARTY_ID")
-                                        ->select("party.PARTY_ID", "party.NAMA","kode_party.URAIAN", "party.KODE_PARTY")
-                                        ->orderBy("PARTY_ID"), "party",
-                                        function($join){
-                                            $join->on("party.PARTY_ID","=","db.PARTY_ID");
-                                        })
+                        ->selectRaw("db.*, DATE_FORMAT(TGL_DOK, '%d-%m-%Y') AS TGL_DOK, IFNULL((SELECT URAIAN FROM kode_acc where "
+                                   ."kode_acc.KODEACC_ID = db.KODEACC_ID), '') AS KODE_ACC, "
+                                   ."IFNULL((SELECT URAIAN FROM kode_party where kode_party.KODEPARTY_ID = db.KODEPARTY_ID),'') AS KODE_PARTY, "
+                                   ."IFNULL((SELECT NAMA FROM party where party.PARTY_ID = db.PARTY_ID), '') AS PARTY")
                         ->where("db.ID_HEADER", $id)
                         ->get();
         }
@@ -2496,6 +2490,7 @@ class Transaksi extends Model
             foreach ($detail as $item){
                 $arrDetail[] = Array("ID_HEADER" => $idtransaksi,
                                     "KODEACC_ID" => $item["KODEACC_ID"],
+                                    "KODEPARTY_ID" => isset($item["KODEPARTY_ID"]) ? $item['KODEPARTY_ID'] : NULL,
                                     "PARTY_ID" => isset($item["PARTY_ID"]) ? $item['PARTY_ID'] : NULL,
                                     "REMARKS" => trim($item["REMARKS"]),
                                     "NO_DOK" => strtoupper(trim($item["NO_DOK"])),
@@ -2511,11 +2506,17 @@ class Transaksi extends Model
     {
         return KodeAcc::orderBy("URAIAN")->get();
     }
+    public static function getKodeParty()
+    {
+        return KodeParty::orderBy("KODE")->get();
+    }
     public static function getParty()
     {
-        return Party::join("kode_party", "party.KODE_PARTY","=","kode_party.KODEPARTY_ID")
-                      ->select("PARTY_ID","kode_party.URAIAN","party.NAMA")
-                      ->orderBy("kode_party.URAIAN", "asc")
-                      ->orderBy("party.NAMA", "asc")->get();
+        $data = KodeParty::with('parties')->get();
+        $result = Array();
+        foreach ($data as $d){
+            $result[$d->KODEPARTY_ID] = $d->parties;
+        }
+        return $result;
     }
 }

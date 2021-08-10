@@ -48,7 +48,7 @@
                         </div>
                     </div>
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-md-3" for="party">Kode Party</label>
+                        <label class="col-form-label col-md-3" for="party">Kode ID</label>
                         <div class="col-md-9">
                         <select class="form-control form-control-sm" id="kodeparty" name="kodeparty">
                             <option value=""></option>
@@ -188,7 +188,7 @@
                                                     <th>Nominal</th>
                                                     <th>D/K</th>
                                                     <th>Kode Acc</th>
-                                                    <th>Kode Party</th>
+                                                    <th>Kode ID</th>
                                                     <th>Party</th>
                                                     <th>No Dok</th>
                                                     <th>Tgl Dok</th>
@@ -223,7 +223,6 @@
     datadetail = JSON.parse(detail);
     var party = @json($party);
     dataparty = JSON.parse(party);
-    console.log(dataparty);
     $(function(){
 
         Number.prototype.formatMoney = function(places, symbol, thousand, decimal) {

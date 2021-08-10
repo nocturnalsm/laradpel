@@ -99,21 +99,32 @@
                                         <input {{ $readonly }} type="text" class="form-control form-control-sm" name="noinv" value="{{ $header->NO_INV_JUAL }}" id="noinv">
                                     </div>
                                 </div>
-                                <div class="form-row px-2 pb-0">
+                                <div class="form-row px-2 pb-0 pt-2">
                                     <label class="col-md-3 col-form-label form-control-sm">Tgl Inv Jual</label>
                                     <div class="col-md-3">
                                         <input {{ $readonly }} autocomplete="off" type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tgljual" value="{{ $header->TGL_JUAL }}" id="tgljual">
                                     </div>
                                 </div>
-                                <div class="form-row px-2">
-                                    <label class="col-md-3 col-form-label form-control-sm">Pembeli</label>
-                                    <div class="col-md-6">
-                                        <select {{ $readonly == 'readonly' ? 'disabled' : '' }} class="form-control form-control-sm" id="pembeli" name="pembeli" value="{{ $header->PEMBELI_ID }}">
+                                <div class="form-row px-2 pt-2">
+                                    <label class="col-form-label col-md-3" for="party">Kode ID</label>
+                                    <div class="col-md-2">
+                                        <select {{ $readonly == 'readonly' ? 'disabled' : '' }} class="form-control form-control-sm" id="kodeparty" name="kodeparty" value="{{ $header->KODEPARTY_ID }}">
                                             <option value=""></option>
-                                            @foreach($pembeli as $pemb)
-                                            <option @if($header->PEMBELI_ID == $pemb->ID) selected @endif value="{{ $pemb->ID }}">{{ $pemb->NAMA }}</option>
+                                            @foreach($kodeparty as $kode)
+                                            <option @if($header->KODEPARTY_ID == $kode->KODEPARTY_ID) selected @endif value="{{ $kode->KODEPARTY_ID }}">{{ $kode->URAIAN }}</option>
                                             @endforeach
                                         </select>
+                                    </div>
+                                </div>
+                                <div class="form-row px-2">                                    
+                                    <label class="col-md-3 col-form-label">Party</label>
+                                    <div class="col-md-4">
+                                        <select {{ $readonly == 'readonly' ? 'disabled' : '' }} class="form-control form-control-sm" id="party" name="party" value="{{ $header->PEMBELI_ID }}">
+                                        </select>
+                                    </div>
+                                    <label class="col-md-2 col-form-label">No ID</label>
+                                    <div class="col-md-3 mt-2">
+                                        <span id="no_identitas"></span>
                                     </div>
                                 </div>
                             </div>
@@ -175,6 +186,9 @@
 <script>
     var detail = @json($detail);
     datadetail = JSON.parse(detail);
+    var party = @json($party);
+    dataparty = JSON.parse(party);
+
     $(function(){
 
         Number.prototype.formatMoney = function(places, symbol, thousand, decimal) {
@@ -422,10 +436,38 @@
                 })
             });
             $("#modal").modal("show");
-        });
-        @endif
+        });                
+        @endif     
+        $("#party").on("change", function(){
+            var selected = $(this).find("option:selected");
+            if ($(selected).val() == ""){
+                $("#no_identitas").html("");
+            }
+            else {
+                $("#no_identitas").html($(selected).attr("no_id"));
+            }
+        })
         @endcan
-        $("#nopen").inputmask({"mask": "999999","removeMaskOnSubmit": true});
+        $("#kodeparty").on("change", function(){
+            var value = $(this).val();            
+            if (value == ""){
+                $("#party").html('<option value=""></option>');
+                $("#no_identitas").html("");
+            }
+            else {
+                var party = dataparty[value];
+                var html = '<option value=""></option>';
+                for(var i in party){
+                    html += '<option no_id="' + party[i].NO_IDENTITAS + '" value="' + party[i].PARTY_ID + '">' + party[i].NAMA + '</option>';
+                }
+                $("#party").html(html);
+                $("#no_identitas").html("");
+            }
+        })
+        $("#kodeparty").trigger("change");
+        $("#party").val("{{ $header->PEMBELI_ID }}");
+        $("#no_identitas").html("{{ $header->NO_IDENTITAS }}");
+        $("#nopen").inputmask({"mask": "999999","removeMaskOnSubmit": true});        
     })
 </script>
 @endpush

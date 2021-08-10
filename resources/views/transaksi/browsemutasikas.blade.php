@@ -97,7 +97,7 @@
                         <th>Nominal</th>
                         <th>D/K</th>
                         <th>Kd Acc</th>
-                        <th>Kd Party</th>
+                        <th>Kd ID</th>
                         <th>Party</th>
                         <th>No Dok</th>
                         <th>Tgl Dok</th>
@@ -211,7 +211,7 @@
                     options_html += '<option value="' + options[i].KODEACC_ID +'">' + options[i].URAIAN +'</option>';
                 }                
             }
-            else if (value == "Kode Party"){                
+            else if (value == "Kode ID"){                
                 var source = @json($kodeparty);
                 options = JSON.parse(source);                
                 for(var i in options){

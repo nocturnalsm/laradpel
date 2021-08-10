@@ -2312,8 +2312,9 @@ class Transaksi extends Model
         }
         else {
             $header = DB::table(DB::raw("tbl_header_invoice h"))
-                        ->selectRaw("h.*")
-                        ->join(DB::raw("ref_pembeli p"), "h.PEMBELI_ID","=", "p.ID")
+                        ->selectRaw("h.*, py.NO_IDENTITAS")
+                        ->leftJoin(DB::raw("kode_party p"), "h.KODEPARTY_ID","=", "p.KODEPARTY_ID")
+                        ->leftJoin(DB::raw("party py"), "h.PEMBELI_ID","=", "py.PARTY_ID")
                         ->where("h.ID", $id);
             if ($header->exists()){
                 $header = $header->first();
@@ -2339,7 +2340,8 @@ class Transaksi extends Model
     public static function saveInvoice($action, $header, $detail)
     {
         $arrHeader = Array("TGL_JUAL" => trim($header["tgljual"]) == "" ? Date("Y-m-d") : Date("Y-m-d", strtotime($header["tgljual"])),
-                           "PEMBELI_ID" => $header["pembeli"],
+                           "PEMBELI_ID" => nullval($header["party"]),
+                           "KODEPARTY_ID" => nullval($header["kodeparty"]),
                            "NO_INV_JUAL" => $header["noinv"]
                          );
 
@@ -2380,7 +2382,7 @@ class Transaksi extends Model
     }
     public static function browseMutasiKas($importir, $kategori1, $isikategori1, $kategori2, $isikategori2, $kategori3, $dari3, $sampai3)
     {
-        $array1 = Array("Kode Acc" => "acc.KODEACC_ID", "Kode Party" => "kparty.KODEPARTY_ID", "No Rekening" => "rek.REKENING_ID", "D/K" => "DK");
+        $array1 = Array("Kode Acc" => "acc.KODEACC_ID", "Kode ID" => "kparty.KODEPARTY_ID", "No Rekening" => "rek.REKENING_ID", "D/K" => "DK");
         $array2 = Array("Tanggal Mutasi" => "TANGGAL");
         $where = " 1 = 1";
         if ($kategori1 != ""){

@@ -2954,7 +2954,7 @@ class TransaksiController extends Controller {
 		}
 	}
 	public function invoice(Request $request)
-  {
+  	{
 		$canBrowse = auth()->user()->can('invoice.browse');
 		$canEdit = auth()->user()->can('invoice.transaksi');
 
@@ -2979,13 +2979,14 @@ class TransaksiController extends Controller {
 		$breadcrumb[] = Array("link" => "/", "text" => "Home");
 
 		$breadcrumb[] = Array("text" => "Perekaman Invoice");
-
-		$dtPembeli = Transaksi::getPembeli();
+		
 		$dtSatuan = Transaksi::getSatuan();
+		$dtKodeParty = Transaksi::getKodeParty();
+		$dtParty = Transaksi::getParty();
 
 		$data = [
 				"header" => isset($dtTransaksi["header"]) ? $dtTransaksi["header"] : "{}" , "breads" => $breadcrumb,
-				"pembeli" => $dtPembeli, "satuan" => $dtSatuan,
+				"party" => json_encode($dtParty), "kodeparty" => $dtKodeParty, "satuan" => $dtSatuan,
 				"detail" => isset($dtTransaksi["detail"]) ? json_encode($dtTransaksi["detail"]) : "{}",
 				"readonly" => $canEdit ? '' : 'readonly'
 			];
@@ -3077,7 +3078,7 @@ class TransaksiController extends Controller {
 					$sheet->setCellValue('D' .$lastrow, 'Nominal');
 					$sheet->setCellValue('E' .$lastrow, 'D/K');
 					$sheet->setCellValue('F' .$lastrow, 'Kode Acc');
-					$sheet->setCellValue('G' .$lastrow, 'Kode Party');
+					$sheet->setCellValue('G' .$lastrow, 'Kode ID');
 					$sheet->setCellValue('H' .$lastrow, 'Party');
 					$sheet->setCellValue('I' .$lastrow, 'No Dok');
 					$sheet->setCellValue('J' .$lastrow, 'Tgl Dok');
@@ -3117,7 +3118,7 @@ class TransaksiController extends Controller {
 			$importir = $this->getImportir();
 			return view("transaksi.browsemutasikas",["breads" => $breadcrumb,
 										"dataimportir" => $importir,
-										"datakategori1" => Array("Kode Acc", "Kode Party", "No Rekening", "D/K"),
+										"datakategori1" => Array("Kode Acc", "Kode ID", "No Rekening", "D/K"),
 										"datakategori2" => Array("Tanggal Mutasi"),
 										"kodeacc" => json_encode($kodeAcc), 
 										"kodeparty" => json_encode($kodeParty), 

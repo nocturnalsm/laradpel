@@ -53,9 +53,15 @@
                         </div>
                     </div>
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-md-3" for="total">Total Jual</label>
+                        <label class="col-form-label col-md-3" for="total">Total DPP</label>
                         <div class="col-md-9">
                             <input type="text" readonly id="total" name="total" class="number form-control form-control-sm validate">
+                        </div>
+                    </div>
+                    <div class="form-row mb-1">
+                        <label class="col-form-label col-md-3" for="ppn">PPN</label>
+                        <div class="col-md-9">
+                            <input type="text" readonly id="ppn" name="ppn" class="number form-control form-control-sm validate">
                         </div>
                     </div>
                 </form>
@@ -94,19 +100,33 @@
                         <div class="card col-md-12 p-0 mb-2">
                             <div class="card-body p-3">
                                 <div class="form-row px-2 pb-0">
-                                    <label class="col-md-3 col-form-label form-control-sm">No.Inv Jual</label>
+                                    <label class="col-md-2 col-form-label form-control-sm">No.Inv Jual</label>
                                     <div class="col-sm-4">
                                         <input {{ $readonly }} type="text" class="form-control form-control-sm" name="noinv" value="{{ $header->NO_INV_JUAL }}" id="noinv">
                                     </div>
+                                    <label class="col-md-2 col-form-label form-control-sm">Payment</label>
+                                    <div class="col-sm-2">
+                                        <select {{ $readonly == 'readonly' ? 'disabled' : '' }} type="text" class="form-control form-control-sm" name="payment" value="{{ $header->PAYMENT }}" id="payment">
+                                            <option value=""></option>
+                                            <option {{ $header->PAYMENT == "C" ? 'selected' : ' '}} value="C">Cash</option>
+                                            <option {{ $header->PAYMENT == "30" ? 'selected' : ' '}} value="30">D/A-30</option>
+                                            <option {{ $header->PAYMENT == "60" ? 'selected' : ' '}} value="60">D/A-60</option>
+                                            <option {{ $header->PAYMENT == "90" ? 'selected' : ' '}} value="90">D/A-90</option>                                            
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="form-row px-2 pb-0 pt-2">
-                                    <label class="col-md-3 col-form-label form-control-sm">Tgl Inv Jual</label>
+                                    <label class="col-md-2 col-form-label form-control-sm">Tgl Inv Jual</label>
                                     <div class="col-md-3">
                                         <input {{ $readonly }} autocomplete="off" type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tgljual" value="{{ $header->TGL_JUAL }}" id="tgljual">
                                     </div>
+                                    <label class="col-md-3 text-sm-center col-form-label form-control-sm">Tgl Jth Tempo</label>
+                                    <div class="col-md-3">
+                                        <input readonly type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tgljatuhtempo" id="tgljatuhtempo">
+                                    </div>
                                 </div>
                                 <div class="form-row px-2 pt-2">
-                                    <label class="col-form-label col-md-3" for="party">Kode ID</label>
+                                    <label class="col-form-label col-md-2" for="party">Kode ID</label>
                                     <div class="col-md-2">
                                         <select {{ $readonly == 'readonly' ? 'disabled' : '' }} class="form-control form-control-sm" id="kodeparty" name="kodeparty" value="{{ $header->KODEPARTY_ID }}">
                                             <option value=""></option>
@@ -115,9 +135,13 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                    <label class="col-md-3 text-sm-center col-form-label form-control-sm">Tgl Lunas</label>
+                                    <div class="col-md-3">
+                                        <input type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" value="{{ $header->TGL_LUNAS }}" name="tgllunas" id="tgllunas">
+                                    </div>
                                 </div>
                                 <div class="form-row px-2">                                    
-                                    <label class="col-md-3 col-form-label">Party</label>
+                                    <label class="col-md-2 col-form-label">Party</label>
                                     <div class="col-md-4">
                                         <select {{ $readonly == 'readonly' ? 'disabled' : '' }} class="form-control form-control-sm" id="party" name="party" value="{{ $header->PEMBELI_ID }}">
                                         </select>
@@ -158,7 +182,8 @@
                                                     <th>Jumlah</th>
                                                     <th>Satuan</th>
                                                     <th>Harga</th>
-                                                    <th>Total</th>
+                                                    <th>Total DPP</th>
+                                                    <th>PPN</th>
                                                     @can('invoice.transaksi')
                                                     <th>Opsi</th>
                                                     @endcan
@@ -222,8 +247,9 @@
                 $('td:eq(2)', row).html(parseFloat(data.JMLSATJUAL).formatMoney(2,"",",","."));
                 $('td:eq(4)', row).html(parseFloat(data.HARGA).formatMoney(2,"",",","."));
                 $('td:eq(5)', row).html((parseFloat(data.HARGA)*parseFloat(data.JMLSATJUAL)).formatMoney(0,"",",","."));
+                $('td:eq(6)', row).html((0.1*parseFloat(data.HARGA)*parseFloat(data.JMLSATJUAL)).formatMoney(0,"",",","."));
                 @can('invoice.transaksi')
-                $('td:eq(6)', row).html('<a href="#modaldetail" class="edit" data-toggle="modal" id="' + data.ID +
+                $('td:eq(7)', row).html('<a href="#modaldetail" class="edit" data-toggle="modal" id="' + data.ID +
                                         '"><i class="fa fa-edit"></i></a>' +
                                         '&nbsp;&nbsp;<a class="del" id="' + data.ID + '"><i class="fa fa-trash"></i></a>'
                                         );
@@ -289,7 +315,26 @@
             var harga = parseFloat($("#harga").inputmask("unmaskedvalue"));
             var jumlah = parseFloat($("#jumlah").inputmask("unmaskedvalue"));
             var total = (harga*jumlah).toFixed(2);
+            var ppn = (harga*jumlah*0.1).toFixed(2);
             $("#total").val(total);
+            $("#ppn").val(ppn);
+        })
+        $("#payment, #tgljual").on("change", function(){
+            var payment = $("#payment").val();
+            var tgljual = $("#tgljual").val();
+            if (payment != "" & tgljual != ""){
+                if (payment == "C"){
+                    tgljatuhtempo = tgljual
+                }
+                else {
+                    var orig = $('#tgljual').datepicker('getDate'); 
+                    orig.setDate(orig.getDate()+parseInt(payment)); 
+                    $('#tgljatuhtempo').datepicker('setDate', orig);
+                }
+            }
+            else {
+                $("#tgljatuhtempo").val("");
+            }
         })
         $("#savedetail").on("click", function(){
             var kodebarang = $("#kodebarang").val();
@@ -313,6 +358,7 @@
                 $("#harga").val("");
                 $("#jumlah").val("");
                 $("#total").val("");
+                $("#ppn").val("");
                 $("#satuan").val("");
                 $("#kodebarang").focus();
             }
@@ -331,6 +377,7 @@
             $("#harga").val("");
             $("#jumlah").val("");
             $("#total").val("");
+            $("#ppn").val("");
             $("#satuan").val("");
             $("#kodebarang").focus();
             $("#modaldetail .modal-title").html("Tambah ");
@@ -347,6 +394,7 @@
             $("#harga").val(row[0].HARGA);
             $("#jumlah").val(row[0].JMLSATJUAL);
             $("#total").val(row[0].HARGA*row[0].JMLSATJUAL);
+            $("#ppn").val(row[0].HARGA*row[0].JMLSATUAN*0.1);
             $("#idxdetail").val(index);
             $("#iddetail").val(row[0].ID);
             $("#modaldetail .modal-title").html("Edit ");
@@ -467,7 +515,8 @@
         $("#kodeparty").trigger("change");
         $("#party").val("{{ $header->PEMBELI_ID }}");
         $("#no_identitas").html("{{ $header->NO_IDENTITAS }}");
-        $("#nopen").inputmask({"mask": "999999","removeMaskOnSubmit": true});        
+        $("#nopen").inputmask({"mask": "999999","removeMaskOnSubmit": true});      
+        $("#payment").trigger("change");
     })
 </script>
 @endpush

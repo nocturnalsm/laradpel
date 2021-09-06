@@ -1828,12 +1828,15 @@ class Transaksi extends Model
         //echo $data->printquery();die();
         return $data->get();
     }
-    public static function stokBarang($customer, $importir, $kategori1, $isikategori1, $dari2, $sampai2)
+    public static function stokBarang($customer, $importir, $kategori1, $isikategori1, $dari2, $sampai2, $dari3, $sampai3)
     {
-        $array1 =  Array("Kode Barang" => "tb.KODEBARANG", "Kode Produk" => "p.kode");
+        $array1 =  Array("Kode Barang" => "tb.KODEBARANG", "Kode Produk" => "p.kode");  
+        
         $dari2 = str_replace(",", "", $dari2);
         $sampai2 = str_replace(",","",$sampai2);
-
+        $dari3 = str_replace(",", "", $dari3);
+        $sampai3 = str_replace(",","",$sampai3);
+        
         $where = " 1 = 1 ";
         if ($kategori1 != ""){
             $where  .=  " AND " .$array1[$kategori1] ." LIKE '%" .trim($isikategori1) ."%'";
@@ -1897,6 +1900,9 @@ class Transaksi extends Model
                                "t.HPP", "t.satuan");
         if (trim($dari2) != "" && trim($sampai2) != ''){
             $data = $data->havingRaw("SUM(IFNULL(t.satuanmasuk,0)) - SUM(IFNULL(t.satuankeluar,0)) BETWEEN {$dari2} AND {$sampai2}");
+        }
+        if (trim($dari3) != "" && trim($sampai3) != ''){
+            $data = $data->whereRaw("HPP BETWEEN {$dari3} AND {$sampai3}");
         }
         //print_r($data->dd());die();
         return $data->get();
@@ -2342,7 +2348,10 @@ class Transaksi extends Model
         $arrHeader = Array("TGL_JUAL" => trim($header["tgljual"]) == "" ? Date("Y-m-d") : Date("Y-m-d", strtotime($header["tgljual"])),
                            "PEMBELI_ID" => nullval($header["party"]),
                            "KODEPARTY_ID" => nullval($header["kodeparty"]),
-                           "NO_INV_JUAL" => $header["noinv"]
+                           "NO_INV_JUAL" => $header["noinv"],
+                           "PAYMENT" => nullval($header["payment"]),
+                           "TGL_LUNAS" => trim($header["tgllunas"]) != "" ? Date("Y-m-d", strtotime($header["tgllunas"])) : NULL
+
                          );
 
         if ($action == "insert"){

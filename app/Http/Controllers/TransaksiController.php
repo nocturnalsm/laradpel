@@ -1951,8 +1951,9 @@ class TransaksiController extends Controller {
 						]);
 		}
 	}
+	/*
 	public function konversibarang(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('konversi.browse')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -2085,6 +2086,7 @@ class TransaksiController extends Controller {
 										]);
 		}
 	}
+	*/
 	private function getImportir()
 	{
 		$user = auth()->user()->id;
@@ -2100,7 +2102,7 @@ class TransaksiController extends Controller {
 		return $importir;
 	}
 	public function browseStokProduk(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('stokperproduk')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -2187,7 +2189,7 @@ class TransaksiController extends Controller {
 	}
 
 	public function browseStokBarang(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('stokperbarang')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -2200,9 +2202,11 @@ class TransaksiController extends Controller {
 			$isikategori1 = $request->input("isikategori1");
 			$dari2 = $request->input("dari2");
 			$sampai2 = $request->input("sampai2");
+			$dari3 = $request->input("dari3");
+			$sampai3 = $request->input("sampai3");
 
 			$data = Transaksi::stokBarang($postCustomer, $postImportir, $postKategori1,
-									$isikategori1, $dari2, $sampai2);
+									$isikategori1, $dari2, $sampai2, $dari3, $sampai3);
 			if ($data){
 				$export = $request->input("export");
         if ($export == "1"){

@@ -2220,8 +2220,8 @@ class Transaksi extends Model
     public static function getBL($no_bl)
     {
         $header = DB::table(DB::raw("tbl_penarikan_header p"))
-                    ->selectRaw("p.NO_INV, imp.NAMA AS NAMAIMPORTIR, c.nama_customer AS NAMACUSTOMER,"
-                               ."p.NOAJU, p.NOPEN, DATE_FORMAT(p.TGL_NOPEN, '%d-%m-%Y) AS TGLNOPEN, p.JUMLAH_KEMASAN,"
+                    ->selectRaw("p.ID, p.NO_INV, imp.NAMA AS NAMAIMPORTIR, c.nama_customer AS NAMACUSTOMER,"
+                               ."p.NOAJU, p.NOPEN, DATE_FORMAT(p.TGL_NOPEN, '%d-%m-%Y') AS TGLNOPEN, p.JUMLAH_KEMASAN,"
                                ."(SELECT GROUP_CONCAT(k.NOMOR_KONTAINER) AS NO_KONTAINER FROM tbl_penarikan_kontainer k WHERE k.ID_HEADER = p.ID) AS NO_KONTAINER")
                     ->leftJoin(DB::raw("plbbandu_app15.tb_customer c"), "p.CUSTOMER","=","c.id_customer")
                     ->leftJoin(DB::raw("importir imp"), "p.IMPORTIR", "=", "imp.IMPORTIR_ID")
@@ -2529,5 +2529,189 @@ class Transaksi extends Model
             $result[$d->KODEPARTY_ID] = $d->parties;
         }
         return $result;
+    }
+    public static function getPengajuanBiaya($id)
+    {
+        if ($id == ""){
+            $header = new AjuBiaya;
+            $detail = [];
+        }
+        else {
+            $header = DB::table(DB::raw("ajubiaya h"))
+                        ->selectRaw("h.*, i.NAMA AS NAMAIMPORTIR")
+                        ->leftJoin(DB::raw("importir i"), "h.IMPORTIR","=", "i.IMPORTIR_ID")                         
+                        ->where("h.ID", $id);
+            if ($header->exists()){
+                $header = $header->first();
+                $total = DB::table("detail_aju_biaya")
+                           ->where("detail_aju_biaya.ID_HEADER", $header->ID)
+                           ->sum(DB::raw('(DPP+PPN)'));
+                $header->TOTAL_BIAYA = $total;
+            }
+            else {
+                return false;
+            }
+            $detail = DB::table(DB::raw("detail_aju_biaya db"))
+                        ->selectRaw("db.*, d.NOPEN, d.NO_BL AS NOBL, d.NOAJU,"
+                                    ."DATE_FORMAT(d.TGL_NOPEN, '%d-%m-%Y') AS TGLNOPEN")
+                        ->join(DB::raw("tbl_penarikan_header d"), "db.NO_BL", "=", "d.ID")
+                        ->where("db.ID_HEADER", $id);
+
+            $detail = $detail->get();
+        }
+        if ($header){
+            $header->TGL_AJU_BY = $header->TGL_AJU_BY == "" ? "" : Date("d-m-Y", strtotime($header->TGL_AJU_BY));
+            $header->TGL_VRF_BY = $header->TGL_VRF_BY == "" ? "" : Date("d-m-Y", strtotime($header->TGL_VRF_BY));
+            $header->TGL_BYR_BY = $header->TGL_BYR_BY == "" ? "" : Date("d-m-Y", strtotime($header->TGL_BYR_BY));
+        }
+        return Array("header" => $header, "detail" => $detail);
+    }
+    public static function saveAjuBiaya($action, $header, $detail)
+    {
+        $arrHeader = Array("TGL_AJU_BY" => trim($header["tglajubiaya"]) == "" ? Date("Y-m-d") : Date("Y-m-d", strtotime($header["tglajubiaya"])),
+                           "IMPORTIR" => nullval($header["importir"]),                           
+                           "TGL_VRF_BY" => trim($header["tglvrfbiaya"]) != "" ? Date("Y-m-d", strtotime($header["tglvrfbiaya"])) : NULL,
+                           "TGL_BYR_BY" => trim($header["tglbyrbiaya"]) != "" ? Date("Y-m-d", strtotime($header["tglbyrbiaya"])) : NULL
+                         );
+
+        if ($action == "insert"){
+            $idtransaksi = DB::table("ajubiaya")->insertGetId($arrHeader);
+        }
+        else if ($action == "update"){
+            $idtransaksi = $header["idtransaksi"];
+            DB::table("ajubiaya")->where("ID", $idtransaksi)->update($arrHeader);
+            DB::table("detail_aju_biaya")->where("ID_HEADER", $idtransaksi)->delete();
+        }
+        $arrDetail = Array();
+        if (is_array($detail) && count($detail) > 0){
+            foreach ($detail as $item){
+                $arrDetail[] = Array("ID_HEADER" => $idtransaksi,
+                                    "NO_BL" => nullval($item["NO_BL"]),
+                                    "NO_INV_BY" => $item["NO_INV_BY"],
+                                    "NO_FAKTUR_BY" => $item["NO_FAKTUR_BY"],
+                                    "TGL_INV_BY" => trim($item["TGL_INV_BY"]) != "" ? Date("Y-m-d", strtotime($item["TGL_INV_BY"])) : NULL,
+                                    "TGL_FAKTUR_BY" => trim($item["TGL_FAKTUR_BY"]) != "" ? Date("Y-m-d", strtotime($item["TGL_FAKTUR_BY"])) : NULL,
+                                    "DPP" => $item["DPP"] != "" ? str_replace(",","",$item["DPP"]) : 0,
+                                    "PPN" => $item["PPN"] != "" ? str_replace(",","",$item["PPN"]) : 0
+                                    );
+            }
+            DB::table("detail_aju_biaya")->insert($arrDetail);
+        }
+    }
+    public static function deleteAjuBiaya($id)
+    {
+        if (trim($id) != ""){
+            DB::table("detail_aju_biaya")->where("ID_HEADER", $id)->delete();
+            DB::table("ajubiaya")->where("ID", $id)->delete();
+        }
+    }
+    public static function browseAjuBiaya($importir, $kategori1, $dari1, $sampai1, $kategori2, $dari2, $sampai2)
+    {
+        $array1 = Array("Tgl Aju Biaya" => "TGL_AJU_BY", "Tgl Vrf Biaya" => "TGL_VRF_BY", "Tgl Byr Biaya" => "TGL_BYR_BY");        
+        $where = " 1 = 1";
+        if ($kategori1 != ""){
+            if (trim($dari1) == "" && trim($sampai1) == ""){
+                $where  .=  " AND (" .$array1[$kategori1] ." IS NULL OR " .$array1[$kategori1] ." = '')";
+            }
+            else {
+                if (trim($dari1) == ""){
+                    $dari1 = "0000-00-00";
+                }
+                if (trim($sampai1) == ""){
+                    $sampai1 = "9999-99-99";
+                }
+                $where  .=  " AND (" .$array1[$kategori1] ." BETWEEN '" .Date("Y-m-d", strtotime($dari1)) ."'
+                                            AND '" .Date("Y-m-d", strtotime($sampai1)) ."')";
+            }
+        }
+        if ($kategori2 != ""){
+            if (trim($dari2) == "" && trim($sampai2) == ""){
+                $where  .=  " AND (" .$array1[$kategori2] ." IS NULL OR " .$array1[$kategori2] ." = '')";
+            }
+            else {
+                if (trim($dari2) == ""){
+                    $dari2 = "0000-00-00";
+                }
+                if (trim($sampai2) == ""){
+                    $sampai2 = "9999-99-99";
+                }
+                $where  .=  " AND (" .$array1[$kategori2] ." BETWEEN '" .Date("Y-m-d", strtotime($dari2)) ."'
+                                            AND '" .Date("Y-m-d", strtotime($sampai2)) ."')";
+            }
+        }
+        if (trim($importir) != ""){
+            $where .= " AND i.IMPORTIR_ID = '" .$importir ."'";
+        }
+
+        $data = DB::table(DB::raw("ajubiaya h"))
+                    ->selectRaw("h.ID, i.NAMA AS NAMAIMPORTIR, IFNULL(TOTAL_BIAYA,0) AS TOTAL_BIAYA,"
+                            ."IFNULL(DATE_FORMAT(TGL_AJU_BY, '%d-%m-%Y'),'') AS TGL_AJU_BY,"
+                            ."IFNULL(DATE_FORMAT(TGL_BYR_BY, '%d-%m-%Y'),'') AS TGL_BYR_BY,"
+                            ."IFNULL(DATE_FORMAT(TGL_VRF_BY, '%d-%m-%Y'), '') AS TGL_VRF_BY")                    
+                    ->join(DB::raw("importir i"), "h.IMPORTIR", "=", "i.IMPORTIR_ID")
+                    ->leftJoinSub(
+                        DB::table("detail_aju_biaya")
+                          ->select("ID_HEADER", DB::raw("SUM(DPP+PPN) AS TOTAL_BIAYA"))
+                          ->groupBy("ID_HEADER"),
+                        "db", function($join){
+                            $join->on("db.ID_HEADER", "=", "h.ID");
+                        }
+                    )
+                    ->orderBy("TGL_AJU_BY");
+        if (trim($where) != ""){
+            $data = $data->whereRaw($where);
+        }
+        return $data->get();
+    }
+    public static function detailAjuBiaya($importir, $kategori1, $isikategori1, $kategori2, $dari2, $sampai2)
+    {
+        $array1 = Array("No Inv By" => "NO_INV_BY", "No Faktur By" => "NO_FAKTUR_BY", 
+                        "No BL" => "h.NO_BL", "No Aju" => "NOAJU", "Nopen" => "NOPEN");
+        $array2 = Array("Tgl Byr By" => "TGL_BYR_BY", "Tgl Faktur By" => "TGL_FAKTUR_BY");
+        $where = " 1 = 1";
+        if ($kategori1 != ""){
+            if (trim($isikategori1) == ""){
+                $where  .=  " AND (" .$array1[$kategori1] ." IS NULL OR " .$array1[$kategori1] ." = '')";
+            }
+            else {
+                $where  .=  " AND (" .$array1[$kategori1] ." = '" .$isikategori1 ."')";
+            }
+
+        }
+        if ($kategori2 != ""){
+            if (trim($dari2) == "" && trim($sampai2) == ""){
+                $where  .=  " AND (" .$array2[$kategori2] ." IS NULL OR " .$array2[$kategori2] ." = '')";
+            }
+            else {
+                if (trim($dari2) == ""){
+                    $dari2 = "0000-00-00";
+                }
+                if (trim($sampai2) == ""){
+                    $sampai2 = "9999-99-99";
+                }
+                $where  .=  " AND (" .$array2[$kategori2] ." BETWEEN '" .Date("Y-m-d", strtotime($dari2)) ."'
+                                            AND '" .Date("Y-m-d", strtotime($sampai2)) ."')";
+            }
+        }
+        if (trim($importir) != ""){
+            $where .= " AND i.IMPORTIR_ID = '" .$importir ."'";
+        }
+
+        $data = DB::table(DB::raw("detail_aju_biaya d"))
+                    ->selectRaw("h.NO_BL, h.NOAJU, h.NOPEN, NO_INV_BY, NO_FAKTUR_BY, d.DPP, d.PPN, d.DPP+ d.PPN AS TOTAL_BIAYA,"
+                            ."IFNULL(DATE_FORMAT(TGL_NOPEN, '%d-%m-%Y'),'') AS TGLNOPEN, "
+                            ."IFNULL(DATE_FORMAT(TGL_BYR_BY, '%d-%m-%Y'), '') AS TGL_BYR_BY, "
+                            ."IFNULL(DATE_FORMAT(TGL_INV_BY, '%d-%m-%Y'), '') AS TGL_INV_BY, "
+                            ."IFNULL(DATE_FORMAT(TGL_FAKTUR_BY, '%d-%m-%Y'), '') AS TGL_FAKTUR_BY"
+                    )
+                    ->join(DB::raw("ajubiaya b"), "d.ID_HEADER","=","b.ID")
+                    ->join(DB::raw("importir i"), "b.IMPORTIR", "=", "i.IMPORTIR_ID")
+                    ->join(DB::raw("tbl_penarikan_header h"), "h.ID","=","d.NO_BL")
+                    ->orderBy("h.NO_BL");
+        
+        if (trim($where) != ""){
+            $data = $data->whereRaw($where);
+        }
+        return $data->get();
     }
 }

@@ -18,52 +18,72 @@
                     <input {{ $readonly }} type="hidden" name="idxdetail" id="idxdetail">
                     <input {{ $readonly }} type="hidden" name="iddetail" id="iddetail">
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-md-3" for="kodebarang">Kode Barang</label>
-                        <div class="col-md-9">
-                            <input {{ $readonly }} type="text" id="kodebarang" name="kodebarang" class="form-control form-control-sm validate">
-                            <input {{ $readonly }} type="hidden" id="kodebarang_id" name="kodebarang_id">
+                        <label class="col-form-label col-form-label-sm col-md-4" for="nobl">No BL</label>
+                        <div class="col-md-8">
+                            <input {{ $readonly }} type="text" id="nobl" name="nobl" class="form-control form-control-sm validate">
+                            <input {{ $readonly }} type="hidden" id="nobl_id" name="nobl_id">
                         </div>
                     </div>
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-md-3">Kode Produk</label>
-                        <div class="col-md-9 pt-2">
-                            <span id="formproduk"></span>
+                        <label class="col-form-label col-form-label-sm col-md-4">No Aju</label>
+                        <div class="col-md-8">
+                            <span id="formnoaju" class="form-control-sm"></span>
                         </div>
                     </div>
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-md-3" for="jumlah">Jumlah</label>
-                        <div class="col-md-9">
-                            <input {{ $readonly }} type="text" id="jumlah" name="jumlah" class="number form-control form-control-sm validate">
+                        <label class="col-form-label col-form-label-sm col-md-4">Nopen</label>
+                        <div class="col-md-8">
+                            <span id="formnopen" class="form-control-sm"></span>
                         </div>
                     </div>
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-md-3" for="satuan">Satuan</label>
-                        <div class="col-md-9">
-                        <select class="form-control form-control-sm" id="satuan" name="satuan">
-                            @foreach($satuan as $sat)
-                            <option value="{{ $sat->id }}">{{ $sat->satuan }}</option>
-                            @endforeach
-                        </select>
+                        <label class="col-form-label col-form-label-sm col-md-4">Tgl Nopen</label>
+                        <div class="col-md-8">
+                            <span id="formtglnopen" class="form-control-sm"></span>
                         </div>
                     </div>
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-md-3" for="harga">Harga</label>
-                        <div class="col-md-9">
-                            <input {{ $readonly }} type="text" id="harga" name="harga" class="number form-control form-control-sm validate">
+                        <label class="col-form-label col-form-label-sm col-md-4" for="noinvbiaya">No Inv Biaya</label>
+                        <div class="col-md-8">
+                            <input {{ $readonly }} type="text" id="noinvbiaya" name="noinvbiaya" class="form-control form-control-sm validate">                            
                         </div>
                     </div>
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-md-3" for="total">Total DPP</label>
-                        <div class="col-md-9">
+                        <label class="col-form-label col-form-label-sm col-md-4" for="tglinvbiaya">Tgl Inv Biaya</label>
+                        <div class="col-md-8">
+                            <input type="text" id="tglinvbiaya" name="tglinvbiaya" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm validate">                            
+                        </div>
+                    </div>
+                    <div class="form-row mb-1">
+                        <label class="col-form-label col-form-label-sm col-md-4" for="nofakturbiaya">No Faktur Biaya</label>
+                        <div class="col-md-8">
+                            <input {{ $readonly }} type="text" id="nofakturbiaya" name="nofakturbiaya" class="form-control form-control-sm validate">                            
+                        </div>
+                    </div>
+                    <div class="form-row mb-1">
+                        <label class="col-form-label col-form-label-sm col-md-4" for="tglinvbiaya">Tgl Faktur Biaya</label>
+                        <div class="col-md-8">
+                            <input type="text" id="tglfakturbiaya" name="tglfakturbiaya" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm validate">                            
+                        </div>
+                    </div>
+                    <div class="form-row mb-1">
+                        <label class="col-form-label col-form-label-sm col-md-4" for="dpp">DPP</label>
+                        <div class="col-md-8">
+                            <input {{ $readonly }} type="text" id="dpp" name="dpp" class="number form-control form-control-sm validate">
+                        </div>
+                    </div>
+                    <div class="form-row mb-1">
+                        <label class="col-form-label col-form-label-sm col-md-4" for="ppn">PPN</label>
+                        <div class="col-md-8">
+                            <input {{ $readonly }} type="text" id="ppn" name="ppn" class="number form-control form-control-sm validate">
+                        </div>
+                    </div>
+                    <div class="form-row mb-1">
+                        <label class="col-form-label col-form-label-sm col-md-4" for="total">Subtotal</label>
+                        <div class="col-md-8">
                             <input type="text" readonly id="total" name="total" class="number form-control form-control-sm validate">
                         </div>
-                    </div>
-                    <div class="form-row mb-1">
-                        <label class="col-form-label col-md-3" for="ppn">PPN</label>
-                        <div class="col-md-9">
-                            <input type="text" readonly id="ppn" name="ppn" class="number form-control form-control-sm validate">
-                        </div>
-                    </div>
+                    </div>                    
                 </form>
             </div>
             <div class="modal-footer d-flex justify-content-center">
@@ -78,9 +98,9 @@
         <div class="card-header font-weight-bold">
             <div class="row">
                 <div class="col-md-4 py-0 pl-4 mt-1">
-                    Form Perekaman Invoice
+                    Form Pengajuan Biaya
                 </div>
-                @can('invoice.transaksi')
+                @can('ajubiaya.transaksi')
                 <div class="col-md-8 py-0 pr-4 text-right">
                     <button type="button" id="btnsimpan" class="btn btn-primary btn-sm m-0">Simpan</button>&nbsp;
                     <a href="/" class="btn btn-default btn-sm m-0">Batal</a>&nbsp;
@@ -100,56 +120,38 @@
                         <div class="card col-md-12 p-0 mb-2">
                             <div class="card-body p-3">
                                 <div class="form-row px-2 pb-0">
-                                    <label class="col-md-2 col-form-label form-control-sm">No.Inv Jual</label>
+                                    <label class="col-md-2 col-form-label form-control-sm">Tgl Aju Biaya</label>
                                     <div class="col-sm-4">
-                                        <input {{ $readonly }} type="text" class="form-control form-control-sm" name="noinv" value="{{ $header->NO_INV_JUAL }}" id="noinv">
-                                    </div>
-                                    <label class="col-md-2 col-form-label form-control-sm">Payment</label>
-                                    <div class="col-sm-2">
-                                        <select {{ $readonly == 'readonly' ? 'disabled' : '' }} type="text" class="form-control form-control-sm" name="payment" value="{{ $header->PAYMENT }}" id="payment">
+                                        <input autocomplete="off" type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tglajubiaya" value="{{ $header->TGL_AJU_BY }}" id="tglajubiaya">
+                                    </div>                                    
+                                </div>
+                                <div class="form-row px-2 pt-2">
+                                    <label class="col-form-label col-form-label-sm col-md-2" for="importir">Importir</label>
+                                    <div class="col-md-8">
+                                        <select {{ $readonly == 'readonly' ? 'disabled' : '' }} class="form-control form-control-sm" id="importir" name="importir" value="{{ $header->IMPORTIR }}">
                                             <option value=""></option>
-                                            <option {{ $header->PAYMENT == "C" ? 'selected' : ' '}} value="C">Cash</option>
-                                            <option {{ $header->PAYMENT == "30" ? 'selected' : ' '}} value="30">D/A-30</option>
-                                            <option {{ $header->PAYMENT == "60" ? 'selected' : ' '}} value="60">D/A-60</option>
-                                            <option {{ $header->PAYMENT == "90" ? 'selected' : ' '}} value="90">D/A-90</option>                                            
+                                            @foreach($importir as $imp)
+                                            <option @if($header->IMPORTIR == $imp->IMPORTIR_ID) selected @endif value="{{ $imp->IMPORTIR_ID }}">{{ $imp->NAMA }}</option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-row px-2 pb-0 pt-2">
-                                    <label class="col-md-2 col-form-label form-control-sm">Tgl Inv Jual</label>
+                                    <label class="col-md-2 col-form-label form-control-sm">Tgl Vrf Biaya</label>
                                     <div class="col-md-3">
-                                        <input autocomplete="off" type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tgljual" value="{{ $header->TGL_JUAL }}" id="tgljual">
-                                    </div>
-                                    <label class="col-md-3 text-sm-center col-form-label form-control-sm">Tgl Jth Tempo</label>
-                                    <div class="col-md-3">
-                                        <input readonly type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tgljatuhtempo" id="tgljatuhtempo">
+                                        <input autocomplete="off" type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tglvrfbiaya" value="{{ $header->TGL_VRF_BY }}" id="tglvrfbiaya">
                                     </div>
                                 </div>
-                                <div class="form-row px-2 pt-2">
-                                    <label class="col-form-label col-md-2" for="party">Kode ID</label>
-                                    <div class="col-md-2">
-                                        <select {{ $readonly == 'readonly' ? 'disabled' : '' }} class="form-control form-control-sm" id="kodeparty" name="kodeparty" value="{{ $header->KODEPARTY_ID }}">
-                                            <option value=""></option>
-                                            @foreach($kodeparty as $kode)
-                                            <option @if($header->KODEPARTY_ID == $kode->KODEPARTY_ID) selected @endif value="{{ $kode->KODEPARTY_ID }}">{{ $kode->URAIAN }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <div class="col-md-1">&nbsp;</div>
-                                    <label class="col-md-3 text-sm-center col-form-label form-control-sm">Tgl Lunas</label>
+                                <div class="form-row px-2 pb-0 pt-2">
+                                    <label class="col-md-2 col-form-label form-control-sm">Tgl Byr Biaya</label>
                                     <div class="col-md-3">
-                                        <input type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" value="{{ $header->TGL_LUNAS }}" name="tgllunas" id="tgllunas">
+                                        <input type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tglbyrbiaya" id="tglbyrbiaya" value="{{ $header->TGL_BYR_BY }}">
                                     </div>
                                 </div>
-                                <div class="form-row px-2">                                    
-                                    <label class="col-md-2 col-form-label">Party</label>
-                                    <div class="col-md-4">
-                                        <select {{ $readonly == 'readonly' ? 'disabled' : '' }} class="form-control form-control-sm" id="party" name="party" value="{{ $header->PEMBELI_ID }}">
-                                        </select>
-                                    </div>
-                                    <label class="col-md-2 col-form-label">No ID</label>
-                                    <div class="col-md-3 mt-2">
-                                        <span id="no_identitas"></span>
+                                <div class="form-row px-2 pb-0 pt-2">
+                                    <label class="col-md-2 col-form-label form-control-sm">Total Biaya</label>
+                                    <div class="col-md-3">
+                                        <input readonly type="text" class="number form-control form-control-sm" name="totalbiaya" id="totalbiaya" value="{{ $header->TOTAL_BIAYA }}">
                                     </div>
                                 </div>
                             </div>
@@ -162,12 +164,12 @@
                     <div class="row mb-2">
                         <div class="card col-md-12 p-0">
                             <div class="card-body p-3">
-                                <h5 class="card-title">Detail Invoice</h5>
+                                <h5 class="card-title">Detail Aju Biaya</h5>
                                 <div class="form-row">
                                     <div class="col primary-color text-white py-2 px-4">
-                                        Detail Invoice
+                                        Detail Aju Biaya
                                     </div>
-                                    @can('invoice.transaksi')
+                                    @can('ajubiaya.transaksi')
                                     <div class="col primary-color text-white text-right p-2" style="text-decoration:underline">
                                         <a href="#modaldetail" data-toggle="modal" class="text-white" id="adddetail">Tambah Detail</a>
                                     </div>
@@ -178,14 +180,16 @@
                                         <table width="100%" id="griddetail" class="table">
                                             <thead>
                                                 <tr>
-                                                    <th>Kd Brg</th>
-                                                    <th>Produk</th>
-                                                    <th>Jumlah</th>
-                                                    <th>Satuan</th>
-                                                    <th>Harga</th>
-                                                    <th>Total DPP</th>
-                                                    <th>PPN</th>
-                                                    @can('invoice.transaksi')
+                                                    <th>No BL</th>
+                                                    <th>No Aju</th>
+                                                    <th>Nopen<br>Tgl Nopen</th>
+                                                    <th>No Inv By<br>Tgl Inv By</th>
+                                                    <th>No Faktur By<br>Tgl Faktur By</th>
+                                                    <th>DPP</th>
+                                                    <th>PPN</th>                                                    
+                                                    <th>Sub Ttl By</th>
+                                                    <th>Upload</th>
+                                                    @can('ajubiaya.transaksi')
                                                     <th>Opsi</th>
                                                     @endcan
                                                 </tr>
@@ -212,8 +216,6 @@
 <script>
     var detail = @json($detail);
     datadetail = JSON.parse(detail);
-    var party = @json($party);
-    dataparty = JSON.parse(party);
 
     $(function(){
 
@@ -245,12 +247,14 @@
             rowCallback: function(row, data)
             {
                 $(row).attr("id-transaksi", data.ID);
-                $('td:eq(2)', row).html(parseFloat(data.JMLSATJUAL).formatMoney(2,"",",","."));
-                $('td:eq(4)', row).html(parseFloat(data.HARGA).formatMoney(2,"",",","."));
-                $('td:eq(5)', row).html((parseFloat(data.HARGA)*parseFloat(data.JMLSATJUAL)).formatMoney(0,"",",","."));
-                $('td:eq(6)', row).html((0.1*parseFloat(data.HARGA)*parseFloat(data.JMLSATJUAL)).formatMoney(0,"",",","."));
-                @can('invoice.transaksi')
-                $('td:eq(7)', row).html('<a href="#modaldetail" class="edit" data-toggle="modal" id="' + data.ID +
+                $('td:eq(2)', row).html(data.NOPEN + '<BR>' + data.TGLNOPEN);
+                $('td:eq(3)', row).html(data.NO_INV_BY + '<BR>' + data.TGL_INV_BY);
+                $('td:eq(4)', row).html(data.NO_FAKTUR_BY + '<BR>' + data.TGL_FAKTUR_BY);
+                $('td:eq(5)', row).html(parseFloat(data.DPP).formatMoney(2,"",",","."));
+                $('td:eq(6)', row).html(parseFloat(data.PPN).formatMoney(2,"",",","."));
+                $('td:eq(7)', row).html((parseFloat(data.DPP) + parseFloat(data.PPN)).formatMoney(0,"",",","."));                
+                @can('ajubiaya.transaksi')
+                $('td:eq(9)', row).html('<a href="#modaldetail" class="edit" data-toggle="modal" id="' + data.ID +
                                         '"><i class="fa fa-edit"></i></a>' +
                                         '&nbsp;&nbsp;<a class="del" id="' + data.ID + '"><i class="fa fa-trash"></i></a>'
                                         );
@@ -261,49 +265,59 @@
             rowId: 0,
             columns: [{
                 target: 0,
-                data: "NAMABARANG"
+                data: "NOBL"
             },
             { target: 1,
-                data: "nama"
+                data: "NOAJU"
             },
             { target: 2,
-                data: "JMLSATJUAL"
+                data: "NOPEN"
             },
             { target: 3,
-                data: "satuan"
+                data: "NO_INV_BY"
             },
             { target: 4,
-                data: "HARGA"
+                data: "NO_FAKTUR_BY"
             },
             { target: 5,
-                data: null
+                data: "DPP"
             },
             { target: 6,
+                data: "PPN"
+            },
+            { target: 7,
                 data: null
             },
-            @can('invoice.transaksi')
-            { target: 7,
+            { target: 8,
+                data: null
+            },
+            @can('ajubiaya.transaksi')
+            { target: 9,
                 data: null
             }
             @endcan
             ],
         })
-        @can('invoice.transaksi')
-        $("body").on("change","#kodebarang", function(){
-            var kodebarang = $(this).val().trim();
+        @can('ajubiaya.transaksi')
+        $("body").on("change","#nobl", function(){
+            var nobl = $(this).val().trim();
             $.ajax({
                 method: "GET",
-                url: "/transaksi/searchproduk",
-                data: {kode: kodebarang},
+                url: "/transaksi/searchbl",
+                data: {kode: nobl},
                 success: function(response){
                     if (typeof response.error == 'undefined'){
-                        $("#formproduk").html(response.nama);
-                        $("#kodebarang_id").val(response.ID);
+                        $("#formnopen").html(response.NOPEN);
+                        $("#formnoaju").html(response.NOAJU);
+                        $("#formtglnopen").html(response.TGLNOPEN);                        
+                        $("#nobl_id").val(response.ID);
                     }
                     else {
                         $("#modal .modal-body").html(response.error);
-                        $("#formproduk").html("");
-                        $("#kodebarang_id").val("");
+                        $("#formnopen").html("");
+                        $("#formnoaju").html("");
+                        $("#formtglnopen").html("");                        
+                        $("#nobl_id").val("");                        
                         $("#modal").modal("show");
                         setTimeout(function(){
                             $("#modal").modal("hide");
@@ -313,76 +327,78 @@
             })
         })
         $('#modaldetail').on('shown.bs.modal', function () {
-            $('#kodebarang').focus();
+            $('#nobl').focus();
         })
-        $("#harga,#jumlah").on("change", function(){
-            var harga = parseFloat($("#harga").inputmask("unmaskedvalue"));
-            var jumlah = parseFloat($("#jumlah").inputmask("unmaskedvalue"));
-            var total = (harga*jumlah).toFixed(2);
-            var ppn = (harga*jumlah*0.1).toFixed(2);
+        $("#dpp,#ppn").on("change", function(){
+            var dpp = parseFloat($("#dpp").inputmask("unmaskedvalue"));
+            var ppn = parseFloat($("#ppn").inputmask("unmaskedvalue"));
+            var total = (dpp+ppn).toFixed(2);
             $("#total").val(total);
-            $("#ppn").val(ppn);
-        })
-        $("#payment, #tgljual").on("change", function(){
-            var payment = $("#payment").val();
-            var tgljual = $("#tgljual").val();
-            if (payment != "" & tgljual != ""){
-                if (payment == "C"){
-                    tgljatuhtempo = tgljual
-                }
-                else {
-                    var orig = $('#tgljual').datepicker('getDate'); 
-                    orig.setDate(orig.getDate()+parseInt(payment)); 
-                    $('#tgljatuhtempo').datepicker('setDate', orig);
-                }
-            }
-            else {
-                $("#tgljatuhtempo").val("");
-            }
         })
         $("#savedetail").on("click", function(){
-            var kodebarang = $("#kodebarang").val();
-            var kodebarang_id = $("#kodebarang_id").val();
-            var produk = $("#formproduk").html();
-            var satuan_id = $("#satuan option:selected").val();
-            var satuan = $("#satuan option:selected").html();
-            if (!satuan){
-                satuan = "";
-                satuan_id = "";
-            }
-            var jumlah = $("#jumlah").inputmask('unmaskedvalue');
-            var harga = $("#harga").inputmask('unmaskedvalue');
+            var nobl = $("#nobl").val();
+            var nobl_id = $("#nobl_id").val();
+            var nopen = $("#formnopen").html();
+            var noaju = $("#formnoaju").html();
+            var tglnopen = $("#formtglnopen").html();
+            var noinvbiaya = $("#noinvbiaya").val();
+            var nofakturbiaya = $("#nofakturbiaya").val();
+            var tglinvbiaya = $("#tglinvbiaya").val();
+            var tglfakturbiaya = $("#tglfakturbiaya").val();
+            var dpp = $("#dpp").inputmask('unmaskedvalue');
+            var ppn = $("#ppn").inputmask('unmaskedvalue');
             var act = $("#form").attr("act");
 
             if (act == "add"){
-                tabel.row.add({KODEBARANG: kodebarang_id, NAMABARANG: kodebarang, nama: produk, JMLSATJUAL: jumlah, SATJUAL: satuan_id, satuan: satuan, HARGA: harga}).draw();
-                $("#formproduk").html("");
-                $("#kodebarang").val("");
-                $("#kodebarang_id").val("");
-                $("#harga").val("");
-                $("#jumlah").val("");
-                $("#total").val("");
+                tabel.row.add({NO_BL: nobl_id, NOBL: nobl, NOPEN: nopen, 
+                               DPP: dpp, PPN: ppn, NOAJU: noaju, TGLNOPEN: tglnopen,
+                               TGL_INV_BY: tglinvbiaya, TGL_FAKTUR_BY: tglfakturbiaya,
+                               NO_FAKTUR_BY: nofakturbiaya, NO_INV_BY: noinvbiaya
+                            }).draw();
+                $("#formnopen").html("");
+                $("#formnoaju").html("");
+                $("#formtglnopen").html("")
+                $("#nobl").val("");
+                $("#nobl_id").val("");
+                $("#noinvbiaya").val("");
+                $("#tglinvbiaya").val("");
+                $("#nofakturbiaya").val("");
+                $("#tglfakturbiaya").val("");
+                $("#dpp").val("");
                 $("#ppn").val("");
-                $("#satuan").val("");
-                $("#kodebarang").focus();
+                $("#total").val("");
+                $("#nobl").focus();
             }
             else if (act == "edit"){
                 var id = $("#iddetail").val();
                 var idx = $("#idxdetail").val();
-                tabel.row(idx).data({ID: id, KODEBARANG: kodebarang_id, NAMABARANG: kodebarang, nama: produk, JMLSATJUAL: jumlah, SATJUAL: satuan_id, satuan: satuan, HARGA: harga}).draw();
+                tabel.row(idx).data({ID: id, NO_BL: nobl_id, NOBL: nobl, NOPEN: nopen, 
+                                    DPP: dpp, PPN: ppn, NOAJU: noaju, TGLNOPEN: tglnopen,
+                                    TGL_INV_BY: tglinvbiaya, TGL_FAKTUR_BY: tglfakturbiaya,
+                                    NO_FAKTUR_BY: nofakturbiaya, NO_INV_BY: noinvbiaya}).draw();
                 $("#modaldetail").modal("hide");
             }
+            var rows = tabel.rows().data();
+            var total = 0;
+            $(rows).each(function(index,elem){                
+                total = total + parseFloat(elem.DPP) + parseFloat(elem.PPN);
+            })
+            $("#totalbiaya").val(total);
         });
 
         $("#adddetail").on("click", function(){
-            $("#formproduk").html("");
-            $("#kodebarang").val("");
-            $("#kodebarang_id").val("");
-            $("#harga").val("");
-            $("#jumlah").val("");
-            $("#total").val("");
+            $("#formnopen").html("");
+            $("#formnoaju").html("");
+            $("#formtglnopen").html("")
+            $("#nobl").val("");
+            $("#nobl_id").val("");
+            $("#noinvbiaya").val("");
+            $("#tglinvbiaya").val("");
+            $("#nofakturbiaya").val("");
+            $("#tglfakturbiaya").val("");
+            $("#dpp").val("");
             $("#ppn").val("");
-            $("#satuan").val("");
+            $("#total").val("");
             $("#kodebarang").focus();
             $("#modaldetail .modal-title").html("Tambah ");
             $("#form").attr("act","add");
@@ -391,14 +407,18 @@
             var row = $(this).closest("tr");
             var index = tabel.row(row).index();
             var row = tabel.rows(index).data();
-            $("#formproduk").html(row[0].nama);
-            $("#kodebarang").val(row[0].NAMABARANG);
-            $("#kodebarang_id").val(row[0].KODEBARANG);
-            $("#satuan").val(row[0].SATJUAL);
-            $("#harga").val(row[0].HARGA);
-            $("#jumlah").val(row[0].JMLSATJUAL);
-            $("#total").val(row[0].HARGA*row[0].JMLSATJUAL);
-            $("#ppn").val(row[0].HARGA*row[0].JMLSATUAN*0.1);
+            $("#formnopen").html(row[0].NOPEN);
+            $("#formtglnopen").html(row[0].TGLNOPEN);
+            $("#formnoaju").html(row[0].NOAJU);
+            $("#nobl").val(row[0].NOBL);
+            $("#nobl_id").val(row[0].NO_BL);
+            $("#noinvbiaya").val(row[0].NO_INV_BY);
+            $("#nofakturbiaya").val(row[0].NO_FAKTUR_BY);
+            $("#tglinvbiaya").val(row[0].TGL_INV_BY);
+            $("#tglfakturbiaya").val(row[0].TGL_FAKTUR_BY);
+            $("#dpp").val(row[0].DPP);
+            $("#ppn").val(row[0].PPN);
+            $("#total").val(row[0].DPP + row[0].PPN);            
             $("#idxdetail").val(index);
             $("#iddetail").val(row[0].ID);
             $("#modaldetail .modal-title").html("Edit ");
@@ -425,7 +445,7 @@
                 $(".loader").show()
                 $.ajax({
                     url: "/transaksi/crud",
-                    data: {_token: "{{ csrf_token() }}", type: "invoice", header: $("#transaksi").serialize(), detail: detail},
+                    data: {_token: "{{ csrf_token() }}", type: "ajubiaya", header: $("#transaksi").serialize(), detail: detail},
                     type: "POST",
                     cache: false,
                     success: function(msg) {
@@ -465,7 +485,7 @@
             $("#modal .btn-ok").html("Ya").on("click", function(){
                 $.ajax({
                     url: "/transaksi/crud",
-                    data: {_token: "{{ csrf_token() }}", type: "invoice", delete: "{{ $header->ID}}"},
+                    data: {_token: "{{ csrf_token() }}", type: "ajubiaya", delete: "{{ $header->ID}}"},
                     type: "POST",
                     success: function(msg){
                         $("#modal .btn-ok").addClass("d-none");
@@ -482,7 +502,7 @@
                             setTimeout(function(){
                                 $("#modal").modal("hide");
                             }, 10000);
-                            window.location.href = "/transaksi/invoice";
+                            window.location.href = "/transaksi/ajubiaya";
                         }
                     }
                 })
@@ -490,37 +510,7 @@
             $("#modal").modal("show");
         });                
         @endif     
-        $("#party").on("change", function(){
-            var selected = $(this).find("option:selected");
-            if ($(selected).val() == ""){
-                $("#no_identitas").html("");
-            }
-            else {
-                $("#no_identitas").html($(selected).attr("no_id"));
-            }
-        })
         @endcan
-        $("#kodeparty").on("change", function(){
-            var value = $(this).val();            
-            if (value == ""){
-                $("#party").html('<option value=""></option>');
-                $("#no_identitas").html("");
-            }
-            else {
-                var party = dataparty[value];
-                var html = '<option value=""></option>';
-                for(var i in party){
-                    html += '<option no_id="' + party[i].NO_IDENTITAS + '" value="' + party[i].PARTY_ID + '">' + party[i].NAMA + '</option>';
-                }
-                $("#party").html(html);
-                $("#no_identitas").html("");
-            }
-        })
-        $("#kodeparty").trigger("change");
-        $("#party").val("{{ $header->PEMBELI_ID }}");
-        $("#no_identitas").html("{{ $header->NO_IDENTITAS }}");
-        $("#nopen").inputmask({"mask": "999999","removeMaskOnSubmit": true});      
-        $("#payment").trigger("change");
     })
 </script>
 @endpush

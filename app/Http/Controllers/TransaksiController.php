@@ -1838,26 +1838,26 @@ class TransaksiController extends Controller {
 					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'Tgl Form');
 					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'No LS');
 					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'Tgl LS');
-          $sheet->setCellValue($columns[$colNo++] .$lastrow, 'Jns Dokumen');
-          $sheet->setCellValue($columns[$colNo++] .$lastrow, 'Valuta');
-          $sheet->setCellValue($columns[$colNo++] .$lastrow, 'NDPBM');
-          $sheet->setCellValue($columns[$colNo++] .$lastrow, 'Nilai');
-          $sheet->setCellValue($columns[$colNo++] .$lastrow, 'BM');
-          $sheet->setCellValue($columns[$colNo++] .$lastrow, 'BMT');
-          $sheet->setCellValue($columns[$colNo++] .$lastrow, 'PPn');
-          $sheet->setCellValue($columns[$colNo++] .$lastrow, 'PPh');
-          $sheet->setCellValue($columns[$colNo++] .$lastrow, 'Total');
-          $sheet->setCellValue($columns[$colNo++] .$lastrow, 'PPh Bebas');
-          $sheet->setCellValue($columns[$colNo++] .$lastrow, 'Kode Barang');
+					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'Jns Dokumen');
+					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'Valuta');
+					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'NDPBM');
+					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'Nilai');
+					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'BM');
+					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'BMT');
+					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'PPn');
+					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'PPh');
+					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'Total');
+					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'PPh Bebas');
+					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'Kode Barang');
 					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'Uraian');
-			    $sheet->setCellValue($columns[$colNo++] .$lastrow, 'Jml Kemasan');
+			    	$sheet->setCellValue($columns[$colNo++] .$lastrow, 'Jml Kemasan');
 					$sheet->setCellValue($columns[$colNo++] .$lastrow, '');
-			    $sheet->setCellValue($columns[$colNo++] .$lastrow, 'Jml Sat Harga');
+			    	$sheet->setCellValue($columns[$colNo++] .$lastrow, 'Jml Sat Harga');
 					$sheet->setCellValue($columns[$colNo++] .$lastrow, '');
-			    $sheet->setCellValue($columns[$colNo++] .$lastrow, 'CIF');
-			    $sheet->setCellValue($columns[$colNo++] .$lastrow, 'Harga');
-			    $sheet->setCellValue($columns[$colNo++] .$lastrow, 'No. SPTNP');
-			    $sheet->setCellValue($columns[$colNo++] .$lastrow, 'Tgl SPTNP');
+					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'CIF');
+					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'Harga');
+					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'No. SPTNP');
+					$sheet->setCellValue($columns[$colNo++] .$lastrow, 'Tgl SPTNP');
 
 					$rowIndex = 0;
 					$rowId = 0;
@@ -1888,25 +1888,25 @@ class TransaksiController extends Controller {
 						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->TGLKELUAR);
 						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->TGLTERIMA);
 						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->JALURDOK);
-  					$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->PENGIRIM);
-  					$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->NO_FORM);
-  					$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->TGLFORM);
-  					$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->NO_LS);
-  					$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->TGLLS);
-            $sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->JENISDOKUMEN);
-            $sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->MATAUANG);
-            $sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->NDPBM);
-            $sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->NILAI);
-            $sheet->getStyle($columns[$colNo] .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
-            $sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->BM);
-            $sheet->getStyle($columns[$colNo] .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
-            $sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->BMT);
-            $sheet->getStyle($columns[$colNo] .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
-            $sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->PPN);
-            $sheet->getStyle($columns[$colNo] .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
-            $sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->PPH);
-            $sheet->getStyle($columns[$colNo] .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
-            $sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->TOTAL);
+						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->PENGIRIM);
+						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->NO_FORM);
+						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->TGLFORM);
+						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->NO_LS);
+						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->TGLLS);
+						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->JENISDOKUMEN);
+						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->MATAUANG);
+						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->NDPBM);
+						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->NILAI);
+						$sheet->getStyle($columns[$colNo] .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
+						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->BM);
+						$sheet->getStyle($columns[$colNo] .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
+						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->BMT);
+						$sheet->getStyle($columns[$colNo] .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
+						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->PPN);
+						$sheet->getStyle($columns[$colNo] .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
+						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->PPH);
+						$sheet->getStyle($columns[$colNo] .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
+						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->TOTAL);
 						$sheet->getStyle($columns[$colNo] .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
 						$sheet->setCellValue($columns[$colNo++] .$lastrow, $dt->PPH_BEBAS);
 						$sheet->getStyle($columns[$colNo] .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
@@ -2958,7 +2958,7 @@ class TransaksiController extends Controller {
 		}
 	}
 	public function invoice(Request $request)
-  {
+  	{
 		$canBrowse = auth()->user()->can('invoice.browse');
 		$canEdit = auth()->user()->can('invoice.transaksi');
 
@@ -2983,13 +2983,14 @@ class TransaksiController extends Controller {
 		$breadcrumb[] = Array("link" => "/", "text" => "Home");
 
 		$breadcrumb[] = Array("text" => "Perekaman Invoice");
-
-		$dtPembeli = Transaksi::getPembeli();
+		
 		$dtSatuan = Transaksi::getSatuan();
+		$dtKodeParty = Transaksi::getKodeParty();
+		$dtParty = Transaksi::getParty();
 
 		$data = [
 				"header" => isset($dtTransaksi["header"]) ? $dtTransaksi["header"] : "{}" , "breads" => $breadcrumb,
-				"pembeli" => $dtPembeli, "satuan" => $dtSatuan,
+				"party" => json_encode($dtParty), "kodeparty" => $dtKodeParty, "satuan" => $dtSatuan,
 				"detail" => isset($dtTransaksi["detail"]) ? json_encode($dtTransaksi["detail"]) : "{}",
 				"readonly" => $canEdit ? '' : 'readonly'
 			];
@@ -3011,15 +3012,16 @@ class TransaksiController extends Controller {
 			$breadcrumb[] = Array("link" => "/", "text" => "Home");
 			$breadcrumb[] = Array("text" => "Transaksi Mutasi Kas");
 			$dtRekening = Transaksi::getRekening();
-			$dtImportir = Transaksi::getImportir();
+			$dtImportir = $this->getImportir();
 			$dtKodeAcc = Transaksi::getKodeAcc();
+			$dtKodeParty = Transaksi::getKodeParty();
 			$dtParty = Transaksi::getParty();
 
 			$data = [
 					"header" => isset($dtTransaksi["header"]) ? $dtTransaksi["header"] : "{}" , "breads" => $breadcrumb,
 					"rekening" => $dtRekening, "importir" => $dtImportir,
 					"detail" => isset($dtTransaksi["detail"]) ? json_encode($dtTransaksi["detail"]) : "{}",
-					"kodeacc" => $dtKodeAcc, "party" => $dtParty,
+					"kodeacc" => $dtKodeAcc, "party" => json_encode($dtParty), "kodeparty" => $dtKodeParty,
 					"readonly" => $canEdit ? '' : 'readonly'
 				];
 			return view("transaksi.mutasikas", $data);
@@ -3080,7 +3082,7 @@ class TransaksiController extends Controller {
 					$sheet->setCellValue('D' .$lastrow, 'Nominal');
 					$sheet->setCellValue('E' .$lastrow, 'D/K');
 					$sheet->setCellValue('F' .$lastrow, 'Kode Acc');
-					$sheet->setCellValue('G' .$lastrow, 'Kode Party');
+					$sheet->setCellValue('G' .$lastrow, 'Kode ID');
 					$sheet->setCellValue('H' .$lastrow, 'Party');
 					$sheet->setCellValue('I' .$lastrow, 'No Dok');
 					$sheet->setCellValue('J' .$lastrow, 'Tgl Dok');
@@ -3114,11 +3116,17 @@ class TransaksiController extends Controller {
 		else {
 			$breadcrumb[] = Array("link" => "../", "text" => "Home");
 			$breadcrumb[] = Array("text" => "Browse Mutasi Kas");
-			$importir = Importir::select("IMPORTIR_ID","NAMA")->get();
+			$kodeAcc = Transaksi::getKodeAcc();
+			$kodeParty = Transaksi::getKodeParty();
+			$rekening = Transaksi::getRekening();
+			$importir = $this->getImportir();
 			return view("transaksi.browsemutasikas",["breads" => $breadcrumb,
 										"dataimportir" => $importir,
-										"datakategori1" => Array("Kode Acc", "Kode Party", "No Rekening"),
-										"datakategori2" => Array("Tanggal Mutasi")
+										"datakategori1" => Array("Kode Acc", "Kode ID", "No Rekening", "D/K"),
+										"datakategori2" => Array("Tanggal Mutasi"),
+										"kodeacc" => json_encode($kodeAcc), 
+										"kodeparty" => json_encode($kodeParty), 
+										"rekening" => json_encode($rekening)
 										]);
 		}
 	}

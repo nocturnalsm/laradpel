@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Transaksi;
+use App\Models\Party;
 
 class KodeParty extends Model
 {
@@ -12,6 +12,10 @@ class KodeParty extends Model
     protected $guarded = ['KODEPARTY_ID'];
     public $timestamps = false;
 
+	public function parties()
+	{
+		return $this->hasMany(Party::class,"KODE_PARTY", "KODEPARTY_ID");
+	}
     public static function add($fields)
   	{
         $check = KodeParty::select("KODE")

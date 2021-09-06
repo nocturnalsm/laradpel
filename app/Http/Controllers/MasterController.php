@@ -79,6 +79,7 @@ class MasterController extends Controller
 		$dataTable = datatables()->of($dataSource);
 		return $dataTable->toJson();
 	}
+	/*
 	public function penerima()
 	{
 		$breadcrumb[] = Array("link" => "../", "text" => "Home");
@@ -86,6 +87,7 @@ class MasterController extends Controller
 		return view("master.penerima",["breads" => $breadcrumb,
 									   "columns" => Array("Kode","Penerima")]);
 	}
+	*/
 	public function getdata_penerima()
 	{
 		$dataSource = Penerima::select('penerima_id','kode','uraian');
@@ -199,6 +201,7 @@ class MasterController extends Controller
 		$dataTable = datatables()->of($dataSource);
 		return $dataTable->toJson();
 	}
+	/*
 	public function ratedpp()
 	{
 		$breadcrumb[] = Array("link" => "../", "text" => "Home");
@@ -206,12 +209,14 @@ class MasterController extends Controller
 		return view("master.ratedpp",   ["breads" => $breadcrumb,
 									 "columns" => Array("Rate")]);
 	}
+	*/
 	public function getdata_ratedpp()
 	{
 		$dataSource = Rate::select('RATE_ID','RATE');
 		$dataTable = datatables()->of($dataSource);
 		return $dataTable->toJson();
 	}
+	/*
 	public function pembeli()
 	{
 		$breadcrumb[] = Array("link" => "../", "text" => "Home");
@@ -222,6 +227,7 @@ class MasterController extends Controller
 		return view("master.pembeli",   ["breads" => $breadcrumb,
 									     "customer" => $customer, "columns" => Array("Kode","Nama Pembeli","Customer","Alamat")]);
 	}
+	*/
 	public function getdata_pembeli()
 	{
 		$dataSource = Pembeli::select('ID','KODE', 'CUSTOMER', 'NAMA', 'ALAMAT', 'KTPNPWP', 'KETERANGAN',

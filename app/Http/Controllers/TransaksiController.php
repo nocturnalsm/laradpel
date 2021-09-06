@@ -1425,6 +1425,7 @@ class TransaksiController extends Controller {
 
 		return response()->json($response);
 	}
+	/*
 	public function konversi(Request $request)
 	{
 		$id = $request->input("id");
@@ -1437,6 +1438,7 @@ class TransaksiController extends Controller {
 		}
 		return response()->json($response);
 	}
+	*/
 	public function kartuHutang(Request $request)
   {
 		if(!auth()->user()->can('kartu_hutang')){
@@ -1951,6 +1953,7 @@ class TransaksiController extends Controller {
 						]);
 		}
 	}
+	/*
 	public function konversibarang(Request $request)
   {
 		if(!auth()->user()->can('konversi.browse')){
@@ -2085,6 +2088,7 @@ class TransaksiController extends Controller {
 										]);
 		}
 	}
+	*/
 	private function getImportir()
 	{
 		$user = auth()->user()->id;

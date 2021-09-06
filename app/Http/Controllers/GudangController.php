@@ -1127,6 +1127,7 @@ class GudangController extends Controller {
 
 		return response()->json($response);
 	}
+	/*
 	public function konversi(Request $request)
 	{
 		$id = $request->input("id");
@@ -1139,6 +1140,7 @@ class GudangController extends Controller {
 		}
 		return response()->json($response);
 	}
+	*/
 	public function kartuHutang(Request $request)
   {
 		if(!auth()->user()->can('kartu_hutang')){
@@ -1616,6 +1618,7 @@ class GudangController extends Controller {
 						]);
 		}
 	}
+	/*
 	public function konversibarang(Request $request)
   {
 		if(!auth()->user()->can('konversi.browse')){
@@ -1740,6 +1743,7 @@ class GudangController extends Controller {
 										]);
 		}
 	}
+	*/
 	private function getImportir()
 	{
 		$user = auth()->user()->id;
@@ -2730,6 +2734,7 @@ class GudangController extends Controller {
 										]);
 		}
 	}
+	/*
 	public function konversistok(Request $request)
   {
 		if(!auth()->user()->can('gudang.konversistok')){
@@ -2842,4 +2847,5 @@ class GudangController extends Controller {
 										]);
 		}
 	}
+	*/
 }

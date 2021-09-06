@@ -95,6 +95,15 @@
                     @can('mutasikas.browse')
                     <a class="list-group-item list-group-item-action" href="./transaksi/browsemutasikas">Browse Mutasi Kas</a>
                     @endcan
+                    @can('ajubiaya.transaksi')
+                    <a class="list-group-item list-group-item-action" href="./transaksi/pengajuanbiaya">Pengajuan Biaya</a>
+                    @endcan
+                    @can('ajubiaya.browse')
+                    <a class="list-group-item list-group-item-action" href="./transaksi/ajubiaya">Browse Pengajuan Biaya</a>
+                    @endcan
+                    @can('ajubiaya.detail')
+                    <a class="list-group-item list-group-item-action" href="./transaksi/detailajubiaya">Browse Detail Biaya</a>
+                    @endcan
                 </ul>
             </div>
         </div>

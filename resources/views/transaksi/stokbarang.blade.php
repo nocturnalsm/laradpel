@@ -54,6 +54,16 @@
                     </div>
                     <div class="row">
                         <div class="col-md-2">
+                            Range HPP
+                        </div>
+                        <div class="col-md-5">
+                            <input autocomplete="off" type="text" id="dari3" name="dari3" class="number form-control d-inline form-control-sm" style="width: 120px">
+                            &nbsp;&nbsp;sampai&nbsp;&nbsp;
+                            <input autocomplete="off" type="text" id="sampai3" name="sampai3" class="number form-control d-inline form-control-sm" style="width: 120px">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
                             Range Saldo Akhir
                         </div>
                         <div class="col-md-5">

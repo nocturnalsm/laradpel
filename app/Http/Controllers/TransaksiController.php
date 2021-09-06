@@ -66,7 +66,7 @@ class TransaksiController extends Controller {
 		return view("transaksi.transaksi", $data);
 	}
 	public function transaksibayar(Request $request)
-  {
+  	{
 		$canBrowse = auth()->user()->can('pembayaran.browse');
 		$canEdit = auth()->user()->can('pembayaran.transaksi');
 
@@ -106,7 +106,7 @@ class TransaksiController extends Controller {
 		return view("transaksi.transaksibayar", $data);
 	}
 	public function userdo(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('dokumen.browse')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -138,14 +138,14 @@ class TransaksiController extends Controller {
 		return view("transaksi.transaksido", $data);
 	}
 	public function uservo(Request $request, $id)
-  {
+  	{
 		if(!auth()->user()->can('vo.browse')){
 			abort(403, 'User does not have the right roles.');
 		}
 		if (trim($id) == ""){
 				abort(404, 'Data tidak ada');
 		}
-    $breadcrumb[] = Array("link" => "/", "text" => "Home");
+    	$breadcrumb[] = Array("link" => "/", "text" => "Home");
 		$breadcrumb[] = Array("link" => "/transaksi/perekamanvo", "text" => "Browse VO");
 		$breadcrumb[] = Array("text" => "Perekaman VO");
 		$dtTransaksi = Transaksi::getTransaksiVo($id);
@@ -173,7 +173,7 @@ class TransaksiController extends Controller {
 		return view("transaksi.transaksivo", $data);
 	}
 	public function usersptnp(Request $request, $id = "")
-  {
+  	{
 		$canEdit = auth()->user()->can('sptnp.transaksi');
 		$canBrowse = auth()->user()->can('sptnp.browse');
 
@@ -198,7 +198,7 @@ class TransaksiController extends Controller {
 					abort(403, "User doesn't have the right roles");
 			}
 		}
-    $breadcrumb[] = Array("link" => "/", "text" => "Home");
+    	$breadcrumb[] = Array("link" => "/", "text" => "Home");
 		$breadcrumb[] = Array("text" => "Perekaman SPTNP");
 
 		$kantor = Transaksi::getKantor();
@@ -220,12 +220,12 @@ class TransaksiController extends Controller {
 				['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']);
 	}
 	public function userbayar(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('pembayaran.transaksi')){
 			abort(403, 'User does not have the right roles.');
 		}
 		$id = $request->id;
-    $breadcrumb[] = Array("link" => "/", "text" => "Home");
+    	$breadcrumb[] = Array("link" => "/", "text" => "Home");
 		$breadcrumb[] = Array("text" => "Perekaman Pembayaran");
 
 		$dtCustomer = Transaksi::getCustomer();
@@ -253,11 +253,11 @@ class TransaksiController extends Controller {
 		return view("transaksi.transaksibayar", $data);
 	}
 	public function search()
-  {
+  	{
 		if(!auth()->user()->can('schedule.cari')){
 			abort(403, 'User does not have the right roles.');
 		}
-    $breadcrumb[] = Array("link" => "../", "text" => "Home");
+    	$breadcrumb[] = Array("link" => "../", "text" => "Home");
 		$breadcrumb[] = Array("text" => "Cari Transaksi");
 		$kantor = Transaksi::getKantor();
 		$customer = Transaksi::getCustomer();
@@ -277,7 +277,7 @@ class TransaksiController extends Controller {
 	}
 	*/
 	public function browse()
-  {
+  	{
 		if(!auth()->user()->can('schedule.browse')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -294,7 +294,7 @@ class TransaksiController extends Controller {
 															"Tanggal Nopen", "Tanggal SPPB")]);
 	}
 	public function perekamanvo(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('vo.browse')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -455,7 +455,7 @@ class TransaksiController extends Controller {
 		}
 	}
 	public function perekamanbayar(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('pembayaran.browse')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -628,7 +628,7 @@ class TransaksiController extends Controller {
 		}
 	}
 	public function perekamando(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('dokumen.browse')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -1182,6 +1182,25 @@ class TransaksiController extends Controller {
 					}
 				}
 			}
+			else if ($type == "ajubiaya"){
+				if ($postheader){
+					$detail = $request->input("detail");
+					parse_str($postheader, $header);
+					if ($header["idtransaksi"] == ""){
+						$action = "insert";
+					}
+					else {
+						$action = "update";
+					}
+					$id = Transaksi::saveAjuBiaya($action, $header, $detail);
+				}
+				else {
+					$id = $request->input("delete");
+					if ($id && $id != ""){
+						Transaksi::deleteAjuBiaya($id);
+					}
+				}
+			}
 			else if ($type == "deliveryorder"){
 				if ($postheader){
 					$detail = $request->input("detail");
@@ -1390,6 +1409,18 @@ class TransaksiController extends Controller {
 		$data = Transaksi::getInv($inv);
 		if (!$data){
 			$response["error"] = "No Inv tidak ada";
+		}
+		else {
+			$response = $data;
+		}
+		return response()->json($response);
+	}
+	public function searchbl(Request $request)
+	{
+		$kode = $request->input("kode");
+		$data = Transaksi::getBl(trim($kode));				  
+		if (!$data){
+			$response["error"] = "No BL tidak ada";
 		}
 		else {
 			$response = $data;
@@ -1955,7 +1986,7 @@ class TransaksiController extends Controller {
 	}
 	/*
 	public function konversibarang(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('konversi.browse')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -2104,7 +2135,7 @@ class TransaksiController extends Controller {
 		return $importir;
 	}
 	public function browseStokProduk(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('stokperproduk')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -2191,7 +2222,7 @@ class TransaksiController extends Controller {
 	}
 
 	public function browseStokBarang(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('stokperbarang')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -2204,9 +2235,11 @@ class TransaksiController extends Controller {
 			$isikategori1 = $request->input("isikategori1");
 			$dari2 = $request->input("dari2");
 			$sampai2 = $request->input("sampai2");
+			$dari3 = $request->input("dari3");
+			$sampai3 = $request->input("sampai3");
 
 			$data = Transaksi::stokBarang($postCustomer, $postImportir, $postKategori1,
-									$isikategori1, $dari2, $sampai2);
+									$isikategori1, $dari2, $sampai2, $dari3, $sampai3);
 			if ($data){
 				$export = $request->input("export");
         if ($export == "1"){
@@ -3127,6 +3160,220 @@ class TransaksiController extends Controller {
 										"kodeacc" => json_encode($kodeAcc), 
 										"kodeparty" => json_encode($kodeParty), 
 										"rekening" => json_encode($rekening)
+										]);
+		}
+	}
+	public function pengajuanbiaya(Request $request)
+  	{
+		$canBrowse = auth()->user()->can('pengajuanbiaya.browse');
+		$canEdit = auth()->user()->can('pengajuanbiaya.transaksi');
+
+		$dtTransaksi = Array();
+		$id = $request->id ?? "";
+		if ($id != ""){
+			if (!$canBrowse){
+					abort(403, "User does not have the right roles");
+			}
+		}
+		else {
+			if (!$canEdit){
+					abort(403, "User does not have the right roles");
+			}
+			$notransaksi = " (Baru)";
+		}
+		$dtTransaksi = Transaksi::getPengajuanBiaya($id);
+		if (!$dtTransaksi){
+				abort(404, 'Data tidak ada');
+		}
+
+		$breadcrumb[] = Array("link" => "/", "text" => "Home");
+
+		$breadcrumb[] = Array("text" => "Pengajuan Biaya");
+		
+		$dtImportir = Transaksi::getImportir();
+
+		$data = [
+				"header" => isset($dtTransaksi["header"]) ? $dtTransaksi["header"] : "{}" , "breads" => $breadcrumb,				
+				"detail" => isset($dtTransaksi["detail"]) ? json_encode($dtTransaksi["detail"]) : "{}",
+				"importir" => $dtImportir,
+				"readonly" => $canEdit ? '' : 'readonly'
+			];
+		return view("transaksi.ajubiaya", $data);
+	}
+	public function ajubiaya(Request $request)
+  	{
+		if(!auth()->user()->can('ajubiaya.browse')){
+			abort(403, 'User does not have the right roles.');
+		}
+		$filter = $request->input("filter");
+		if ($filter && $filter == "1"){			
+			$postImportir = $request->input("importir");
+			$postKategori1 = $request->input("kategori1");
+			$postKategori2 = $request->input("kategori2");
+			$dari1 = $request->input("dari1");
+			$sampai1 = $request->input("sampai1");
+			$dari2 = $request->input("dari2");
+			$sampai2 = $request->input("sampai2");
+
+			$data = Transaksi::browseAjuBiaya($postImportir, $postKategori1, $dari1, $sampai1,
+											  $postKategori2,$dari2, $sampai2);
+			if ($data){
+				$export = $request->input("export");
+				if ($export == "1"){
+
+					$spreadsheet = new Spreadsheet();
+					$sheet = $spreadsheet->getActiveSheet();
+					$sheet->setCellValue('A' .strval($row), 'IMPORTIR');
+					$row = 1;
+					if ($postImportir && trim($postImportir) != ""){
+						$sheet->setCellValue('C' .strval($row), Transaksi::getImportir($postImportir)->NAMA);
+					}
+					else {
+						$sheet->setCellValue('C' .strval($row), "Semua");
+					}
+					$lastrow = $row;
+					if ($postKategori1 && trim($postKategori1) != ""){
+						$lastrow += 1;
+						$sheet->setCellValue('A' .$lastrow, $postKategori1);
+						$sheet->setCellValue('C' .$lastrow, $dari1 == "" ? "-" : Date("d M Y", strtotime($dari1)));
+						$sheet->setCellValue('D' .$lastrow, "sampai");
+						$sheet->setCellValue('E' .$lastrow, $sampai1 == "" ? "-" : Date("d M Y", strtotime($sampai1)));
+					}
+					if ($postKategori2 && trim($postKategori2) != ""){
+						$lastrow += 1;
+						$sheet->setCellValue('A' .$lastrow, $postKategori2);
+						$sheet->setCellValue('C' .$lastrow, $dari2 == "" ? "-" : Date("d M Y", strtotime($dari2)));
+						$sheet->setCellValue('D' .$lastrow, "sampai");
+						$sheet->setCellValue('E' .$lastrow, $sampai2 == "" ? "-" : Date("d M Y", strtotime($sampai2)));
+					}
+					$lastrow += 2;					
+					$sheet->setCellValue('A' .$lastrow, 'Tgl Aju By');
+					$sheet->setCellValue('B' .$lastrow, 'Importir');
+					$sheet->setCellValue('C' .$lastrow, 'Tgl Vrf By');
+					$sheet->setCellValue('D' .$lastrow, 'Tgl Byr By');
+					$sheet->setCellValue('E' .$lastrow, 'Ttl By');
+
+					foreach ($data as $dt){
+						$lastrow += 1;
+						$sheet->setCellValue('A' .$lastrow, $dt->TGL_AJU_BY);
+						$sheet->setCellValue('B' .$lastrow, $dt->NAMAIMPORTIR);
+						$sheet->setCellValue('C' .$lastrow, $dt->TGL_VRF_BY);
+						$sheet->setCellValue('D' .$lastrow, $dt->TGL_BYR_BY);
+						$sheet->setCellValue('E' .$lastrow, $dt->TOTAL_BIAYA);						
+					}
+
+					return $this->exportXls($spreadsheet, "browse_ajubiaya");
+				}
+				else {
+					return response()->json($data);
+				}
+			}
+			else {
+
+				return response()->json([]);
+			}
+		}
+		else {
+			$breadcrumb[] = Array("link" => "../", "text" => "Home");
+			$breadcrumb[] = Array("text" => "Browse Aju Biaya");
+			$importir = $this->getImportir();
+
+			return view("transaksi.perekamanajubiaya",["breads" => $breadcrumb,										
+										"dataimportir" => $importir,
+										"datakategori" => Array("Tgl Aju Biaya","Tgl Vrf Biaya","Tgl Byr Biaya")
+										]);
+		}
+	}
+	public function detailajubiaya(Request $request)
+  	{
+		if(!auth()->user()->can('ajubiaya.detail')){
+			abort(403, 'User does not have the right roles.');
+		}
+		$filter = $request->input("filter");
+		if ($filter && $filter == "1"){
+			$postImportir = $request->input("importir");
+			$postKategori1 = $request->input("kategori1");
+			$isikategori1 = $request->input("isikategori1");
+			$postKategori2 = $request->input("kategori2");
+			$dari2 = $request->input("dari2");
+			$sampai2 = $request->input("sampai2");
+
+			$data = Transaksi::detailAjuBiaya($postImportir, $postKategori1, $isikategori1, $postKategori2, $dari2, $sampai2);
+			if ($data){
+				$export = $request->input("export");
+				if ($export == "1"){
+					$spreadsheet = new Spreadsheet();
+					$sheet = $spreadsheet->getActiveSheet();
+					$sheet->setCellValue('A1', 'IMPORTIR');
+					if ($postImportir && trim($postImportir) != ""){
+						$importir = Importir::where("IMPORTIR_ID", $postImportir);
+						$sheet->setCellValue('C1', $importir->first()->NAMA);
+					}
+					else {
+						$sheet->setCellValue('C1', "Semua");
+					}
+					$lastrow = 1;
+					if ($postKategori1 && trim($postKategori1) != ""){
+						$lastrow += 1;
+						$sheet->setCellValue('A' .$lastrow, $postKategori1);
+						$sheet->setCellValue('C' .$lastrow, $isikategori1);
+					}
+					if ($postKategori2 && trim($postKategori2) != ""){
+						$lastrow += 1;
+						$sheet->setCellValue('A' .$lastrow, $postKategori2);
+						$sheet->setCellValue('C' .$lastrow, $dari2 == "" ? "-" : Date("d M Y", strtotime($dari2)));
+						$sheet->setCellValue('D' .$lastrow, "sampai");
+						$sheet->setCellValue('E' .$lastrow, $sampai2 == "" ? "-" : Date("d M Y", strtotime($sampai2)));
+					}
+
+					$lastrow += 2;
+					$sheet->setCellValue('A' .$lastrow, 'No BL');
+					$sheet->setCellValue('B' .$lastrow, 'No Aju');
+					$sheet->setCellValue('C' .$lastrow, 'Nopen');
+					$sheet->setCellValue('D' .$lastrow, 'Tgl Nopen');
+					$sheet->setCellValue('E' .$lastrow, 'No Inv By');
+					$sheet->setCellValue('F' .$lastrow, 'Tgl Inv By');
+					$sheet->setCellValue('G' .$lastrow, 'No Faktur By');
+					$sheet->setCellValue('H' .$lastrow, 'Tgl Faktur By');
+					$sheet->setCellValue('I' .$lastrow, 'DPP');
+					$sheet->setCellValue('J' .$lastrow, 'PPN');
+					$sheet->setCellValue('K' .$lastrow, 'Sub TTl By');
+					$sheet->setCellValue('L' .$lastrow, 'Tgl Byr By');
+
+					foreach ($data as $dt){
+						$lastrow += 1;
+						$sheet->setCellValue('A' .$lastrow, $dt->NO_BL);
+						$sheet->setCellValue('B' .$lastrow, $dt->NOAJU);
+						$sheet->setCellValue('C' .$lastrow, $dt->NOPEN);
+						$sheet->setCellValue('D' .$lastrow, $dt->TGLNOPEN);
+						$sheet->setCellValue('E' .$lastrow, $dt->NO_INV_BY);
+						$sheet->setCellValue('F' .$lastrow, $dt->TGL_INV_BY);
+						$sheet->setCellValue('G' .$lastrow, $dt->NO_FAKTUR_BY);
+						$sheet->setCellValue('H' .$lastrow, $dt->TGL_FAKTUR_BY);
+						$sheet->setCellValue('I' .$lastrow, $dt->DPP);
+						$sheet->setCellValue('J' .$lastrow, $dt->PPN);
+						$sheet->setCellValue('K' .$lastrow, $dt->TOTAL_BIAYA);
+						$sheet->setCellValue('L' .$lastrow, $dt->TGL_BYR_BY);
+					}
+					return $this->exportXls($spreadsheet, "browse_detail_biaya");
+				}
+				else {
+					return response()->json($data);
+				}
+			}
+			else {
+
+				return response()->json([]);
+			}
+		}
+		else {
+			$breadcrumb[] = Array("link" => "../", "text" => "Home");
+			$breadcrumb[] = Array("text" => "Browse Detal Biaya");
+			$importir = $this->getImportir();
+			return view("transaksi.detailajubiaya",["breads" => $breadcrumb,
+										"dataimportir" => $importir,
+										"datakategori1" => Array("No Inv By", "No Faktur By", "No BL", "No Aju", "Nopen"),
+										"datakategori2" => Array("Tgl Byr By", "Tgl Faktur By")
 										]);
 		}
 	}

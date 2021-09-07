@@ -3387,17 +3387,16 @@ class TransaksiController extends Controller {
 			$postImportir = $request->input("importir");
 			$postKategori1 = $request->input("kategori1");
 			$postKategori2 = $request->input("kategori2");
-			$dari1 = $request->input("dari1");
-			$sampai1 = $request->input("sampai1");
+			$isiKategori1 = $request->input("isikategori1");
 			$dari2 = $request->input("dari2");
 			$sampai2 = $request->input("sampai2");
 
-			$data = Transaksi::browseInvoice($postImportir, $postKategori1, $dari1, $sampai1,
+			$data = Transaksi::browseInvoice($postImportir, $postKategori1, $isiKategori1,
 												$postKategori2,$dari2, $sampai2);
 			if ($data){
 				$export = $request->input("export");
 				if ($export == "1"){
-
+					$row = 1;
 					$spreadsheet = new Spreadsheet();
 					$sheet = $spreadsheet->getActiveSheet();
 					$sheet->setCellValue('A' .strval($row), 'IMPORTIR');
@@ -3438,6 +3437,7 @@ class TransaksiController extends Controller {
 
 					foreach ($data as $dt){
 							$lastrow += 1;
+							$payment = $dt->PAYMENT == '' ? '' : ($dt->PAYMENT == "C" ? "Cash" : "D/A-" .$dt->PAYMENT);
 							$sheet->setCellValue('A' .$lastrow, $dt->NAMAIMPORTIR);
 							$sheet->setCellValue('B' .$lastrow, $dt->NO_INV_JUAL);
 							$sheet->setCellValue('C' .$lastrow, $dt->TGL_INV_JUAL);
@@ -3445,7 +3445,7 @@ class TransaksiController extends Controller {
 							$sheet->setCellValue('E' .$lastrow, $dt->TGL_FAKTUR);
 							$sheet->setCellValue('F' .$lastrow, $dt->KODE_ID);
 							$sheet->setCellValue('G' .$lastrow, $dt->PARTY);
-							$sheet->setCellValue('H' .$lastrow, $dt->PAYMENT);
+							$sheet->setCellValue('H' .$lastrow, $payment);
 							$sheet->setCellValue('I' .$lastrow, $dt->TGL_JATUH_TEMPO);
 							$sheet->setCellValue('J' .$lastrow, $dt->TGL_LUNAS);
 							$sheet->setCellValue('K' .$lastrow, $dt->TOTAL_PPN);
@@ -3465,10 +3465,11 @@ class TransaksiController extends Controller {
 		else {
 			$breadcrumb[] = Array("link" => "../", "text" => "Home");
 			$breadcrumb[] = Array("text" => "Browse Invoice");
+			$dtKodeParty = Transaksi::getKodeParty();
 			$importir = $this->getImportir();
 
 			return view("transaksi.browseinvoice",["breads" => $breadcrumb,
-										"dataimportir" => $importir,
+										"dataimportir" => $importir, "kodeparty" => $dtKodeParty,
 										"datakategori1" => Array("No Faktur","No Inv Jual","Kode ID","Payment"),
 										"datakategori2" => Array("Tgl Inv Jual","Tgl Faktur","Tgl Lunas","Tgl Jatuh Tempo")
 										]);

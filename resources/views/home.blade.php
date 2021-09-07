@@ -71,6 +71,9 @@
                     @can('gudang.search')
                     <a class="list-group-item list-group-item-action" href="./gudang/searchnopen">Cari Nopen</a>
                     @endcan
+                    @can('gudang.konversistok')
+                    <a class="list-group-item list-group-item-action" href="./gudang/konversistok">Konversi Stok</a>
+                    @endcan
                     @can('gudang.kontainermasuk')
                     <a class="list-group-item list-group-item-action" href="./gudang/kontainermasuk">Kontainer Masuk</a>
                     @endcan

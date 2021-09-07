@@ -1845,7 +1845,7 @@ class Transaksi extends Model
             $where .= " AND th.CUSTOMER = '" .$customer ."'";
         }
         if (trim($importir) != ""){
-            $where .= " AND IMPORTIR = '" .$importir ."'";
+            $where .= " AND th.IMPORTIR = '" .$importir ."'";
         }
 
         $saldo1 = DB::table(DB::raw("konversistok tk"))
@@ -2747,14 +2747,14 @@ class Transaksi extends Model
                 $where  .=  " AND (" .$array2[$kategori2] ." IS NULL OR " .$array2[$kategori2] ." = '')";
             }
             else {
-                if (trim($dari3) == ""){
-                    $dari3 = "0000-00-00";
+                if (trim($dari2) == ""){
+                    $dari2 = "0000-00-00";
                 }
-                if (trim($sampai3) == ""){
-                    $sampai3 = "9999-99-99";
+                if (trim($sampai2) == ""){
+                    $sampai2 = "9999-99-99";
                 }
                 $where  .=  " AND (" .$array2[$kategori2] ." BETWEEN '" .Date("Y-m-d", strtotime($dari2)) ."'
-                                            AND '" .Date("Y-m-d", strtotime($sampai3)) ."')";
+                                            AND '" .Date("Y-m-d", strtotime($sampai2)) ."')";
             }
         }
         if (trim($importir) != ""){
@@ -2762,8 +2762,9 @@ class Transaksi extends Model
         }
 
         $data = DB::table(DB::raw("tbl_header_invoice h"))
-                    ->selectRaw("h.ID, i.NAMA AS IMPORTIR, NO_INV_JUAL, NO_FAKTUR, PAYMENT, "
-                            ."kparty.URAIAN AS KODE_ID, party.NAMA AS PARTY,"
+                    ->selectRaw("h.ID, i.NAMA AS NAMAIMPORTIR, IFNULL(NO_INV_JUAL,'') AS NO_INV_JUAL, "
+                            ."IFNULL(NO_FAKTUR,'') AS NO_FAKTUR, IFNULL(PAYMENT,'') AS PAYMENT, "
+                            ."IFNULL(kparty.URAIAN,'') AS KODE_ID, IFNULL(party.NAMA,'') AS PARTY,"
                             ."IFNULL(DATE_FORMAT(TGL_JUAL, '%d-%m-%Y'),'') AS TGL_INV_JUAL, "
                             ."IFNULL(DATE_FORMAT(TGL_FAKTUR, '%d-%m-%Y'), '') AS TGL_FAKTUR, "
                             ."IFNULL(DATE_FORMAT(TGL_JATUH_TEMPO, '%d-%m-%Y'), '') AS TGL_JATUH_TEMPO, "
@@ -2772,7 +2773,7 @@ class Transaksi extends Model
                       )
                     ->leftJoin("party", "party.PARTY_ID", "=", "h.PEMBELI_ID")
                     ->leftJoin(DB::raw("kode_party kparty"), "h.KODEPARTY_ID", "=", "kparty.KODEPARTY_ID")
-                    ->join(DB::raw("importir i"), "h.IMPORTIR", "=", "i.IMPORTIR_ID")
+                    ->leftJoin(DB::raw("importir i"), "h.IMPORTIR", "=", "i.IMPORTIR_ID")
                     ->leftJoinSub(
                         DB::table("tbl_detail_invoice")
                           ->selectRaw("ID_HEADER, SUM(JMLSATJUAL*HARGA*0.1) AS TOTAL_PPN,"
@@ -2785,7 +2786,7 @@ class Transaksi extends Model
                     ->orderBy("i.NAMA");
         if (trim($where) != ""){
             $data = $data->whereRaw($where);
-        }
+        }        
         return $data->get();
     }
 }

@@ -213,6 +213,7 @@
                                                     <th>Harga</th>
                                                     <th>Total DPP</th>
                                                     <th>PPN</th>
+                                                    <th>Subtotal</th>
                                                     @can('invoice.transaksi')
                                                     <th>Opsi</th>
                                                     @endcan
@@ -277,8 +278,9 @@
                 $('td:eq(4)', row).html(parseFloat(data.HARGA).formatMoney(2,"",",","."));
                 $('td:eq(5)', row).html((parseFloat(data.HARGA)*parseFloat(data.JMLSATJUAL)).formatMoney(0,"",",","."));
                 $('td:eq(6)', row).html((0.1*parseFloat(data.HARGA)*parseFloat(data.JMLSATJUAL)).formatMoney(0,"",",","."));
+                $('td:eq(7)', row).html((1.1*parseFloat(data.HARGA)*parseFloat(data.JMLSATJUAL)).formatMoney(0,"",",","."));
                 @can('invoice.transaksi')
-                $('td:eq(7)', row).html('<a href="#modaldetail" class="edit" data-toggle="modal" id="' + data.ID +
+                $('td:eq(8)', row).html('<a href="#modaldetail" class="edit" data-toggle="modal" id="' + data.ID +
                                         '"><i class="fa fa-edit"></i></a>' +
                                         '&nbsp;&nbsp;<a class="del" id="' + data.ID + '"><i class="fa fa-trash"></i></a>'
                                         );
@@ -309,8 +311,11 @@
             { target: 6,
                 data: null
             },
-            @can('invoice.transaksi')
             { target: 7,
+                data: null
+            },
+            @can('invoice.transaksi')
+            { target: 8,
                 data: null
             }
             @endcan

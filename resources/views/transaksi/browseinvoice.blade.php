@@ -37,14 +37,18 @@
                         <label class="px-sm-3 col-2 col-sm-1">Nilai</label>
                         <div class="col-md-4">
                             <input type="text" id="isikategori1_text" name="isikategori1" class="form-control form-control-sm" style="display:inline;width: 120px">
-                            <select disabled id="isikategori1_select" name="isikategori1" class="form-control form-control-sm" style="display:none;width:120px">
+                            <select disabled id="isikategori1_select_payment" name="isikategori1" class="form-control form-control-sm" style="display:none;width:120px">
                                 <option value=""></option>
-                                <option value="K">Konfirmasi</option>
-                                <option value="B">Belum Inspect</option>
-                                <option value="S">Sudah Inspect</option>
-                                <option value="R">Revisi FD</option>
-                                <option value="F">FD</option>
-                                <option value="L">LS Terbit</option>
+                                <option value="C">Cash</option>
+                                <option value="30">D/A-30</option>
+                                <option value="60">D/A-60</option>
+                                <option value="90">D/A-90</option>
+                            </select>
+                            <select disabled id="isikategori1_select_kodeid" name="isikategori1" class="form-control form-control-sm" style="display:none;width:120px">
+                                <option value=""></option>
+                                @foreach($kodeparty as $kode)
+                                <option value="{{ $kode->KODEPARTY_ID }}">{{ $kode->URAIAN }}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -119,8 +123,8 @@
             return symbol + negative + (j ? i.substr(0, j) + thousand : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousand) + (places ? decimal + Math.abs(number - i).toFixed(places).slice(2) : "");
         };
         var columns = [{target: 0, data: null},
-        {target: 1, data: "NO_INV_JUAL"}, {target: 2, data: "NO_FAKTUR"},
-        {target: 3, data: "KODE_ID"}, {target: 4, data: "PARTY"},
+        {target: 1, data: "NAMAIMPORTIR"}, {target: 2, data: "NO_INV_JUAL"},
+        {target: 3, data: "NO_FAKTUR"}, {target: 4, data: "PARTY"},
         {target: 5, data: "PAYMENT"}, {target: 6, data: "TGL_JATUH_TEMPO"}, {target: 7, data: "TGL_LUNAS"},
         {target: 8, data: "TOTAL_PPN"}, {target: 9, data: "TOTAL_INV"}
         ];
@@ -182,17 +186,29 @@
         })
         $("#kategori1").on("change", function(){
             var value = $(this).val();
-            if (value == "Status VO"){
+            if (value == "Kode ID"){
                 $("#isikategori1_text").css("display","none");
                 $("#isikategori1_text").prop("disabled", true);
-                $("#isikategori1_select").css("display","inline");
-                $("#isikategori1_select").prop("disabled", false);
+                $("#isikategori1_select_payment").css("display","none");
+                $("#isikategori1_select_payment").prop("disabled", true);
+                $("#isikategori1_select_kodeid").css("display","inline");
+                $("#isikategori1_select_kodeid").prop("disabled", false);
+            }
+            else if (value == "Payment"){
+                $("#isikategori1_text").css("display","none");
+                $("#isikategori1_text").prop("disabled", true);
+                $("#isikategori1_select_payment").css("display","inline");
+                $("#isikategori1_select_payment").prop("disabled", false);
+                $("#isikategori1_select_kodeid").css("display","none");
+                $("#isikategori1_select_kodeid").prop("disabled", true);
             }
             else {
                 $("#isikategori1_text").css("display","inline");
-                $("#isikategori1_select").css("display","none");
-                $("#isikategori1_select").prop("disabled", true);
                 $("#isikategori1_text").prop("disabled", false);
+                $("#isikategori1_select_kodeid").css("display","none");
+                $("#isikategori1_select_kodeid").prop("disabled", true);    
+                $("#isikategori1_select_payment").css("display","none");
+                $("#isikategori1_select_payment").prop("disabled", true);            
             }
         })
     })

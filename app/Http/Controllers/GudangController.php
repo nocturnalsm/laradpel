@@ -2734,9 +2734,9 @@ class GudangController extends Controller {
 										]);
 		}
 	}
-	/*
+	
 	public function konversistok(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('gudang.konversistok')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -2846,6 +2846,5 @@ class GudangController extends Controller {
 										"datakategori" => Array("Tanggal Bongkar","Tanggal Konversi")
 										]);
 		}
-	}
-	*/
+	}	
 }

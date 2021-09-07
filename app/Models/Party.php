@@ -14,25 +14,33 @@ class Party extends Model
 
     public static function add($fields)
   	{
-        $check = Party::select("NO_IDENTITAS")
-                                ->where("NO_IDENTITAS", $fields["input-noid"]);
-    		if ($check->count() > 0){
-    			throw new \Exception("No Identitas sudah ada");
-    		}
-    		$data = Array("KODE_PARTY" => strtoupper($fields["input-kodeparty"]),
-                      "NO_IDENTITAS" => strtoupper($fields["input-noid"]),
-                      "NAMA" => strtoupper($fields["input-nama"]),
-    					        "ALAMAT" => strtoupper($fields["input-alamat"]));
-    		Party::create($data);
+		$kodeParty = KodeParty::find($fields["input-kodeparty"]);
+		if ($kodeParty->URAIAN == 'KTP' || $kodeParty->URAIAN == 'NPWP'){
+			$check = Party::select("NO_IDENTITAS")
+						   ->where("NO_IDENTITAS", $fields["input-noid"])
+						   ->where("KODE_PARTY", $fields["input-kodeparty"]);
+			if ($check->count() > 0){
+				throw new \Exception("No Identitas sudah ada");
+			}
+		}
+		$data = Array("KODE_PARTY" => strtoupper($fields["input-kodeparty"]),
+					"NO_IDENTITAS" => strtoupper($fields["input-noid"]),
+					"NAMA" => strtoupper($fields["input-nama"]),
+					"ALAMAT" => strtoupper($fields["input-alamat"]));
+		Party::create($data);
   	}
   	public static function edit($fields)
   	{
-        $check = Party::select("NO_IDENTITAS")
-                              ->where("NO_IDENTITAS", $fields["input-noid"])
-                              ->where("PARTY_ID" ,"<>", $fields["input-id"]);
-    		if ($check->count() > 0){
-    			throw new \Exception("No Identitas sudah ada");
-    		}
+		$kodeParty = KodeParty::find($fields["input-kodeparty"]);
+		if ($kodeParty->URAIAN == 'KTP' || $kodeParty->URAIAN == 'NPWP'){
+			$check = Party::select("NO_IDENTITAS")
+								->where("NO_IDENTITAS", $fields["input-noid"])
+								->where("KODE_PARTY", $fields["input-kodeparty"])
+								->where("PARTY_ID" ,"<>", $fields["input-id"]);
+			if ($check->count() > 0){
+				throw new \Exception("No Identitas sudah ada");
+			}
+		}
         $data = Array("KODE_PARTY" => strtoupper($fields["input-kodeparty"]),
                       "NO_IDENTITAS" => strtoupper($fields["input-noid"]),
                       "NAMA" => strtoupper($fields["input-nama"]),

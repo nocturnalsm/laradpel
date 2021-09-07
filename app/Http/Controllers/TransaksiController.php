@@ -3165,8 +3165,8 @@ class TransaksiController extends Controller {
 	}
 	public function pengajuanbiaya(Request $request)
   	{
-		$canBrowse = auth()->user()->can('pengajuanbiaya.browse');
-		$canEdit = auth()->user()->can('pengajuanbiaya.transaksi');
+		$canBrowse = auth()->user()->can('ajubiaya.browse');
+		$canEdit = auth()->user()->can('ajubiaya.transaksi');
 
 		$dtTransaksi = Array();
 		$id = $request->id ?? "";

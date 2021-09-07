@@ -3223,8 +3223,9 @@ class TransaksiController extends Controller {
 
 					$spreadsheet = new Spreadsheet();
 					$sheet = $spreadsheet->getActiveSheet();
-					$sheet->setCellValue('A' .strval($row), 'IMPORTIR');
 					$row = 1;
+					$sheet->setCellValue('A' .strval($row), 'IMPORTIR');
+
 					if ($postImportir && trim($postImportir) != ""){
 						$sheet->setCellValue('C' .strval($row), Transaksi::getImportir($postImportir)->NAMA);
 					}
@@ -3247,19 +3248,21 @@ class TransaksiController extends Controller {
 						$sheet->setCellValue('E' .$lastrow, $sampai2 == "" ? "-" : Date("d M Y", strtotime($sampai2)));
 					}
 					$lastrow += 2;
-					$sheet->setCellValue('A' .$lastrow, 'Tgl Aju By');
-					$sheet->setCellValue('B' .$lastrow, 'Importir');
-					$sheet->setCellValue('C' .$lastrow, 'Tgl Vrf By');
-					$sheet->setCellValue('D' .$lastrow, 'Tgl Byr By');
-					$sheet->setCellValue('E' .$lastrow, 'Ttl By');
+					$sheet->setCellValue('A' .$lastrow, 'Tgl Rekam');
+					$sheet->setCellValue('B' .$lastrow, 'Tgl Aju By');
+					$sheet->setCellValue('C' .$lastrow, 'Importir');
+					$sheet->setCellValue('D' .$lastrow, 'Tgl Vrf By');
+					$sheet->setCellValue('E' .$lastrow, 'Tgl Byr By');
+					$sheet->setCellValue('F' .$lastrow, 'Ttl By');
 
 					foreach ($data as $dt){
 						$lastrow += 1;
-						$sheet->setCellValue('A' .$lastrow, $dt->TGL_AJU_BY);
-						$sheet->setCellValue('B' .$lastrow, $dt->NAMAIMPORTIR);
-						$sheet->setCellValue('C' .$lastrow, $dt->TGL_VRF_BY);
-						$sheet->setCellValue('D' .$lastrow, $dt->TGL_BYR_BY);
-						$sheet->setCellValue('E' .$lastrow, $dt->TOTAL_BIAYA);
+						$sheet->setCellValue('A' .$lastrow, $dt->TGL_REKAM);
+						$sheet->setCellValue('B' .$lastrow, $dt->TGL_AJU_BY);
+						$sheet->setCellValue('C' .$lastrow, $dt->NAMAIMPORTIR);
+						$sheet->setCellValue('D' .$lastrow, $dt->TGL_VRF_BY);
+						$sheet->setCellValue('E' .$lastrow, $dt->TGL_BYR_BY);
+						$sheet->setCellValue('F' .$lastrow, $dt->TOTAL_BIAYA);
 					}
 
 					return $this->exportXls($spreadsheet, "browse_ajubiaya");
@@ -3280,7 +3283,7 @@ class TransaksiController extends Controller {
 
 			return view("transaksi.perekamanajubiaya",["breads" => $breadcrumb,
 										"dataimportir" => $importir,
-										"datakategori" => Array("Tgl Aju Biaya","Tgl Vrf Biaya","Tgl Byr Biaya")
+										"datakategori" => Array("Tgl Rekam","Tgl Aju Biaya","Tgl Vrf Biaya","Tgl Byr Biaya")
 										]);
 		}
 	}

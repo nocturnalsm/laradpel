@@ -2575,6 +2575,7 @@ class Transaksi extends Model
             $header->TGL_AJU_BY = $header->TGL_AJU_BY == "" ? "" : Date("d-m-Y", strtotime($header->TGL_AJU_BY));
             $header->TGL_VRF_BY = $header->TGL_VRF_BY == "" ? "" : Date("d-m-Y", strtotime($header->TGL_VRF_BY));
             $header->TGL_BYR_BY = $header->TGL_BYR_BY == "" ? "" : Date("d-m-Y", strtotime($header->TGL_BYR_BY));
+            $header->TGL_REKAM = $header->TGL_REKAM == "" ? "" : Date("d-m-Y", strtotime($header->TGL_REKAM));
         }
         return Array("header" => $header, "detail" => $detail);
     }
@@ -2582,6 +2583,7 @@ class Transaksi extends Model
     {
         $arrHeader = Array("TGL_AJU_BY" => trim($header["tglajubiaya"]) == "" ? Date("Y-m-d") : Date("Y-m-d", strtotime($header["tglajubiaya"])),
                            "IMPORTIR" => nullval($header["importir"]),
+                           "TGL_REKAM" => trim($header["tglrekam"]) != "" ? Date("Y-m-d", strtotime($header["tglrekam"])) : NULL,
                            "TGL_VRF_BY" => trim($header["tglvrfbiaya"]) != "" ? Date("Y-m-d", strtotime($header["tglvrfbiaya"])) : NULL,
                            "TGL_BYR_BY" => trim($header["tglbyrbiaya"]) != "" ? Date("Y-m-d", strtotime($header["tglbyrbiaya"])) : NULL
                          );
@@ -2619,7 +2621,8 @@ class Transaksi extends Model
     }
     public static function browseAjuBiaya($importir, $kategori1, $dari1, $sampai1, $kategori2, $dari2, $sampai2)
     {
-        $array1 = Array("Tgl Aju Biaya" => "TGL_AJU_BY", "Tgl Vrf Biaya" => "TGL_VRF_BY", "Tgl Byr Biaya" => "TGL_BYR_BY");
+        $array1 = Array("Tgl Aju Biaya" => "TGL_AJU_BY", "Tgl Vrf Biaya" => "TGL_VRF_BY",
+                        "Tgl Byr Biaya" => "TGL_BYR_BY", "Tgl Rekam" => "TGL_REKAM");
         $where = " 1 = 1";
         if ($kategori1 != ""){
             if (trim($dari1) == "" && trim($sampai1) == ""){
@@ -2658,6 +2661,7 @@ class Transaksi extends Model
         $data = DB::table(DB::raw("ajubiaya h"))
                     ->selectRaw("h.ID, i.NAMA AS NAMAIMPORTIR, IFNULL(TOTAL_BIAYA,0) AS TOTAL_BIAYA,"
                             ."IFNULL(DATE_FORMAT(TGL_AJU_BY, '%d-%m-%Y'),'') AS TGL_AJU_BY,"
+                            ."IFNULL(DATE_FORMAT(TGL_REKAM, '%d-%m-%Y'),'') AS TGL_REKAM,"
                             ."IFNULL(DATE_FORMAT(TGL_BYR_BY, '%d-%m-%Y'),'') AS TGL_BYR_BY,"
                             ."IFNULL(DATE_FORMAT(TGL_VRF_BY, '%d-%m-%Y'), '') AS TGL_VRF_BY")
                     ->join(DB::raw("importir i"), "h.IMPORTIR", "=", "i.IMPORTIR_ID")
@@ -2679,7 +2683,8 @@ class Transaksi extends Model
     {
         $array1 = Array("No Inv By" => "NO_INV_BY", "No Faktur By" => "NO_FAKTUR_BY",
                         "No BL" => "h.NO_BL", "No Aju" => "NOAJU", "Nopen" => "NOPEN");
-        $array2 = Array("Tgl Byr By" => "TGL_BYR_BY", "Tgl Faktur By" => "TGL_FAKTUR_BY");
+        $array2 = Array("Tgl Rekam" => "TGL_REKAM","Tgl Byr By" => "TGL_BYR_BY",
+                        "Tgl Faktur By" => "TGL_FAKTUR_BY");
         $where = " 1 = 1";
         if ($kategori1 != ""){
             if (trim($isikategori1) == ""){
@@ -2713,6 +2718,7 @@ class Transaksi extends Model
                     ->selectRaw("h.NO_BL, h.NOAJU, h.NOPEN, NO_INV_BY, NO_FAKTUR_BY, d.DPP, d.PPN, d.DPP+ d.PPN AS TOTAL_BIAYA,"
                             ."IFNULL(DATE_FORMAT(TGL_NOPEN, '%d-%m-%Y'),'') AS TGLNOPEN, "
                             ."IFNULL(DATE_FORMAT(TGL_BYR_BY, '%d-%m-%Y'), '') AS TGL_BYR_BY, "
+                            ."IFNULL(DATE_FORMAT(TGL_REKAM, '%d-%m-%Y'), '') AS TGL_REKAM, "
                             ."IFNULL(DATE_FORMAT(TGL_INV_BY, '%d-%m-%Y'), '') AS TGL_INV_BY, "
                             ."IFNULL(DATE_FORMAT(TGL_FAKTUR_BY, '%d-%m-%Y'), '') AS TGL_FAKTUR_BY"
                     )
@@ -2786,7 +2792,7 @@ class Transaksi extends Model
                     ->orderBy("i.NAMA");
         if (trim($where) != ""){
             $data = $data->whereRaw($where);
-        }        
+        }
         return $data->get();
     }
 }

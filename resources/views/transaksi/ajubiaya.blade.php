@@ -45,25 +45,25 @@
                     <div class="form-row mb-1">
                         <label class="col-form-label col-form-label-sm col-md-4" for="noinvbiaya">No Inv Biaya</label>
                         <div class="col-md-8">
-                            <input {{ $readonly }} type="text" id="noinvbiaya" name="noinvbiaya" class="form-control form-control-sm validate">                            
+                            <input {{ $readonly }} type="text" id="noinvbiaya" name="noinvbiaya" class="form-control form-control-sm validate">
                         </div>
                     </div>
                     <div class="form-row mb-1">
                         <label class="col-form-label col-form-label-sm col-md-4" for="tglinvbiaya">Tgl Inv Biaya</label>
                         <div class="col-md-8">
-                            <input type="text" id="tglinvbiaya" name="tglinvbiaya" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm validate">                            
+                            <input type="text" id="tglinvbiaya" name="tglinvbiaya" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm validate">
                         </div>
                     </div>
                     <div class="form-row mb-1">
                         <label class="col-form-label col-form-label-sm col-md-4" for="nofakturbiaya">No Faktur Biaya</label>
                         <div class="col-md-8">
-                            <input {{ $readonly }} type="text" id="nofakturbiaya" name="nofakturbiaya" class="form-control form-control-sm validate">                            
+                            <input {{ $readonly }} type="text" id="nofakturbiaya" name="nofakturbiaya" class="form-control form-control-sm validate">
                         </div>
                     </div>
                     <div class="form-row mb-1">
                         <label class="col-form-label col-form-label-sm col-md-4" for="tglinvbiaya">Tgl Faktur Biaya</label>
                         <div class="col-md-8">
-                            <input type="text" id="tglfakturbiaya" name="tglfakturbiaya" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm validate">                            
+                            <input type="text" id="tglfakturbiaya" name="tglfakturbiaya" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm validate">
                         </div>
                     </div>
                     <div class="form-row mb-1">
@@ -83,7 +83,7 @@
                         <div class="col-md-8">
                             <input type="text" readonly id="total" name="total" class="number form-control form-control-sm validate">
                         </div>
-                    </div>                    
+                    </div>
                 </form>
             </div>
             <div class="modal-footer d-flex justify-content-center">
@@ -120,10 +120,16 @@
                         <div class="card col-md-12 p-0 mb-2">
                             <div class="card-body p-3">
                                 <div class="form-row px-2 pb-0">
+                                    <label class="col-md-2 col-form-label form-control-sm">Tgl Rekam</label>
+                                    <div class="col-sm-4">
+                                        <input autocomplete="off" type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tglrekam" value="{{ $header->TGL_REKAM }}" id="tglrekam">
+                                    </div>
+                                </div>
+                                <div class="form-row px-2 pb-0 pt-2">
                                     <label class="col-md-2 col-form-label form-control-sm">Tgl Aju Biaya</label>
                                     <div class="col-sm-4">
                                         <input autocomplete="off" type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tglajubiaya" value="{{ $header->TGL_AJU_BY }}" id="tglajubiaya">
-                                    </div>                                    
+                                    </div>
                                 </div>
                                 <div class="form-row px-2 pt-2">
                                     <label class="col-form-label col-form-label-sm col-md-2" for="importir">Importir</label>
@@ -186,7 +192,7 @@
                                                     <th>No Inv By<br>Tgl Inv By</th>
                                                     <th>No Faktur By<br>Tgl Faktur By</th>
                                                     <th>DPP</th>
-                                                    <th>PPN</th>                                                    
+                                                    <th>PPN</th>
                                                     <th>Sub Ttl By</th>
                                                     <th>Upload</th>
                                                     @can('ajubiaya.transaksi')
@@ -252,7 +258,7 @@
                 $('td:eq(4)', row).html(data.NO_FAKTUR_BY + '<BR>' + data.TGL_FAKTUR_BY);
                 $('td:eq(5)', row).html(parseFloat(data.DPP).formatMoney(2,"",",","."));
                 $('td:eq(6)', row).html(parseFloat(data.PPN).formatMoney(2,"",",","."));
-                $('td:eq(7)', row).html((parseFloat(data.DPP) + parseFloat(data.PPN)).formatMoney(0,"",",","."));                
+                $('td:eq(7)', row).html((parseFloat(data.DPP) + parseFloat(data.PPN)).formatMoney(0,"",",","."));
                 @can('ajubiaya.transaksi')
                 $('td:eq(9)', row).html('<a href="#modaldetail" class="edit" data-toggle="modal" id="' + data.ID +
                                         '"><i class="fa fa-edit"></i></a>' +
@@ -309,15 +315,15 @@
                     if (typeof response.error == 'undefined'){
                         $("#formnopen").html(response.NOPEN);
                         $("#formnoaju").html(response.NOAJU);
-                        $("#formtglnopen").html(response.TGLNOPEN);                        
+                        $("#formtglnopen").html(response.TGLNOPEN);
                         $("#nobl_id").val(response.ID);
                     }
                     else {
                         $("#modal .modal-body").html(response.error);
                         $("#formnopen").html("");
                         $("#formnoaju").html("");
-                        $("#formtglnopen").html("");                        
-                        $("#nobl_id").val("");                        
+                        $("#formtglnopen").html("");
+                        $("#nobl_id").val("");
                         $("#modal").modal("show");
                         setTimeout(function(){
                             $("#modal").modal("hide");
@@ -350,7 +356,7 @@
             var act = $("#form").attr("act");
 
             if (act == "add"){
-                tabel.row.add({NO_BL: nobl_id, NOBL: nobl, NOPEN: nopen, 
+                tabel.row.add({NO_BL: nobl_id, NOBL: nobl, NOPEN: nopen,
                                DPP: dpp, PPN: ppn, NOAJU: noaju, TGLNOPEN: tglnopen,
                                TGL_INV_BY: tglinvbiaya, TGL_FAKTUR_BY: tglfakturbiaya,
                                NO_FAKTUR_BY: nofakturbiaya, NO_INV_BY: noinvbiaya
@@ -372,7 +378,7 @@
             else if (act == "edit"){
                 var id = $("#iddetail").val();
                 var idx = $("#idxdetail").val();
-                tabel.row(idx).data({ID: id, NO_BL: nobl_id, NOBL: nobl, NOPEN: nopen, 
+                tabel.row(idx).data({ID: id, NO_BL: nobl_id, NOBL: nobl, NOPEN: nopen,
                                     DPP: dpp, PPN: ppn, NOAJU: noaju, TGLNOPEN: tglnopen,
                                     TGL_INV_BY: tglinvbiaya, TGL_FAKTUR_BY: tglfakturbiaya,
                                     NO_FAKTUR_BY: nofakturbiaya, NO_INV_BY: noinvbiaya}).draw();
@@ -380,7 +386,7 @@
             }
             var rows = tabel.rows().data();
             var total = 0;
-            $(rows).each(function(index,elem){                
+            $(rows).each(function(index,elem){
                 total = total + parseFloat(elem.DPP) + parseFloat(elem.PPN);
             })
             $("#totalbiaya").val(total);
@@ -418,7 +424,7 @@
             $("#tglfakturbiaya").val(row[0].TGL_FAKTUR_BY);
             $("#dpp").val(row[0].DPP);
             $("#ppn").val(row[0].PPN);
-            $("#total").val(row[0].DPP + row[0].PPN);            
+            $("#total").val(row[0].DPP + row[0].PPN);
             $("#idxdetail").val(index);
             $("#iddetail").val(row[0].ID);
             $("#modaldetail .modal-title").html("Edit ");
@@ -508,8 +514,8 @@
                 })
             });
             $("#modal").modal("show");
-        });                
-        @endif     
+        });
+        @endif
         @endcan
     })
 </script>

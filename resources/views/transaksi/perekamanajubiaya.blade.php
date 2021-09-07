@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-md-10">
                 <form id="form" method="POST" action="/transaksi/ajubiaya?filter=1&export=1">
-                    @csrf                    
+                    @csrf
                     <div class="row">
                         <label class="col-md-2">Importir</label>
                         <div class="col-md-3">
@@ -21,7 +21,7 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div>                    
+                    </div>
                     <div class="row">
                         <div class="col-md-2">
                             Kategori
@@ -74,6 +74,7 @@
                 <table width="100%" id="grid" class="table">
                     <thead>
                         <th>Opsi</th>
+                        <th>Tgl Rekam</th>
                         <th>Tgl Aju By</th>
                         <th>Importir</th>
                         <th>Tgl Vrf By</th>
@@ -108,8 +109,9 @@
             return symbol + negative + (j ? i.substr(0, j) + thousand : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thousand) + (places ? decimal + Math.abs(number - i).toFixed(places).slice(2) : "");
         };
         var columns = [{target: 0, data: null, orderable : false},
-        {target: 1, data: "TGL_AJU_BY"}, {target: 2, data: "NAMAIMPORTIR"},
-        {target: 3, data: "TGL_VRF_BY"}, {target: 4, data: "TGL_BYR_BY"}, {target: 5, data: "TOTAL_BIAYA"}
+        {target: 1, data: "TGL_REKAM"},
+        {target: 2, data: "TGL_AJU_BY"}, {target: 3, data: "NAMAIMPORTIR"},
+        {target: 4, data: "TGL_VRF_BY"}, {target: 5, data: "TGL_BYR_BY"}, {target: 6, data: "TOTAL_BIAYA"}
         ];
 
         var grid = $("#grid").DataTable({responsive: false,
@@ -133,7 +135,7 @@
             {
                 $(row).attr("id-transaksi", data[0]);
                 $('td:eq(0)', row).html('<a title="Edit" href="/transaksi/pengajuanbiaya/' + data.ID + '"><i class="fa fa-edit"></i></a>');
-                $('td:eq(5)', row).html(parseFloat(data.TOTAL_BIAYA).formatMoney(0,"",",","."));
+                $('td:eq(6)', row).html(parseFloat(data.TOTAL_BIAYA).formatMoney(0,"",",","."));
             }
         });
         $("#preview").on("click", function(){

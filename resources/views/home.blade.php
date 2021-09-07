@@ -89,6 +89,9 @@
                     @can('invoice.transaksi')
                     <a class="list-group-item list-group-item-action" href="./transaksi/invoice">Perekaman Invoice</a>
                     @endcan
+                    @can('invoice.browse')
+                    <a class="list-group-item list-group-item-action" href="./transaksi/browseinvoice">Browse Invoice</a>
+                    @endcan
                     @can('mutasikas.transaksi')
                     <a class="list-group-item list-group-item-action" href="./transaksi/mutasikas">Perekaman Mutasi Kas</a>
                     @endcan

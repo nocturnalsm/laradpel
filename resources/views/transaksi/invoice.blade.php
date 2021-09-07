@@ -95,15 +95,42 @@
         <div class="card-body">
             <input {{ $readonly }} type="hidden" value="{{ $header->ID }}" id="idtransaksi" name="idtransaksi">
             <div class="row px-2">
-                <div class="col-md-6 pt-0 col-sm-12">
+                <div class="col-md-8 pt-0 col-sm-12">
                     <div class="row">
                         <div class="card col-md-12 p-0 mb-2">
                             <div class="card-body p-3">
+                                <div class="form-row px-2 pb-2">
+                                    <label class="col-form-label col-form-label-sm col-md-2" for="importir">Importir</label>
+                                    <div class="col-md-6">
+                                        <select {{ $readonly == 'readonly' ? 'disabled' : '' }} class="form-control form-control-sm" id="importir" name="importir" value="{{ $header->IMPORTIR }}">
+                                            <option value=""></option>
+                                            @foreach($importir as $imp)
+                                            <option @if($header->IMPORTIR == $imp->IMPORTIR_ID) selected @endif value="{{ $imp->IMPORTIR_ID }}">{{ $imp->NAMA }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="form-row px-2 pb-0">
                                     <label class="col-md-2 col-form-label form-control-sm">No.Inv Jual</label>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-2">
                                         <input {{ $readonly }} type="text" class="form-control form-control-sm" name="noinv" value="{{ $header->NO_INV_JUAL }}" id="noinv">
                                     </div>
+                                    <label class="col-md-2 col-form-label form-control-sm">Tgl Inv Jual</label>
+                                    <div class="col-md-2">
+                                        <input autocomplete="off" type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tgljual" value="{{ $header->TGL_JUAL }}" id="tgljual">
+                                    </div>
+                                </div>
+                                <div class="form-row px-2 pt-2">
+                                    <label class="col-md-2 col-form-label form-control-sm">No. Faktur</label>
+                                    <div class="col-sm-2">
+                                        <input {{ $readonly }} type="text" class="form-control form-control-sm" name="nofaktur" value="{{ $header->NO_FAKTUR }}" id="nofaktur">
+                                    </div>
+                                    <label class="col-md-2 col-form-label form-control-sm">Tgl Faktur</label>
+                                    <div class="col-md-2">
+                                        <input autocomplete="off" type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tglfaktur" value="{{ $header->TGL_FAKTUR }}" id="tglfaktur">
+                                    </div>
+                                </div>
+                                <div class="form-row px-2 pb-0 pt-2">
                                     <label class="col-md-2 col-form-label form-control-sm">Payment</label>
                                     <div class="col-sm-2">
                                         <select {{ $readonly == 'readonly' ? 'disabled' : '' }} type="text" class="form-control form-control-sm" name="payment" value="{{ $header->PAYMENT }}" id="payment">
@@ -111,22 +138,20 @@
                                             <option {{ $header->PAYMENT == "C" ? 'selected' : ' '}} value="C">Cash</option>
                                             <option {{ $header->PAYMENT == "30" ? 'selected' : ' '}} value="30">D/A-30</option>
                                             <option {{ $header->PAYMENT == "60" ? 'selected' : ' '}} value="60">D/A-60</option>
-                                            <option {{ $header->PAYMENT == "90" ? 'selected' : ' '}} value="90">D/A-90</option>                                            
+                                            <option {{ $header->PAYMENT == "90" ? 'selected' : ' '}} value="90">D/A-90</option>
                                         </select>
                                     </div>
-                                </div>
-                                <div class="form-row px-2 pb-0 pt-2">
-                                    <label class="col-md-2 col-form-label form-control-sm">Tgl Inv Jual</label>
-                                    <div class="col-md-3">
-                                        <input autocomplete="off" type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tgljual" value="{{ $header->TGL_JUAL }}" id="tgljual">
+                                    <label class="col-md-2 col-form-label form-control-sm">Tgl Jth Tempo</label>
+                                    <div class="col-md-2">
+                                        <input readonly type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tgljatuhtempo" id="tgljatuhtempo" value={{ $header->TGL_JATUH_TEMPO }}>
                                     </div>
-                                    <label class="col-md-3 text-sm-center col-form-label form-control-sm">Tgl Jth Tempo</label>
-                                    <div class="col-md-3">
-                                        <input readonly type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tgljatuhtempo" id="tgljatuhtempo">
+                                    <label class="col-md-1 col-form-label form-control-sm">Tgl Lunas</label>
+                                    <div class="col-md-2">
+                                        <input type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" value="{{ $header->TGL_LUNAS }}" name="tgllunas" id="tgllunas">
                                     </div>
                                 </div>
                                 <div class="form-row px-2 pt-2">
-                                    <label class="col-form-label col-md-2" for="party">Kode ID</label>
+                                    <label class="col-form-label col-form-label-sm col-md-2" for="party">Kode ID</label>
                                     <div class="col-md-2">
                                         <select {{ $readonly == 'readonly' ? 'disabled' : '' }} class="form-control form-control-sm" id="kodeparty" name="kodeparty" value="{{ $header->KODEPARTY_ID }}">
                                             <option value=""></option>
@@ -135,21 +160,24 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-1">&nbsp;</div>
-                                    <label class="col-md-3 text-sm-center col-form-label form-control-sm">Tgl Lunas</label>
-                                    <div class="col-md-3">
-                                        <input type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" value="{{ $header->TGL_LUNAS }}" name="tgllunas" id="tgllunas">
-                                    </div>
-                                </div>
-                                <div class="form-row px-2">                                    
-                                    <label class="col-md-2 col-form-label">Party</label>
-                                    <div class="col-md-4">
+                                    <label class="col-md-2 col-form-label col-form-label-sm ">Party</label>
+                                    <div class="col-md-2">
                                         <select {{ $readonly == 'readonly' ? 'disabled' : '' }} class="form-control form-control-sm" id="party" name="party" value="{{ $header->PEMBELI_ID }}">
                                         </select>
                                     </div>
-                                    <label class="col-md-2 col-form-label">No ID</label>
+                                    <label class="col-md-2 col-form-label col-form-label-sm ">No ID</label>
                                     <div class="col-md-3 mt-2">
                                         <span id="no_identitas"></span>
+                                    </div>
+                                </div>
+                                <div class="form-row px-2">
+                                    <label class="col-md-2 col-form-label col-form-label-sm ">Total PPN</label>
+                                    <div class="col-md-2">
+                                        <input readonly type="text" name="totalppn" id="totalppn" class="form-control form-control-sm number" value="{{ $header->TOTAL_PPN }}">
+                                    </div>
+                                    <label class="col-md-2 col-form-label col-form-label-sm ">Total Invoice</label>
+                                    <div class="col-md-2">
+                                        <input readonly type="text" name="totalinv" id="totalinv" class="form-control form-control-sm number" value="{{ $header->TOTAL_INV }}">
                                     </div>
                                 </div>
                             </div>
@@ -329,10 +357,11 @@
             if (payment != "" & tgljual != ""){
                 if (payment == "C"){
                     tgljatuhtempo = tgljual
+                    $('#tgljatuhtempo').datepicker('setDate', $('#tgljual').datepicker('getDate'));
                 }
                 else {
-                    var orig = $('#tgljual').datepicker('getDate'); 
-                    orig.setDate(orig.getDate()+parseInt(payment)); 
+                    var orig = $('#tgljual').datepicker('getDate');
+                    orig.setDate(orig.getDate()+parseInt(payment));
                     $('#tgljatuhtempo').datepicker('setDate', orig);
                 }
             }
@@ -372,6 +401,15 @@
                 tabel.row(idx).data({ID: id, KODEBARANG: kodebarang_id, NAMABARANG: kodebarang, nama: produk, JMLSATJUAL: jumlah, SATJUAL: satuan_id, satuan: satuan, HARGA: harga}).draw();
                 $("#modaldetail").modal("hide");
             }
+            var rows = tabel.rows().data();
+            var total_ppn = 0;
+            var total_inv = 0;
+            $(rows).each(function(index,elem){
+                total_ppn = total_ppn + parseFloat(elem.JMLSATJUAL)*parseFloat(elem.HARGA)*0.1;
+                total_inv = total_inv + parseFloat(elem.JMLSATJUAL)*parseFloat(elem.HARGA)*1.1;
+            })
+            $("#totalppn").val(total_ppn);
+            $("#totalinv").val(total_inv);
         });
 
         $("#adddetail").on("click", function(){
@@ -488,8 +526,8 @@
                 })
             });
             $("#modal").modal("show");
-        });                
-        @endif     
+        });
+        @endif
         $("#party").on("change", function(){
             var selected = $(this).find("option:selected");
             if ($(selected).val() == ""){
@@ -501,7 +539,7 @@
         })
         @endcan
         $("#kodeparty").on("change", function(){
-            var value = $(this).val();            
+            var value = $(this).val();
             if (value == ""){
                 $("#party").html('<option value=""></option>');
                 $("#no_identitas").html("");
@@ -519,8 +557,7 @@
         $("#kodeparty").trigger("change");
         $("#party").val("{{ $header->PEMBELI_ID }}");
         $("#no_identitas").html("{{ $header->NO_IDENTITAS }}");
-        $("#nopen").inputmask({"mask": "999999","removeMaskOnSubmit": true});      
-        $("#payment").trigger("change");
+        $("#nopen").inputmask({"mask": "999999","removeMaskOnSubmit": true});        
     })
 </script>
 @endpush

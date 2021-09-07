@@ -1418,7 +1418,7 @@ class TransaksiController extends Controller {
 	public function searchbl(Request $request)
 	{
 		$kode = $request->input("kode");
-		$data = Transaksi::getBl(trim($kode));				  
+		$data = Transaksi::getBl(trim($kode));
 		if (!$data){
 			$response["error"] = "No BL tidak ada";
 		}
@@ -3016,16 +3016,16 @@ class TransaksiController extends Controller {
 		$breadcrumb[] = Array("link" => "/", "text" => "Home");
 
 		$breadcrumb[] = Array("text" => "Perekaman Invoice");
-		
+
 		$dtSatuan = Transaksi::getSatuan();
 		$dtKodeParty = Transaksi::getKodeParty();
 		$dtParty = Transaksi::getParty();
-
+		$dtImportir = Transaksi::getImportir();
 		$data = [
 				"header" => isset($dtTransaksi["header"]) ? $dtTransaksi["header"] : "{}" , "breads" => $breadcrumb,
 				"party" => json_encode($dtParty), "kodeparty" => $dtKodeParty, "satuan" => $dtSatuan,
 				"detail" => isset($dtTransaksi["detail"]) ? json_encode($dtTransaksi["detail"]) : "{}",
-				"readonly" => $canEdit ? '' : 'readonly'
+				"readonly" => $canEdit ? '' : 'readonly', "importir" => $dtImportir
 			];
 		return view("transaksi.invoice", $data);
 	}
@@ -3157,8 +3157,8 @@ class TransaksiController extends Controller {
 										"dataimportir" => $importir,
 										"datakategori1" => Array("Kode Acc", "Kode ID", "No Rekening", "D/K"),
 										"datakategori2" => Array("Tanggal Mutasi"),
-										"kodeacc" => json_encode($kodeAcc), 
-										"kodeparty" => json_encode($kodeParty), 
+										"kodeacc" => json_encode($kodeAcc),
+										"kodeparty" => json_encode($kodeParty),
 										"rekening" => json_encode($rekening)
 										]);
 		}
@@ -3189,11 +3189,11 @@ class TransaksiController extends Controller {
 		$breadcrumb[] = Array("link" => "/", "text" => "Home");
 
 		$breadcrumb[] = Array("text" => "Pengajuan Biaya");
-		
+
 		$dtImportir = Transaksi::getImportir();
 
 		$data = [
-				"header" => isset($dtTransaksi["header"]) ? $dtTransaksi["header"] : "{}" , "breads" => $breadcrumb,				
+				"header" => isset($dtTransaksi["header"]) ? $dtTransaksi["header"] : "{}" , "breads" => $breadcrumb,
 				"detail" => isset($dtTransaksi["detail"]) ? json_encode($dtTransaksi["detail"]) : "{}",
 				"importir" => $dtImportir,
 				"readonly" => $canEdit ? '' : 'readonly'
@@ -3206,7 +3206,7 @@ class TransaksiController extends Controller {
 			abort(403, 'User does not have the right roles.');
 		}
 		$filter = $request->input("filter");
-		if ($filter && $filter == "1"){			
+		if ($filter && $filter == "1"){
 			$postImportir = $request->input("importir");
 			$postKategori1 = $request->input("kategori1");
 			$postKategori2 = $request->input("kategori2");
@@ -3246,7 +3246,7 @@ class TransaksiController extends Controller {
 						$sheet->setCellValue('D' .$lastrow, "sampai");
 						$sheet->setCellValue('E' .$lastrow, $sampai2 == "" ? "-" : Date("d M Y", strtotime($sampai2)));
 					}
-					$lastrow += 2;					
+					$lastrow += 2;
 					$sheet->setCellValue('A' .$lastrow, 'Tgl Aju By');
 					$sheet->setCellValue('B' .$lastrow, 'Importir');
 					$sheet->setCellValue('C' .$lastrow, 'Tgl Vrf By');
@@ -3259,7 +3259,7 @@ class TransaksiController extends Controller {
 						$sheet->setCellValue('B' .$lastrow, $dt->NAMAIMPORTIR);
 						$sheet->setCellValue('C' .$lastrow, $dt->TGL_VRF_BY);
 						$sheet->setCellValue('D' .$lastrow, $dt->TGL_BYR_BY);
-						$sheet->setCellValue('E' .$lastrow, $dt->TOTAL_BIAYA);						
+						$sheet->setCellValue('E' .$lastrow, $dt->TOTAL_BIAYA);
 					}
 
 					return $this->exportXls($spreadsheet, "browse_ajubiaya");
@@ -3278,7 +3278,7 @@ class TransaksiController extends Controller {
 			$breadcrumb[] = Array("text" => "Browse Aju Biaya");
 			$importir = $this->getImportir();
 
-			return view("transaksi.perekamanajubiaya",["breads" => $breadcrumb,										
+			return view("transaksi.perekamanajubiaya",["breads" => $breadcrumb,
 										"dataimportir" => $importir,
 										"datakategori" => Array("Tgl Aju Biaya","Tgl Vrf Biaya","Tgl Byr Biaya")
 										]);
@@ -3374,6 +3374,103 @@ class TransaksiController extends Controller {
 										"dataimportir" => $importir,
 										"datakategori1" => Array("No Inv By", "No Faktur By", "No BL", "No Aju", "Nopen"),
 										"datakategori2" => Array("Tgl Byr By", "Tgl Faktur By")
+										]);
+		}
+	}
+	public function browseinvoice(Request $request)
+	{
+		if(!auth()->user()->can('invoice.browse')){
+			abort(403, 'User does not have the right roles.');
+		}
+		$filter = $request->input("filter");
+		if ($filter && $filter == "1"){
+			$postImportir = $request->input("importir");
+			$postKategori1 = $request->input("kategori1");
+			$postKategori2 = $request->input("kategori2");
+			$dari1 = $request->input("dari1");
+			$sampai1 = $request->input("sampai1");
+			$dari2 = $request->input("dari2");
+			$sampai2 = $request->input("sampai2");
+
+			$data = Transaksi::browseInvoice($postImportir, $postKategori1, $dari1, $sampai1,
+												$postKategori2,$dari2, $sampai2);
+			if ($data){
+				$export = $request->input("export");
+				if ($export == "1"){
+
+					$spreadsheet = new Spreadsheet();
+					$sheet = $spreadsheet->getActiveSheet();
+					$sheet->setCellValue('A' .strval($row), 'IMPORTIR');
+					$row = 1;
+					if ($postImportir && trim($postImportir) != ""){
+						$sheet->setCellValue('C' .strval($row), Transaksi::getImportir($postImportir)->NAMA);
+					}
+					else {
+						$sheet->setCellValue('C' .strval($row), "Semua");
+					}
+					$lastrow = $row;
+					if ($postKategori1 && trim($postKategori1) != ""){
+						$lastrow += 1;
+						$sheet->setCellValue('A' .$lastrow, $postKategori1);
+						$sheet->setCellValue('C' .$lastrow, $isikategori1);
+					}
+					if ($postKategori2 && trim($postKategori2) != ""){
+						$lastrow += 1;
+						$sheet->setCellValue('A' .$lastrow, $postKategori2);
+						$sheet->setCellValue('C' .$lastrow, $dari2 == "" ? "-" : Date("d M Y", strtotime($dari2)));
+						$sheet->setCellValue('D' .$lastrow, "sampai");
+						$sheet->setCellValue('E' .$lastrow, $sampai2 == "" ? "-" : Date("d M Y", strtotime($sampai2)));
+					}
+
+					$lastrow += 2;
+					$sheet->setCellValue('A' .$lastrow, 'Importir');
+					$sheet->setCellValue('B' .$lastrow, 'No Inv Jual');
+					$sheet->setCellValue('C' .$lastrow, 'Tgl Inv Jual');
+					$sheet->setCellValue('D' .$lastrow, 'No Faktur');
+					$sheet->setCellValue('E' .$lastrow, 'Tgl Faktur');
+					$sheet->setCellValue('F' .$lastrow, 'Kode ID');
+					$sheet->setCellValue('G' .$lastrow, 'Party');
+					$sheet->setCellValue('H' .$lastrow, 'Payment');
+					$sheet->setCellValue('I' .$lastrow, 'Jth Tempo');
+					$sheet->setCellValue('J' .$lastrow, 'Tgl Lunas');
+					$sheet->setCellValue('K' .$lastrow, 'PPN');
+					$sheet->setCellValue('L' .$lastrow, 'Total');
+
+					foreach ($data as $dt){
+							$lastrow += 1;
+							$sheet->setCellValue('A' .$lastrow, $dt->NAMAIMPORTIR);
+							$sheet->setCellValue('B' .$lastrow, $dt->NO_INV_JUAL);
+							$sheet->setCellValue('C' .$lastrow, $dt->TGL_INV_JUAL);
+							$sheet->setCellValue('D' .$lastrow, $dt->NO_FAKTUR);
+							$sheet->setCellValue('E' .$lastrow, $dt->TGL_FAKTUR);
+							$sheet->setCellValue('F' .$lastrow, $dt->KODE_ID);
+							$sheet->setCellValue('G' .$lastrow, $dt->PARTY);
+							$sheet->setCellValue('H' .$lastrow, $dt->PAYMENT);
+							$sheet->setCellValue('I' .$lastrow, $dt->TGL_JATUH_TEMPO);
+							$sheet->setCellValue('J' .$lastrow, $dt->TGL_LUNAS);
+							$sheet->setCellValue('K' .$lastrow, $dt->TOTAL_PPN);
+							$sheet->setCellValue('L' .$lastrow, $dt->TOTAL_INV);
+					}
+
+					return $this->exportXls($spreadsheet, "browse_invoice");
+				}
+				else {
+					return response()->json($data);
+				}
+			}
+			else {
+				return response()->json([]);
+			}
+		}
+		else {
+			$breadcrumb[] = Array("link" => "../", "text" => "Home");
+			$breadcrumb[] = Array("text" => "Browse Invoice");
+			$importir = $this->getImportir();
+
+			return view("transaksi.browseinvoice",["breads" => $breadcrumb,
+										"dataimportir" => $importir,
+										"datakategori1" => Array("No Faktur","No Inv Jual","Kode ID","Payment"),
+										"datakategori2" => Array("Tgl Inv Jual","Tgl Faktur","Tgl Lunas","Tgl Jatuh Tempo")
 										]);
 		}
 	}

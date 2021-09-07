@@ -1830,13 +1830,13 @@ class Transaksi extends Model
     }
     public static function stokBarang($customer, $importir, $kategori1, $isikategori1, $dari2, $sampai2, $dari3, $sampai3)
     {
-        $array1 =  Array("Kode Barang" => "tb.KODEBARANG", "Kode Produk" => "p.kode");  
-        
+        $array1 =  Array("Kode Barang" => "tb.KODEBARANG", "Kode Produk" => "p.kode");
+
         $dari2 = str_replace(",", "", $dari2);
         $sampai2 = str_replace(",","",$sampai2);
         $dari3 = str_replace(",", "", $dari3);
         $sampai3 = str_replace(",","",$sampai3);
-        
+
         $where = " 1 = 1 ";
         if ($kategori1 != ""){
             $where  .=  " AND " .$array1[$kategori1] ." LIKE '%" .trim($isikategori1) ."%'";
@@ -2318,12 +2318,20 @@ class Transaksi extends Model
         }
         else {
             $header = DB::table(DB::raw("tbl_header_invoice h"))
-                        ->selectRaw("h.*, py.NO_IDENTITAS")
+                        ->selectRaw("h.*, py.NO_IDENTITAS, i.NAMA AS NAMAIMPORTIR")
+                        ->leftJoin(DB::raw("importir i"), "i.IMPORTIR_ID","=","h.IMPORTIR")
                         ->leftJoin(DB::raw("kode_party p"), "h.KODEPARTY_ID","=", "p.KODEPARTY_ID")
                         ->leftJoin(DB::raw("party py"), "h.PEMBELI_ID","=", "py.PARTY_ID")
                         ->where("h.ID", $id);
             if ($header->exists()){
                 $header = $header->first();
+                $total = DB::table("tbl_detail_invoice")
+                           ->where("ID_HEADER", $header->ID)
+                           ->selectRaw("IFNULL(SUM(JMLSATJUAL*HARGA*0.1),0) as TOTAL_PPN, "
+                                      ."IFNULL(SUM(JMLSATJUAL*HARGA*1.1),0) AS TOTAL_INV")
+                           ->first();
+                $header->TOTAL_PPN = $total->TOTAL_PPN;
+                $header->TOTAL_INV = $total->TOTAL_INV;
             }
             else {
                 return false;
@@ -2340,6 +2348,8 @@ class Transaksi extends Model
         }
         if ($header){
             $header->TGL_JUAL = $header->TGL_JUAL == "" ? "" : Date("d-m-Y", strtotime($header->TGL_JUAL));
+            $header->TGL_FAKTUR = $header->TGL_FAKTUR == "" ? "" : Date("d-m-Y", strtotime($header->TGL_FAKTUR));
+            $header->TGL_JATUH_TEMPO = $header->TGL_JATUH_TEMPO == "" ? "" : Date("d-m-Y", strtotime($header->TGL_JATUH_TEMPO));
         }
         return Array("header" => $header, "detail" => $detail);
     }
@@ -2347,11 +2357,13 @@ class Transaksi extends Model
     {
         $arrHeader = Array("TGL_JUAL" => trim($header["tgljual"]) == "" ? Date("Y-m-d") : Date("Y-m-d", strtotime($header["tgljual"])),
                            "PEMBELI_ID" => nullval($header["party"]),
+                           "IMPORTIR" => nullval($header["importir"]),
                            "KODEPARTY_ID" => nullval($header["kodeparty"]),
-                           "NO_INV_JUAL" => $header["noinv"],
+                           "NO_INV_JUAL" => $header["noinv"], "NO_FAKTUR" => $header["nofaktur"],
                            "PAYMENT" => nullval($header["payment"]),
-                           "TGL_LUNAS" => trim($header["tgllunas"]) != "" ? Date("Y-m-d", strtotime($header["tgllunas"])) : NULL
-
+                           "TGL_LUNAS" => trim($header["tgllunas"]) != "" ? Date("Y-m-d", strtotime($header["tgllunas"])) : NULL,
+                           "TGL_JATUH_TEMPO" => trim($header["tgljatuhtempo"]) != "" ? Date("Y-m-d", strtotime($header["tgljatuhtempo"])) : NULL,
+                           "TGL_FAKTUR" => trim($header["tglfaktur"]) != "" ? Date("Y-m-d", strtotime($header["tglfaktur"])) : NULL
                          );
 
         if ($action == "insert"){
@@ -2539,7 +2551,7 @@ class Transaksi extends Model
         else {
             $header = DB::table(DB::raw("ajubiaya h"))
                         ->selectRaw("h.*, i.NAMA AS NAMAIMPORTIR")
-                        ->leftJoin(DB::raw("importir i"), "h.IMPORTIR","=", "i.IMPORTIR_ID")                         
+                        ->leftJoin(DB::raw("importir i"), "h.IMPORTIR","=", "i.IMPORTIR_ID")
                         ->where("h.ID", $id);
             if ($header->exists()){
                 $header = $header->first();
@@ -2569,7 +2581,7 @@ class Transaksi extends Model
     public static function saveAjuBiaya($action, $header, $detail)
     {
         $arrHeader = Array("TGL_AJU_BY" => trim($header["tglajubiaya"]) == "" ? Date("Y-m-d") : Date("Y-m-d", strtotime($header["tglajubiaya"])),
-                           "IMPORTIR" => nullval($header["importir"]),                           
+                           "IMPORTIR" => nullval($header["importir"]),
                            "TGL_VRF_BY" => trim($header["tglvrfbiaya"]) != "" ? Date("Y-m-d", strtotime($header["tglvrfbiaya"])) : NULL,
                            "TGL_BYR_BY" => trim($header["tglbyrbiaya"]) != "" ? Date("Y-m-d", strtotime($header["tglbyrbiaya"])) : NULL
                          );
@@ -2607,7 +2619,7 @@ class Transaksi extends Model
     }
     public static function browseAjuBiaya($importir, $kategori1, $dari1, $sampai1, $kategori2, $dari2, $sampai2)
     {
-        $array1 = Array("Tgl Aju Biaya" => "TGL_AJU_BY", "Tgl Vrf Biaya" => "TGL_VRF_BY", "Tgl Byr Biaya" => "TGL_BYR_BY");        
+        $array1 = Array("Tgl Aju Biaya" => "TGL_AJU_BY", "Tgl Vrf Biaya" => "TGL_VRF_BY", "Tgl Byr Biaya" => "TGL_BYR_BY");
         $where = " 1 = 1";
         if ($kategori1 != ""){
             if (trim($dari1) == "" && trim($sampai1) == ""){
@@ -2647,7 +2659,7 @@ class Transaksi extends Model
                     ->selectRaw("h.ID, i.NAMA AS NAMAIMPORTIR, IFNULL(TOTAL_BIAYA,0) AS TOTAL_BIAYA,"
                             ."IFNULL(DATE_FORMAT(TGL_AJU_BY, '%d-%m-%Y'),'') AS TGL_AJU_BY,"
                             ."IFNULL(DATE_FORMAT(TGL_BYR_BY, '%d-%m-%Y'),'') AS TGL_BYR_BY,"
-                            ."IFNULL(DATE_FORMAT(TGL_VRF_BY, '%d-%m-%Y'), '') AS TGL_VRF_BY")                    
+                            ."IFNULL(DATE_FORMAT(TGL_VRF_BY, '%d-%m-%Y'), '') AS TGL_VRF_BY")
                     ->join(DB::raw("importir i"), "h.IMPORTIR", "=", "i.IMPORTIR_ID")
                     ->leftJoinSub(
                         DB::table("detail_aju_biaya")
@@ -2665,7 +2677,7 @@ class Transaksi extends Model
     }
     public static function detailAjuBiaya($importir, $kategori1, $isikategori1, $kategori2, $dari2, $sampai2)
     {
-        $array1 = Array("No Inv By" => "NO_INV_BY", "No Faktur By" => "NO_FAKTUR_BY", 
+        $array1 = Array("No Inv By" => "NO_INV_BY", "No Faktur By" => "NO_FAKTUR_BY",
                         "No BL" => "h.NO_BL", "No Aju" => "NOAJU", "Nopen" => "NOPEN");
         $array2 = Array("Tgl Byr By" => "TGL_BYR_BY", "Tgl Faktur By" => "TGL_FAKTUR_BY");
         $where = " 1 = 1";
@@ -2708,7 +2720,69 @@ class Transaksi extends Model
                     ->join(DB::raw("importir i"), "b.IMPORTIR", "=", "i.IMPORTIR_ID")
                     ->join(DB::raw("tbl_penarikan_header h"), "h.ID","=","d.NO_BL")
                     ->orderBy("h.NO_BL");
-        
+
+        if (trim($where) != ""){
+            $data = $data->whereRaw($where);
+        }
+        return $data->get();
+    }
+    public static function browseInvoice($importir, $kategori1, $isikategori1, $kategori2, $dari2, $sampai2)
+    {
+        $array1 = Array("No Faktur" => "NO_FAKTUR", "No Inv Jual" => "NO_INV_JUAL",
+                        "Kode ID" => "h.KODEPARTY_ID", "Payment" => "h.PAYMENT");
+        $array2 = Array("Tgl Inv Jual" => "TGL_JUAL", "Tgl Faktur" => "TGL_FAKTUR",
+                        "Tgl Lunas" => "TGL_LUNAS", "Tgl Jatuh Tempo" => "TGL_JATUH_TEMPO");
+        $where = " 1 = 1";
+        if ($kategori1 != ""){
+            if (trim($isikategori1) == ""){
+                $where  .=  " AND (" .$array1[$kategori1] ." IS NULL OR " .$array1[$kategori1] ." = '')";
+            }
+            else {
+                $where  .=  " AND (" .$array1[$kategori1] ." = '" .$isikategori1 ."')";
+            }
+
+        }
+        if ($kategori2 != ""){
+            if (trim($dari2) == "" && trim($sampai2) == ""){
+                $where  .=  " AND (" .$array2[$kategori2] ." IS NULL OR " .$array2[$kategori2] ." = '')";
+            }
+            else {
+                if (trim($dari3) == ""){
+                    $dari3 = "0000-00-00";
+                }
+                if (trim($sampai3) == ""){
+                    $sampai3 = "9999-99-99";
+                }
+                $where  .=  " AND (" .$array2[$kategori2] ." BETWEEN '" .Date("Y-m-d", strtotime($dari2)) ."'
+                                            AND '" .Date("Y-m-d", strtotime($sampai3)) ."')";
+            }
+        }
+        if (trim($importir) != ""){
+            $where .= " AND i.IMPORTIR_ID = '" .$importir ."'";
+        }
+
+        $data = DB::table(DB::raw("tbl_header_invoice h"))
+                    ->selectRaw("h.ID, i.NAMA AS IMPORTIR, NO_INV_JUAL, NO_FAKTUR, PAYMENT, "
+                            ."kparty.URAIAN AS KODE_ID, party.NAMA AS PARTY,"
+                            ."IFNULL(DATE_FORMAT(TGL_JUAL, '%d-%m-%Y'),'') AS TGL_INV_JUAL, "
+                            ."IFNULL(DATE_FORMAT(TGL_FAKTUR, '%d-%m-%Y'), '') AS TGL_FAKTUR, "
+                            ."IFNULL(DATE_FORMAT(TGL_JATUH_TEMPO, '%d-%m-%Y'), '') AS TGL_JATUH_TEMPO, "
+                            ."IFNULL(DATE_FORMAT(TGL_LUNAS, '%d-%m-%Y'), '') AS TGL_LUNAS, "
+                            ."IFNULL(TOTAL_PPN, 0) AS TOTAL_PPN, IFNULL(TOTAL_INV, 0) AS TOTAL_INV"
+                      )
+                    ->leftJoin("party", "party.PARTY_ID", "=", "h.PEMBELI_ID")
+                    ->leftJoin(DB::raw("kode_party kparty"), "h.KODEPARTY_ID", "=", "kparty.KODEPARTY_ID")
+                    ->join(DB::raw("importir i"), "h.IMPORTIR", "=", "i.IMPORTIR_ID")
+                    ->leftJoinSub(
+                        DB::table("tbl_detail_invoice")
+                          ->selectRaw("ID_HEADER, SUM(JMLSATJUAL*HARGA*0.1) AS TOTAL_PPN,"
+                                      ."SUM(JMLSATJUAL*HARGA*1.1) AS TOTAL_INV")
+                          ->groupBy("ID_HEADER"),
+                        "total", function($join){
+                            $join->on("total.ID_HEADER","=","h.ID");
+                        }
+                      )
+                    ->orderBy("i.NAMA");
         if (trim($where) != ""){
             $data = $data->whereRaw($where);
         }

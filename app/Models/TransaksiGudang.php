@@ -382,7 +382,7 @@ class TransaksiGudang extends Model
                        $query->select(DB::raw(1))
                              ->from(DB::raw('tbl_penarikan_kontainer k'))
                              ->join(DB::raw("kontainer_masuk km"), "km.NO_KONTAINER","=","k.ID")
-                             ->whereRaw("km.TGL_MASUK IS NOT NULL")
+                             // update konversi stok (08/09/2021) ->whereRaw("km.TGL_MASUK IS NOT NULL")
                              ->whereColumn('h.ID', 'k.ID_HEADER');
                     });
         if (trim($where) != ""){
@@ -770,7 +770,7 @@ class TransaksiGudang extends Model
                        $query->select(DB::raw(1))
                              ->from(DB::raw('tbl_penarikan_kontainer k'))
                              ->join(DB::raw("kontainer_masuk km"), "km.NO_KONTAINER","=","k.ID")
-                             ->whereRaw("km.TGL_MASUK IS NOT NULL")
+                             // update konversi stok (08/09/2021) ->whereRaw("km.TGL_MASUK IS NOT NULL")
                              ->whereColumn('h.ID', 'k.ID_HEADER');
                     });
 
@@ -905,8 +905,8 @@ class TransaksiGudang extends Model
                     ->join(DB::raw("importir i"), "h.IMPORTIR", "=", "i.importir_id")
                     ->leftJoin(DB::raw("ref_jenis_kemasan jk"), "h.JENIS_KEMASAN","=","jk.JENISKEMASAN_ID")
                     ->leftJoin(DB::raw("tbl_header_bongkar b"), "h.ID", "=", "b.ID_HEADER")
-                    ->leftJoin(DB::raw("tbl_header_pengeluaran pu"), "h.ID", "=", "pu.ID_HEADER")
-                    ->whereRaw("TGL_BONGKAR IS NOT NULL");
+                    ->leftJoin(DB::raw("tbl_header_pengeluaran pu"), "h.ID", "=", "pu.ID_HEADER");
+                    // update perubahan policy konversi stok (08/09/2021) ->whereRaw("TGL_BONGKAR IS NOT NULL");
         if (trim($where) != ""){
             $data = $data->whereRaw($where);
         }
@@ -980,7 +980,9 @@ class TransaksiGudang extends Model
     }
     public static function konversiStok($customer, $importir, $kodebarang, $kategori2, $dari2, $sampai2, $kategori3, $dari3, $sampai3)
     {
-        $arrayKategori =  Array("Tanggal Bongkar" => "TGL_BONGKAR","Tanggal Konversi" => "ks.TGL_KONVERSI");
+        $arrayKategori =  Array("Tanggal Bongkar" => "TGL_BONGKAR",
+                                "Tanggal Konversi" => "ks.TGL_KONVERSI",
+                                "Tanggal Nopen" => "h.TGL_NOPEN");
 
         $where = "1 = 1";
         if ($kategori2 != ""){
@@ -1029,6 +1031,7 @@ class TransaksiGudang extends Model
                             ."ks.SATKONVERSI, db.HARGA*h.NDPBM AS RUPIAH, db.SATUAN_ID AS SATHARGA, TAX,"
                             ."(SELECT satuan FROM satuan WHERE id =  db.SATUAN_ID) AS NAMASATHARGA,"
                             ."(SELECT satuan FROM satuan WHERE id =  ks.SATKONVERSI) AS NAMASATKONVERSI,"
+                            ."DATE_FORMAT(h.TGL_NOPEN, '%d-%m-%Y') AS TGLNOPEN,"
                             ."DATE_FORMAT(bh.TGL_BONGKAR, '%d-%m-%Y') AS TGLBONGKAR,"
                             ."DATE_FORMAT(ks.TGL_KONVERSI, '%d-%m-%Y') AS TGLKONVERSI")
                     ->leftJoin(DB::raw("konversistok ks"),"bd.KODEBARANG","=","ks.KODEBARANG")

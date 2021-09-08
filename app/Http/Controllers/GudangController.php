@@ -19,7 +19,7 @@ class GudangController extends Controller {
 
 	public function rekamData(Request $request, $id = "")
 	{
-    $breadcrumb[] = Array("link" => "/", "text" => "Home");
+    	$breadcrumb[] = Array("link" => "/", "text" => "Home");
 		$breadcrumb[] = Array("text" => "Gudang");
 
 		$dtImportir = Transaksi::getImportir();
@@ -53,11 +53,11 @@ class GudangController extends Controller {
 		return view("gudang.transaksi", $data);
 	}
 	public function userbongkar(Request $request, $id = "")
-  {
+  	{
 		if(!auth()->user()->can('gudang.bongkar')){
 			abort(403, 'User does not have the right roles.');
 		}
-    $breadcrumb[] = Array("link" => "/", "text" => "Home");
+    	$breadcrumb[] = Array("link" => "/", "text" => "Home");
 		$breadcrumb[] = Array("link" => "/gudang/perekamanbongkar", "text" => "Browse Bongkar");
 		$breadcrumb[] = Array("text" => "Perekaman Bongkar");
 		$dtTransaksi = TransaksiGudang::getTransaksiBongkar($id);
@@ -84,7 +84,7 @@ class GudangController extends Controller {
 				['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']);
 	}
 	public function search()
-  {
+  	{
 		if(!auth()->user()->can('schedule.cari')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -97,7 +97,7 @@ class GudangController extends Controller {
 									"kodekantor" => $kantor, "customer" => $customer]);
 	}
 	public function searchproduk()
-  {
+  	{
 		if(!auth()->user()->can('cari_produk')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -106,7 +106,7 @@ class GudangController extends Controller {
 		return view("transaksi.searchbarang",["breads" => $breadcrumb]);
 	}
 	public function browse()
-  {
+  	{
 		if(!auth()->user()->can('schedule.browse')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -123,7 +123,7 @@ class GudangController extends Controller {
 															"Tanggal Nopen")]);
 	}
 	public function perekamanvo(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('vo.browse')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -272,7 +272,7 @@ class GudangController extends Controller {
 		}
 	}
 	public function perekamanbayar(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('pembayaran.browse')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -431,133 +431,7 @@ class GudangController extends Controller {
 										"datakategori2" => Array("Tanggal Jatuh Tempo")
 										]);
 		}
-	}
-	public function perekamando(Request $request)
-  {
-		if(!auth()->user()->can('dokumen.browse')){
-			abort(403, 'User does not have the right roles.');
-		}
-		$filter = $request->input("filter");
-		if ($filter && $filter == "1"){
-			$postKantor = $request->input("kantor");
-			$postCustomer = $request->input("customer");
-			$postImportir = $request->input("importir");
-			$postKategori1 = $request->input("kategori1");
-			$isikategori1 = $request->input("isikategori1");
-			$postKategori2 = $request->input("kategori2");
-			$dari2 = $request->input("dari2");
-			$sampai2 = $request->input("sampai2");
-			$postKategori3 = $request->input("kategori3");
-			$dari3 = $request->input("dari3");
-			$sampai3 = $request->input("sampai3");
-
-			$data = Transaksi::browseDo($postKantor, $postCustomer, $postImportir, $postKategori1,
-									$isikategori1, $postKategori2, $dari2, $sampai2, $postKategori3, $dari3, $sampai3);
-			if ($data){
-				$export = $request->input("export");
-				if ($export == "1"){
-					$spreadsheet = new Spreadsheet();
-					$sheet = $spreadsheet->getActiveSheet();
-					$sheet->setCellValue('A1', 'KANTOR');
-					if ($postKantor && trim($postKantor) != ""){
-    					$sheet->setCellValue('C1', Transaksi::getKantor($postKantor)->URAIAN);
-					}
-					else {
-					    $sheet->setCellValue('C1', "Semua");
-					}
-					$sheet->setCellValue('A2', 'CUSTOMER');
-					if ($postCustomer && trim($postCustomer) != ""){
-						$sheet->setCellValue('C2', Transaksi::getCustomer($postCustomer)->nama_customer);
-					}
-					else {
-						$sheet->setCellValue('C2', "Semua");
-					}
-					$sheet->setCellValue('A3', 'IMPORTIR');
-					if ($postImportir && trim($postImportir) != ""){
-						$sheet->setCellValue('C3', Transaksi::getImportir($postImportir)->NAMA);
-					}
-					else {
-						$sheet->setCellValue('C3', "Semua");
-					}
-					$lastrow = 3;
-					if ($postKategori1 && trim($postKategori1) != ""){
-						$lastrow += 1;
-						$sheet->setCellValue('A' .$lastrow, $postKategori1);
-						$sheet->setCellValue('C' .$lastrow, $isikategori1);
-					}
-					if ($postKategori2 && trim($postKategori2) != ""){
-						$lastrow += 1;
-						$sheet->setCellValue('A' .$lastrow, $postKategori2);
-						$sheet->setCellValue('C' .$lastrow, $dari2 == "" ? "-" : Date("d M Y", strtotime($dari2)));
-						$sheet->setCellValue('D' .$lastrow, "sampai");
-						$sheet->setCellValue('E' .$lastrow, $sampai2 == "" ? "-" : Date("d M Y", strtotime($sampai2)));
-					}
-					if ($postKategori3 && trim($postKategori3) != ""){
-						$lastrow += 1;
-						$sheet->setCellValue('A' .$lastrow, $postKategori3);
-						$sheet->setCellValue('C' .$lastrow, $dari3 == "" ? "-" : Date("d M Y", strtotime($dari3)));
-						$sheet->setCellValue('D' .$lastrow, "sampai");
-						$sheet->setCellValue('E' .$lastrow, $sampai3 == "" ? "-" : Date("d M Y", strtotime($sampai3)));
-					}
-
-					$lastrow += 2;
-					$sheet->setCellValue('A' .$lastrow, 'Importir');
-					$sheet->setCellValue('B' .$lastrow, 'Customer');
-					$sheet->setCellValue('C' .$lastrow, 'No Inv');
-					$sheet->setCellValue('D' .$lastrow, 'No PO');
-					$sheet->setCellValue('E' .$lastrow, 'No SC');
-					$sheet->setCellValue('F' .$lastrow, 'No BL');
-					$sheet->setCellValue('G' .$lastrow, 'Tgl BL');
-			    $sheet->setCellValue('H' .$lastrow, 'No Aju');
-			    $sheet->setCellValue('I' .$lastrow, 'Nopen');
-			    $sheet->setCellValue('J' .$lastrow, 'Tgl Nopen');
-					$sheet->setCellValue('K' .$lastrow, 'Tgl Tiba');
-					$sheet->setCellValue('L' .$lastrow, 'No. Form');
-					$sheet->setCellValue('M' .$lastrow, 'Tgl LS');
-					$sheet->setCellValue('N' .$lastrow, 'Tgl Dok Trm');
-
-					foreach ($data as $dt){
-						$lastrow += 1;
-						$sheet->setCellValue('A' .$lastrow, $dt->IMPORTIR);
-						$sheet->setCellValue('B' .$lastrow, $dt->CUSTOMER);
-						$sheet->setCellValue('C' .$lastrow, $dt->NO_INV);
-						$sheet->setCellValue('D' .$lastrow, $dt->NO_PO);
-						$sheet->setCellValue('E' .$lastrow, $dt->NO_SC);
-						$sheet->setCellValue('F' .$lastrow, $dt->NO_BL);
-						$sheet->setCellValue('G' .$lastrow, $dt->TGLBL);
-						$sheet->setCellValue('H' .$lastrow, $dt->NOAJU);
-						$sheet->setCellValue('I' .$lastrow, $dt->NOPEN);
-						$sheet->setCellValue('J' .$lastrow, $dt->TGLNOPEN);
-						$sheet->setCellValue('K' .$lastrow, $dt->TGLTIBA);
-						$sheet->setCellValue('L' .$lastrow, $dt->NO_FORM);
-						$sheet->setCellValue('M' .$lastrow, $dt->TGLLS);
-						$sheet->setCellValue('N' .$lastrow, $dt->TGLDOKTRM);
-					}
-					return $this->exportXls($spreadsheet, "browse_do");
-				}
-				else {
-					return response()->json($data);
-				}
-			}
-			else {
-
-				return response()->json([]);
-			}
-		}
-		else {
-			$breadcrumb[] = Array("link" => "../", "text" => "Home");
-			$breadcrumb[] = Array("text" => "Perekaman Dokumen");
-			$kantor = Transaksi::getKantor();
-			$customer = Transaksi::getCustomer();
-			$importir = Transaksi::getImportir();
-			return view("transaksi.perekamando",["breads" => $breadcrumb,
-										"datakantor" => $kantor, "datacustomer" => $customer,
-										"dataimportir" => $importir,
-										"datakategori1" => Array("No Inv","No BL","No VO", "Nopen","No Aju"),
-										"datakategori2" => Array("Tanggal BL","Tanggal Tiba", "Tanggal Nopen", "Tgl Dok Terima")
-										]);
-		}
-	}
+	}	
 	public function filter(Request $request)
 	{
 		$postKantor = $request->input("kantor");
@@ -735,7 +609,7 @@ class GudangController extends Controller {
 	}
 	*/
 	public function browsesptnp(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('sptnp.browse')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -1253,8 +1127,8 @@ class GudangController extends Controller {
 					$sheet->setCellValue('T' .$lastrow, "RUPIAH");
 					$sheet->setCellValue('U' .$lastrow, "TGL BAYAR");
 
-          $lastrow += 1;
-          $no = 0;
+					$lastrow += 1;
+					$no = 0;
 					foreach ($data as $dt){
 						$detail = Transaksi::getDetailBayar($dt->ID);
 						$no += 1;
@@ -1262,41 +1136,41 @@ class GudangController extends Controller {
                             $lastrow += 1;
 							foreach ($detail as $det){
 							    $sheet->setCellValue('A' .$lastrow, $no);
-                  $sheet->setCellValue('B' .$lastrow, $dt->KANTOR);
-      						$sheet->setCellValue('C' .$lastrow, $dt->IMPORTIR);
-                  $sheet->setCellValue('D' .$lastrow, $dt->CUSTOMER);
-                  $sheet->setCellValue('E' .$lastrow, $dt->SHIPPER);
-                  $sheet->setCellValue('F' .$lastrow, $dt->JENISDOKUMEN);
-                  $sheet->setCellValue('G' .$lastrow, $dt->NOPEN);
-                  $sheet->setCellValue('H' .$lastrow, $dt->TGLNOPEN);
-                  $sheet->setCellValue('I' .$lastrow, $dt->NO_INV);
-                  $sheet->setCellValue('J' .$lastrow, $dt->TGLINV);
+                  				$sheet->setCellValue('B' .$lastrow, $dt->KANTOR);
+      							$sheet->setCellValue('C' .$lastrow, $dt->IMPORTIR);
+								$sheet->setCellValue('D' .$lastrow, $dt->CUSTOMER);
+								$sheet->setCellValue('E' .$lastrow, $dt->SHIPPER);
+								$sheet->setCellValue('F' .$lastrow, $dt->JENISDOKUMEN);
+								$sheet->setCellValue('G' .$lastrow, $dt->NOPEN);
+								$sheet->setCellValue('H' .$lastrow, $dt->TGLNOPEN);
+								$sheet->setCellValue('I' .$lastrow, $dt->NO_INV);
+								$sheet->setCellValue('J' .$lastrow, $dt->TGLINV);
 	    						$sheet->setCellValue('K' .$lastrow, $dt->TGLJTHTEMPO);
 	    						$sheet->setCellValue('L' .$lastrow, $dt->MATAUANG);
 	    						$sheet->setCellValue('M' .$lastrow, $dt->CIF);
 	    						$sheet->setCellValue('N' .$lastrow, $dt->TOT_PAYMENT);
 	    						$sheet->setCellValue('O' .$lastrow, $dt->SALDO);
-									$sheet->setCellValue('P' .$lastrow, $det->NO_PPU);
-									$sheet->setCellValue('Q' .$lastrow, $det->MATAUANG);
-									$sheet->setCellValue('R' .$lastrow, $det->KURS);
-									$sheet->setCellValue('S' .$lastrow, $det->NOMINAL);
-									$sheet->setCellValue('T' .$lastrow, $det->RUPIAH);
-									$sheet->setCellValue('U' .$lastrow, $det->TGLBAYAR);
-									$lastrow += 1;
+								$sheet->setCellValue('P' .$lastrow, $det->NO_PPU);
+								$sheet->setCellValue('Q' .$lastrow, $det->MATAUANG);
+								$sheet->setCellValue('R' .$lastrow, $det->KURS);
+								$sheet->setCellValue('S' .$lastrow, $det->NOMINAL);
+								$sheet->setCellValue('T' .$lastrow, $det->RUPIAH);
+								$sheet->setCellValue('U' .$lastrow, $det->TGLBAYAR);
+								$lastrow += 1;
 							}
 							$lastrow += 1;
 						}
 						else {
 					    $sheet->setCellValue('A' .$lastrow, $no);
-              $sheet->setCellValue('B' .$lastrow, $dt->KANTOR);
+						$sheet->setCellValue('B' .$lastrow, $dt->KANTOR);
   						$sheet->setCellValue('C' .$lastrow, $dt->IMPORTIR);
-              $sheet->setCellValue('D' .$lastrow, $dt->CUSTOMER);
-              $sheet->setCellValue('E' .$lastrow, $dt->SHIPPER);
-              $sheet->setCellValue('F' .$lastrow, $dt->JENISDOKUMEN);
-              $sheet->setCellValue('G' .$lastrow, $dt->NOPEN);
-              $sheet->setCellValue('H' .$lastrow, $dt->TGLNOPEN);
-              $sheet->setCellValue('I' .$lastrow, $dt->NO_INV);
-              $sheet->setCellValue('J' .$lastrow, $dt->TGLINV);
+						$sheet->setCellValue('D' .$lastrow, $dt->CUSTOMER);
+						$sheet->setCellValue('E' .$lastrow, $dt->SHIPPER);
+						$sheet->setCellValue('F' .$lastrow, $dt->JENISDOKUMEN);
+						$sheet->setCellValue('G' .$lastrow, $dt->NOPEN);
+						$sheet->setCellValue('H' .$lastrow, $dt->TGLNOPEN);
+						$sheet->setCellValue('I' .$lastrow, $dt->NO_INV);
+						$sheet->setCellValue('J' .$lastrow, $dt->TGLINV);
   						$sheet->setCellValue('K' .$lastrow, $dt->TGLJTHTEMPO);
   						$sheet->setCellValue('L' .$lastrow, $dt->MATAUANG);
   						$sheet->setCellValue('M' .$lastrow, $dt->CIF);
@@ -1321,8 +1195,8 @@ class GudangController extends Controller {
 			$breadcrumb[] = Array("text" => "Kartu Hutang");
 			$kantor = Transaksi::getKantor();
 			$customer = Transaksi::getCustomer();
-      $importir = Transaksi::getImportir();
-      $shipper = Transaksi::getShipper();
+			$importir = Transaksi::getImportir();
+			$shipper = Transaksi::getShipper();
 
 			return view("transaksi.kartuhutang",["breads" => $breadcrumb,
                                         "datakantor" => $kantor, "datacustomer" => $customer,
@@ -1334,7 +1208,7 @@ class GudangController extends Controller {
 		}
 	}
 	public function userbarang(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('barang.transaksi')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -1371,7 +1245,7 @@ class GudangController extends Controller {
 		return view("transaksi.transaksibarang", $data);
 	}
 	public function userbarangkonversi(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('konversi.transaksi')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -1406,7 +1280,7 @@ class GudangController extends Controller {
 		return view("transaksi.transaksibarangkonversi", $data);
 	}
 	public function userkonversi(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('konversi.transaksi')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -1429,7 +1303,7 @@ class GudangController extends Controller {
 		return view("transaksi.transaksikonversi", $data);
 	}
 	public function perekamanbarang(Request $request)
-  {
+  	{
 		if(!auth()->user()->can('barang.browse')){
 			abort(403, 'User does not have the right roles.');
 		}
@@ -1508,24 +1382,24 @@ class GudangController extends Controller {
 					$sheet->setCellValue('T' .$lastrow, 'Tgl Form');
 					$sheet->setCellValue('U' .$lastrow, 'No LS');
 					$sheet->setCellValue('V' .$lastrow, 'Tgl LS');
-          $sheet->setCellValue('W' .$lastrow, 'Jns Dokumen');
-          $sheet->setCellValue('X' .$lastrow, 'Valuta');
-          $sheet->setCellValue('Y' .$lastrow, 'NDPBM');
-          $sheet->setCellValue('Z' .$lastrow, 'Nilai');
-          $sheet->setCellValue('AA' .$lastrow, 'BM');
-          $sheet->setCellValue('AB' .$lastrow, 'BMT');
-          $sheet->setCellValue('AC' .$lastrow, 'PPn');
-          $sheet->setCellValue('AD' .$lastrow, 'PPh');
-          $sheet->setCellValue('AE' .$lastrow, 'Total');
-          $sheet->setCellValue('AF' .$lastrow, 'PPh Bebas');
-          $sheet->setCellValue('AG' .$lastrow, 'Kode Barang');
+					$sheet->setCellValue('W' .$lastrow, 'Jns Dokumen');
+					$sheet->setCellValue('X' .$lastrow, 'Valuta');
+					$sheet->setCellValue('Y' .$lastrow, 'NDPBM');
+					$sheet->setCellValue('Z' .$lastrow, 'Nilai');
+					$sheet->setCellValue('AA' .$lastrow, 'BM');
+					$sheet->setCellValue('AB' .$lastrow, 'BMT');
+					$sheet->setCellValue('AC' .$lastrow, 'PPn');
+					$sheet->setCellValue('AD' .$lastrow, 'PPh');
+					$sheet->setCellValue('AE' .$lastrow, 'Total');
+					$sheet->setCellValue('AF' .$lastrow, 'PPh Bebas');
+					$sheet->setCellValue('AG' .$lastrow, 'Kode Barang');
 					$sheet->setCellValue('AH' .$lastrow, 'Uraian');
-			    $sheet->setCellValue('AI' .$lastrow, 'Jml Kemasan');
-			    $sheet->setCellValue('AK' .$lastrow, 'Jml Sat Harga');
-			    $sheet->setCellValue('AM' .$lastrow, 'CIF');
-			    $sheet->setCellValue('AN' .$lastrow, 'Harga');
-			    $sheet->setCellValue('AO' .$lastrow, 'No. SPTNP');
-			    $sheet->setCellValue('AP' .$lastrow, 'Tgl SPTNP');
+					$sheet->setCellValue('AI' .$lastrow, 'Jml Kemasan');
+					$sheet->setCellValue('AK' .$lastrow, 'Jml Sat Harga');
+					$sheet->setCellValue('AM' .$lastrow, 'CIF');
+					$sheet->setCellValue('AN' .$lastrow, 'Harga');
+					$sheet->setCellValue('AO' .$lastrow, 'No. SPTNP');
+					$sheet->setCellValue('AP' .$lastrow, 'Tgl SPTNP');
 
 					$rowIndex = 0;
 					$rowId = 0;
@@ -1553,25 +1427,25 @@ class GudangController extends Controller {
 						$sheet->setCellValue('O' .$lastrow, $dt->TGLKELUAR);
 						$sheet->setCellValue('P' .$lastrow, $dt->TGLTERIMA);
 						$sheet->setCellValue('Q' .$lastrow, $dt->JALURDOK);
-  					$sheet->setCellValue('R' .$lastrow, $dt->PENGIRIM);
-  					$sheet->setCellValue('S' .$lastrow, $dt->NO_FORM);
-  					$sheet->setCellValue('T' .$lastrow, $dt->TGLFORM);
-  					$sheet->setCellValue('U' .$lastrow, $dt->NO_LS);
-  					$sheet->setCellValue('V' .$lastrow, $dt->TGLLS);
-            $sheet->setCellValue('W' .$lastrow, $dt->JENISDOKUMEN);
-            $sheet->setCellValue('X' .$lastrow, $dt->MATAUANG);
-            $sheet->setCellValue('Y' .$lastrow, $dt->NDPBM);
-            $sheet->setCellValue('Z' .$lastrow, $dt->NILAI);
-            $sheet->getStyle('Z' .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
-            $sheet->setCellValue('AA' .$lastrow, $dt->BM);
-            $sheet->getStyle('AA' .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
-            $sheet->setCellValue('AB' .$lastrow, $dt->BMT);
-            $sheet->getStyle('AB' .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
-            $sheet->setCellValue('AC' .$lastrow, $dt->PPN);
-            $sheet->getStyle('AC' .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
-            $sheet->setCellValue('AD' .$lastrow, $dt->PPH);
-            $sheet->getStyle('AD' .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
-            $sheet->setCellValue('AE' .$lastrow, $dt->TOTAL);
+						$sheet->setCellValue('R' .$lastrow, $dt->PENGIRIM);
+						$sheet->setCellValue('S' .$lastrow, $dt->NO_FORM);
+						$sheet->setCellValue('T' .$lastrow, $dt->TGLFORM);
+						$sheet->setCellValue('U' .$lastrow, $dt->NO_LS);
+						$sheet->setCellValue('V' .$lastrow, $dt->TGLLS);
+						$sheet->setCellValue('W' .$lastrow, $dt->JENISDOKUMEN);
+						$sheet->setCellValue('X' .$lastrow, $dt->MATAUANG);
+						$sheet->setCellValue('Y' .$lastrow, $dt->NDPBM);
+						$sheet->setCellValue('Z' .$lastrow, $dt->NILAI);
+						$sheet->getStyle('Z' .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
+						$sheet->setCellValue('AA' .$lastrow, $dt->BM);
+						$sheet->getStyle('AA' .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
+						$sheet->setCellValue('AB' .$lastrow, $dt->BMT);
+						$sheet->getStyle('AB' .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
+						$sheet->setCellValue('AC' .$lastrow, $dt->PPN);
+						$sheet->getStyle('AC' .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
+						$sheet->setCellValue('AD' .$lastrow, $dt->PPH);
+						$sheet->getStyle('AD' .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
+						$sheet->setCellValue('AE' .$lastrow, $dt->TOTAL);
 						$sheet->getStyle('AE' .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
 						$sheet->setCellValue('AF' .$lastrow, $dt->PPH_BEBAS);
 						$sheet->getStyle('AF' .$lastrow)->getNumberFormat()->setFormatCode('#,##0');
@@ -2805,9 +2679,10 @@ class GudangController extends Controller {
 					$sheet->setCellValue('E' .$lastrow, 'Rupiah');
 					$sheet->setCellValue('F' .$lastrow, 'Tax');
 					$sheet->setCellValue('G' .$lastrow, 'HPP');
-					$sheet->setCellValue('H' .$lastrow, 'Tgl Bongkar');
-					$sheet->setCellValue('I' .$lastrow, 'Tgl Konversi');
-					$sheet->setCellValue('J' .$lastrow, 'Customer');
+					$sheet->setCellValue('H' .$lastrow, 'Tgl Nopen');
+					$sheet->setCellValue('I' .$lastrow, 'Tgl Bongkar');
+					$sheet->setCellValue('J' .$lastrow, 'Tgl Konversi');
+					$sheet->setCellValue('K' .$lastrow, 'Customer');
 
 					foreach ($data as $dt){
 						$lastrow += 1;
@@ -2818,9 +2693,10 @@ class GudangController extends Controller {
 						$sheet->setCellValue('E' .$lastrow, $dt->RUPIAH);
 						$sheet->setCellValue('F' .$lastrow, $dt->TAX);
 						$sheet->setCellValue('G' .$lastrow, $dt->RUPIAH*(1+$dt->TAX/100));
-						$sheet->setCellValue('H' .$lastrow, $dt->TGLBONGKAR);
-						$sheet->setCellValue('I' .$lastrow, $dt->TGLKONVERSI);
-						$sheet->setCellValue('J' .$lastrow, $dt->NAMACUSTOMER);
+						$sheet->setCellValue('H' .$lastrow, $dt->TGLNOPEN);
+						$sheet->setCellValue('I' .$lastrow, $dt->TGLBONGKAR);
+						$sheet->setCellValue('J' .$lastrow, $dt->TGLKONVERSI);
+						$sheet->setCellValue('K' .$lastrow, $dt->NAMACUSTOMER);
 					}
 					return $this->exportXls($spreadsheet, "konversistok");
 				}
@@ -2843,7 +2719,7 @@ class GudangController extends Controller {
 			return view("gudang.konversistok",["breads" => $breadcrumb,
 										"datacustomer" => $customer, "datasatuan" => $dtSatuan,
 										"dataimportir" => $importir, "dataproduk" => $dtProduk,
-										"datakategori" => Array("Tanggal Bongkar","Tanggal Konversi")
+										"datakategori" => Array("Tanggal Nopen","Tanggal Bongkar","Tanggal Konversi")
 										]);
 		}
 	}	

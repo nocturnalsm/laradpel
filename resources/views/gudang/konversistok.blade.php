@@ -196,6 +196,7 @@
                         <th>Rupiah</th>
                         <th>Tax</th>
                         <th>HPP</th>
+                        <th>Tgl Nopen</th>
                         <th>Tgl Bongkar</th>
                         <th>Tgl Konversi</th>
                         <th>Customer</th>
@@ -231,9 +232,9 @@
         var columns = [{target: 0, data: null}, {target: 1, data: "KODEBARANG"}, {target: 2, data: "KODEPRODUK"},
                       {target: 3, data: "JMLSATKONVERSI"}, {target: 4, data: "NAMASATKONVERSI"},
                       {target: 5, data: "RUPIAH"}, {target: 6, data: "TAX"},
-                      {target: 7, data: null},
-                      {target: 8, data: "TGLBONGKAR"}, {target: 9, data: "TGLKONVERSI"},
-                      {target: 10, data: "NAMACUSTOMER"}
+                      {target: 7, data: null}, {target: 8, data: "TGLNOPEN"},
+                      {target: 9, data: "TGLBONGKAR"}, {target: 10, data: "TGLKONVERSI"},
+                      {target: 11, data: "NAMACUSTOMER"}
         ];
         $(".number").inputmask("decimal", {
             radixPoint: ".",

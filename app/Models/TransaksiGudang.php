@@ -1032,13 +1032,14 @@ class TransaksiGudang extends Model
                             ."(SELECT satuan FROM satuan WHERE id =  db.SATUAN_ID) AS NAMASATHARGA,"
                             ."(SELECT satuan FROM satuan WHERE id =  ks.SATKONVERSI) AS NAMASATKONVERSI,"
                             ."DATE_FORMAT(h.TGL_NOPEN, '%d-%m-%Y') AS TGLNOPEN,"
+                            ."DATE_FORMAT(h.TGL_SPPB, '%d-%m-%Y') AS TGLSPPB,"
                             ."DATE_FORMAT(bh.TGL_BONGKAR, '%d-%m-%Y') AS TGLBONGKAR,"
                             ."DATE_FORMAT(ks.TGL_KONVERSI, '%d-%m-%Y') AS TGLKONVERSI")
                     ->join(DB::raw("tbl_detail_barang db"), "h.ID","=","db.ID_HEADER")
                     ->leftJoin(DB::raw("konversistok ks"),"db.ID","=","ks.KODEBARANG")
                     ->leftJoin(DB::raw("tbl_detail_bongkar bd"), "db.ID","=","bd.KODEBARANG")
-                    ->leftJoin(DB::raw("tbl_header_bongkar bh"),"bh.ID","=","bd.ID_HEADER")                     
-                    ->leftJoin(DB::raw("produk pr"),"pr.id","=","ks.PRODUK_ID")                                                           
+                    ->leftJoin(DB::raw("tbl_header_bongkar bh"),"bh.ID","=","bd.ID_HEADER")
+                    ->leftJoin(DB::raw("produk pr"),"pr.id","=","ks.PRODUK_ID")
                     ->leftJoin(DB::raw("importir i"), "h.IMPORTIR", "=", "i.importir_id")
                     ->leftJoin(DB::raw("plbbandu_app15.tb_customer c"), "h.CUSTOMER", "=", "c.id_customer");
         if (trim($where) != ""){

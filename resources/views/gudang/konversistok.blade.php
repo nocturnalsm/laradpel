@@ -76,6 +76,12 @@
                         </div>
                     </div>
                     <div class="form-row mb-1">
+                      <label class="col-md-3 col-form-label">Tanggal SPPB</label>
+                      <div class="col-md-4 mt-2">
+                          <span id="edittglsppb"></span>
+                      </div>
+                    </div>
+                    <div class="form-row mb-1">
                       <label class="col-md-3 col-form-label">Tanggal Bongkar</label>
                       <div class="col-md-4 mt-2">
                           <span id="edittglbongkar"></span>
@@ -313,6 +319,7 @@
             }
             $("#editkodebarang").html(row[0].KODEBARANG);
             $("#edittglbongkar").html(row[0].TGLBONGKAR);
+            $("#edittglsppb").html(row[0].TGLSPPB);
             $("#editsatuan").html(row[0].NAMASATHARGA);
             $("#editjmlsatharga").html(parseFloat(row[0].JMLSATHARGA).formatMoney(2,"",",","."));
             $("#editrupiah").html(parseFloat(row[0].RUPIAH).formatMoney(2,"",",","."));

@@ -165,12 +165,12 @@
                                         <select {{ $readonly == 'readonly' ? 'disabled' : '' }} class="form-control form-control-sm" id="party" name="party" value="{{ $header->PEMBELI_ID }}">
                                         </select>
                                     </div>
-                                    <label class="col-md-2 col-form-label col-form-label-sm ">No ID</label>
-                                    <div class="col-md-3 mt-2">
+                                    <label class="col-md-1 col-form-label col-form-label-sm ">No ID</label>
+                                    <div class="col-md-2 col-form-label-sm">
                                         <span id="no_identitas"></span>
                                     </div>
                                 </div>
-                                <div class="form-row px-2">
+                                <div class="form-row px-2 mt-2">
                                     <label class="col-md-2 col-form-label col-form-label-sm ">Total PPN</label>
                                     <div class="col-md-2">
                                         <input readonly type="text" name="totalppn" id="totalppn" class="form-control form-control-sm number" value="{{ $header->TOTAL_PPN }}">

@@ -4,7 +4,7 @@
     .error {display:none;font-size: 0.75rem;color: red};
 </style>
 <div class="modal fade" id="modaldetail" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header text-center">
                 <h4 class="modal-title w-100 font-weight-bold"></h4>
@@ -18,69 +18,89 @@
                     <input {{ $readonly }} type="hidden" name="idxdetail" id="idxdetail">
                     <input {{ $readonly }} type="hidden" name="iddetail" id="iddetail">
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-form-label-sm col-md-4" for="nobl">No BL</label>
-                        <div class="col-md-8">
+                        <label class="col-form-label col-form-label-sm col-md-3" for="jenisdok">Jenis Dokumen</label>
+                        <div class="col-md-2">
+                            <select class="form-control form-control-sm" name="jenisdok" id="jenisdok">
+                                <option value="NO_BL">No BL</option>                                
+                                <option value="NO_INV">No Inv</option>
+                                <option value="NO_VO">No VO</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row mb-1">
+                        <label class="col-form-label col-form-label-sm col-md-3" for="nobl">Cari Nomor</label>
+                        <div class="col-md-3">
                             <input {{ $readonly }} type="text" id="nobl" name="nobl" class="form-control form-control-sm validate">
                             <input {{ $readonly }} type="hidden" id="nobl_id" name="nobl_id">
                         </div>
                     </div>
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-form-label-sm col-md-4">No Aju</label>
-                        <div class="col-md-8">
-                            <span id="formnoaju" class="form-control-sm"></span>
+                        <label class="col-form-label col-form-label-sm col-md-3">No Aju</label>
+                        <div class="col-md-3">
+                            <input type="text" readonly id="formnoaju" class="form-control form-control-sm">
                         </div>
                     </div>
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-form-label-sm col-md-4">Nopen</label>
-                        <div class="col-md-8">
-                            <span id="formnopen" class="form-control-sm"></span>
+                        <label class="col-form-label col-form-label-sm col-md-3">Nopen</label>
+                        <div class="col-md-3">
+                            <input type="text" readonly id="formnopen" class="form-control form-control-sm">
+                        </div>
+                        <label class="col-form-label col-form-label-sm col-md-3 text-right">Tgl Nopen</label>
+                        <div class="col-md-3">
+                            <input type="text" readonly id="formtglnopen" class="form-control form-control-sm">
                         </div>
                     </div>
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-form-label-sm col-md-4">Tgl Nopen</label>
-                        <div class="col-md-8">
-                            <span id="formtglnopen" class="form-control-sm"></span>
+                        <label class="col-form-label col-form-label-sm col-md-3">Customer</label>
+                        <div class="col-md-4">
+                            <input type="text" readonly id="formcustomer" class="form-control form-control-sm">
+                        </div>
+                        <label class="col-form-label col-form-label-sm col-md-2 text-right">Jumlah Kemasan</label>
+                        <div class="col-md-3">
+                            <input type="text" readonly id="formparty" class="form-control form-control-sm">
                         </div>
                     </div>
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-form-label-sm col-md-4" for="noinvbiaya">No Inv Biaya</label>
-                        <div class="col-md-8">
+                        <label class="col-form-label col-form-label-sm col-md-3" for="noinvbiaya">No Inv Biaya</label>
+                        <div class="col-md-3">
                             <input {{ $readonly }} type="text" id="noinvbiaya" name="noinvbiaya" class="form-control form-control-sm validate">
                         </div>
                     </div>
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-form-label-sm col-md-4" for="tglinvbiaya">Tgl Inv Biaya</label>
-                        <div class="col-md-8">
+                        <label class="col-form-label col-form-label-sm col-md-3" for="tglinvbiaya">Tgl Inv Biaya</label>
+                        <div class="col-md-3">
                             <input type="text" id="tglinvbiaya" name="tglinvbiaya" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm validate">
                         </div>
                     </div>
+                    <!--
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-form-label-sm col-md-4" for="nofakturbiaya">No Faktur Biaya</label>
-                        <div class="col-md-8">
+                        <label class="col-form-label col-form-label-sm col-md-3" for="nofakturbiaya">No Faktur Biaya</label>
+                        <div class="col-md-4">
                             <input {{ $readonly }} type="text" id="nofakturbiaya" name="nofakturbiaya" class="form-control form-control-sm validate">
                         </div>
                     </div>
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-form-label-sm col-md-4" for="tglinvbiaya">Tgl Faktur Biaya</label>
-                        <div class="col-md-8">
+                        <label class="col-form-label col-form-label-sm col-md-3" for="tglinvbiaya">Tgl Faktur Biaya</label>
+                        <div class="col-md-4">
                             <input type="text" id="tglfakturbiaya" name="tglfakturbiaya" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm validate">
                         </div>
                     </div>
+                    -->
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-form-label-sm col-md-4" for="dpp">DPP</label>
-                        <div class="col-md-8">
+                        <label class="col-form-label col-form-label-sm col-md-3" for="dpp">DPP</label>
+                        <div class="col-md-3">
                             <input {{ $readonly }} type="text" id="dpp" name="dpp" class="number form-control form-control-sm validate">
                         </div>
                     </div>
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-form-label-sm col-md-4" for="ppn">PPN</label>
-                        <div class="col-md-8">
+                        <label class="col-form-label col-form-label-sm col-md-3" for="ppn">PPN</label>
+                        <div class="col-md-3">
                             <input {{ $readonly }} type="text" id="ppn" name="ppn" class="number form-control form-control-sm validate">
                         </div>
                     </div>
                     <div class="form-row mb-1">
-                        <label class="col-form-label col-form-label-sm col-md-4" for="total">Subtotal</label>
-                        <div class="col-md-8">
+                        <label class="col-form-label col-form-label-sm col-md-3" for="total">Subtotal</label>
+                        <div class="col-md-3">
                             <input type="text" readonly id="total" name="total" class="number form-control form-control-sm validate">
                         </div>
                     </div>
@@ -121,13 +141,11 @@
                             <div class="card-body p-3">
                                 <div class="form-row px-2 pb-0">
                                     <label class="col-md-2 col-form-label form-control-sm">Tgl Rekam</label>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <input autocomplete="off" type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tglrekam" value="{{ $header->TGL_REKAM }}" id="tglrekam">
                                     </div>
-                                </div>
-                                <div class="form-row px-2 pb-0 pt-2">
                                     <label class="col-md-2 col-form-label form-control-sm">Tgl Aju Biaya</label>
-                                    <div class="col-sm-4">
+                                    <div class="col-sm-3">
                                         <input autocomplete="off" type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tglajubiaya" value="{{ $header->TGL_AJU_BY }}" id="tglajubiaya">
                                     </div>
                                 </div>
@@ -147,8 +165,6 @@
                                     <div class="col-md-3">
                                         <input autocomplete="off" type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tglvrfbiaya" value="{{ $header->TGL_VRF_BY }}" id="tglvrfbiaya">
                                     </div>
-                                </div>
-                                <div class="form-row px-2 pb-0 pt-2">
                                     <label class="col-md-2 col-form-label form-control-sm">Tgl Byr Biaya</label>
                                     <div class="col-md-3">
                                         <input type="text" class="datepicker{{ $readonly == 'readonly' ? '-readonly' : '' }} form-control form-control-sm" name="tglbyrbiaya" id="tglbyrbiaya" value="{{ $header->TGL_BYR_BY }}">
@@ -186,7 +202,7 @@
                                         <table width="100%" id="griddetail" class="table">
                                             <thead>
                                                 <tr>
-                                                    <th>No BL</th>
+                                                    <th>Nomor</th>
                                                     <th>No Aju</th>
                                                     <th>Nopen<br>Tgl Nopen</th>
                                                     <th>No Inv By<br>Tgl Inv By</th>
@@ -255,12 +271,12 @@
                 $(row).attr("id-transaksi", data.ID);
                 $('td:eq(2)', row).html(data.NOPEN + '<BR>' + data.TGLNOPEN);
                 $('td:eq(3)', row).html(data.NO_INV_BY + '<BR>' + data.TGL_INV_BY);
-                $('td:eq(4)', row).html(data.NO_FAKTUR_BY + '<BR>' + data.TGL_FAKTUR_BY);
-                $('td:eq(5)', row).html(parseFloat(data.DPP).formatMoney(2,"",",","."));
-                $('td:eq(6)', row).html(parseFloat(data.PPN).formatMoney(2,"",",","."));
-                $('td:eq(7)', row).html((parseFloat(data.DPP) + parseFloat(data.PPN)).formatMoney(0,"",",","."));
+                //$('td:eq(4)', row).html(data.NO_FAKTUR_BY + '<BR>' + data.TGL_FAKTUR_BY);
+                $('td:eq(4)', row).html(parseFloat(data.DPP).formatMoney(2,"",",","."));
+                $('td:eq(5)', row).html(parseFloat(data.PPN).formatMoney(2,"",",","."));
+                $('td:eq(6)', row).html((parseFloat(data.DPP) + parseFloat(data.PPN)).formatMoney(0,"",",","."));
                 @can('ajubiaya.transaksi')
-                $('td:eq(9)', row).html('<a href="#modaldetail" class="edit" data-toggle="modal" id="' + data.ID +
+                $('td:eq(8)', row).html('<a href="#modaldetail" class="edit" data-toggle="modal" id="' + data.ID +
                                         '"><i class="fa fa-edit"></i></a>' +
                                         '&nbsp;&nbsp;<a class="del" id="' + data.ID + '"><i class="fa fa-trash"></i></a>'
                                         );
@@ -283,7 +299,8 @@
                 data: "NO_INV_BY"
             },
             { target: 4,
-                data: "NO_FAKTUR_BY"
+                data: "NO_FAKTUR_BY",
+                visible: false
             },
             { target: 5,
                 data: "DPP"
@@ -305,24 +322,29 @@
             ],
         })
         @can('ajubiaya.transaksi')
-        $("body").on("change","#nobl", function(){
-            var nobl = $(this).val().trim();
+        $("body").on("change","#nobl, #jenisdok", function(){
+            var nobl = $("#nobl").val().trim();
+            var jenisdok = $("#jenisdok option:selected").val();
             $.ajax({
                 method: "GET",
-                url: "/transaksi/searchbl",
-                data: {kode: nobl},
+                url: "/transaksi/searchdokaju",
+                data: {kode: nobl, jenisdokumen: jenisdok},
                 success: function(response){
                     if (typeof response.error == 'undefined'){
-                        $("#formnopen").html(response.NOPEN);
-                        $("#formnoaju").html(response.NOAJU);
-                        $("#formtglnopen").html(response.TGLNOPEN);
+                        $("#formnopen").val(response.NOPEN);
+                        $("#formnoaju").val(response.NOAJU);
+                        $("#formtglnopen").val(response.TGLNOPEN);
+                        $("#formcustomer").val(response.NAMACUSTOMER);
+                        $("#formparty").val(response.PARTY);
                         $("#nobl_id").val(response.ID);
                     }
                     else {
                         $("#modal .modal-body").html(response.error);
-                        $("#formnopen").html("");
-                        $("#formnoaju").html("");
-                        $("#formtglnopen").html("");
+                        $("#formnopen").val("");
+                        $("#formnoaju").val("");
+                        $("#formtglnopen").val("");
+                        $("#formcustomer").val("");
+                        $("#formparty").val("");
                         $("#nobl_id").val("");
                         $("#modal").modal("show");
                         setTimeout(function(){
@@ -333,7 +355,7 @@
             })
         })
         $('#modaldetail').on('shown.bs.modal', function () {
-            $('#nobl').focus();
+            $('#jenisdok').focus();
         })
         $("#dpp,#ppn").on("change", function(){
             var dpp = parseFloat($("#dpp").inputmask("unmaskedvalue"));
@@ -342,34 +364,42 @@
             $("#total").val(total);
         })
         $("#savedetail").on("click", function(){
+            var jenisdok = $("#jenisdok").val();
             var nobl = $("#nobl").val();
             var nobl_id = $("#nobl_id").val();
-            var nopen = $("#formnopen").html();
-            var noaju = $("#formnoaju").html();
-            var tglnopen = $("#formtglnopen").html();
+            var nopen = $("#formnopen").val();
+            var noaju = $("#formnoaju").val();
+            var tglnopen = $("#formtglnopen").val();
+            var customer = $("#formcustomer").val();
+            var party = $("#formparty").val();
             var noinvbiaya = $("#noinvbiaya").val();
-            var nofakturbiaya = $("#nofakturbiaya").val();
             var tglinvbiaya = $("#tglinvbiaya").val();
-            var tglfakturbiaya = $("#tglfakturbiaya").val();
+            //var nofakturbiaya = $("#nofakturbiaya").val();            
+            //var tglfakturbiaya = $("#tglfakturbiaya").val();
+            var nofakturbiaya = '';            
+            var tglfakturbiaya = '';
             var dpp = $("#dpp").inputmask('unmaskedvalue');
             var ppn = $("#ppn").inputmask('unmaskedvalue');
             var act = $("#form").attr("act");
 
             if (act == "add"){
-                tabel.row.add({NO_BL: nobl_id, NOBL: nobl, NOPEN: nopen,
+                tabel.row.add({JENIS_DOKUMEN: jenisdok, NO_BL: nobl_id, NOBL: nobl, NOPEN: nopen, 
+                               NAMACUSTOMER: customer, PARTY: party,
                                DPP: dpp, PPN: ppn, NOAJU: noaju, TGLNOPEN: tglnopen,
                                TGL_INV_BY: tglinvbiaya, TGL_FAKTUR_BY: tglfakturbiaya,
                                NO_FAKTUR_BY: nofakturbiaya, NO_INV_BY: noinvbiaya
                             }).draw();
-                $("#formnopen").html("");
-                $("#formnoaju").html("");
-                $("#formtglnopen").html("")
+                $("#formnopen").val("");
+                $("#formnoaju").val("");
+                $("#formtglnopen").val("")
+                $("#formcustomer").val("");
+                $("#formparty").val("");
                 $("#nobl").val("");
                 $("#nobl_id").val("");
                 $("#noinvbiaya").val("");
                 $("#tglinvbiaya").val("");
-                $("#nofakturbiaya").val("");
-                $("#tglfakturbiaya").val("");
+                //$("#nofakturbiaya").val("");
+                //$("#tglfakturbiaya").val("");
                 $("#dpp").val("");
                 $("#ppn").val("");
                 $("#total").val("");
@@ -378,7 +408,8 @@
             else if (act == "edit"){
                 var id = $("#iddetail").val();
                 var idx = $("#idxdetail").val();
-                tabel.row(idx).data({ID: id, NO_BL: nobl_id, NOBL: nobl, NOPEN: nopen,
+                tabel.row(idx).data({JENIS_DOKUMEN: jenisdok, ID: id, NO_BL: nobl_id, NOBL: nobl, NOPEN: nopen,
+                                    NAMACUSTOMER: customer, PARTY: party,
                                     DPP: dpp, PPN: ppn, NOAJU: noaju, TGLNOPEN: tglnopen,
                                     TGL_INV_BY: tglinvbiaya, TGL_FAKTUR_BY: tglfakturbiaya,
                                     NO_FAKTUR_BY: nofakturbiaya, NO_INV_BY: noinvbiaya}).draw();
@@ -393,15 +424,18 @@
         });
 
         $("#adddetail").on("click", function(){
-            $("#formnopen").html("");
-            $("#formnoaju").html("");
-            $("#formtglnopen").html("")
+            $("#formnopen").val("");
+            $("#jenisdok").val("NO_BL");            
+            $("#formnoaju").val("");
+            $("#formtglnopen").val("")
+            $("#formcustomer").val("");
+            $("#formparty").val("");
             $("#nobl").val("");
             $("#nobl_id").val("");
             $("#noinvbiaya").val("");
             $("#tglinvbiaya").val("");
-            $("#nofakturbiaya").val("");
-            $("#tglfakturbiaya").val("");
+            //$("#nofakturbiaya").val("");
+            //$("#tglfakturbiaya").val("");
             $("#dpp").val("");
             $("#ppn").val("");
             $("#total").val("");
@@ -413,15 +447,18 @@
             var row = $(this).closest("tr");
             var index = tabel.row(row).index();
             var row = tabel.rows(index).data();
-            $("#formnopen").html(row[0].NOPEN);
-            $("#formtglnopen").html(row[0].TGLNOPEN);
-            $("#formnoaju").html(row[0].NOAJU);
+            $("#jenisdok").val(row[0].JENIS_DOKUMEN);
+            $("#formnopen").val(row[0].NOPEN);
+            $("#formtglnopen").val(row[0].TGLNOPEN);
+            $("#formnoaju").val(row[0].NOAJU);
+            $("#formcustomer").val(row[0].NAMACUSTOMER);
+            $("#formparty").val(row[0].PARTY);
             $("#nobl").val(row[0].NOBL);
             $("#nobl_id").val(row[0].NO_BL);
             $("#noinvbiaya").val(row[0].NO_INV_BY);
-            $("#nofakturbiaya").val(row[0].NO_FAKTUR_BY);
+            //$("#nofakturbiaya").val(row[0].NO_FAKTUR_BY);
             $("#tglinvbiaya").val(row[0].TGL_INV_BY);
-            $("#tglfakturbiaya").val(row[0].TGL_FAKTUR_BY);
+            //$("#tglfakturbiaya").val(row[0].TGL_FAKTUR_BY);
             $("#dpp").val(row[0].DPP);
             $("#ppn").val(row[0].PPN);
             $("#total").val(row[0].DPP + row[0].PPN);

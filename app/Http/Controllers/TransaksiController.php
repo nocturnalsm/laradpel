@@ -1427,6 +1427,19 @@ class TransaksiController extends Controller {
 		}
 		return response()->json($response);
 	}
+	public function searchdokaju(Request $request)
+	{
+		$kode = $request->input("kode");
+		$jenisdokumen = $request->input("jenisdokumen");
+		$data = Transaksi::getDokAjuBiaya(trim($kode), trim($jenisdokumen));
+		if (!$data){
+			$response["error"] = "Data tidak ada";
+		}
+		else {
+			$response = $data;
+		}
+		return response()->json($response);
+	}
 	public function searchproduk(Request $request)
 	{
 		$inv = $request->input("kode");

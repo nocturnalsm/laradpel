@@ -984,7 +984,7 @@ class TransaksiGudang extends Model
                                 "Tanggal Konversi" => "ks.TGL_KONVERSI",
                                 "Tanggal Nopen" => "h.TGL_NOPEN");
 
-        $where = "1 = 1";
+        $where = "h.TGL_SPPB IS NOT NULL";
         if ($kategori2 != ""){
             if (trim($dari2) == "" && trim($sampai2) == ""){
                 $where  .=  " AND (" .$arrayKategori[$kategori2] ." IS NULL OR " .$arrayKategori[$kategori2] ." = '')";
@@ -1025,7 +1025,7 @@ class TransaksiGudang extends Model
             $where .= " AND db.KODEBARANG LIKE '%" .$kodebarang ."%'";
         }
 
-        $data = DB::table(DB::raw("tbl_detail_bongkar bd"))
+        $data = DB::table(DB::raw("tbl_penarikan_header h"))
                     ->selectRaw("db.ID, db.KODEBARANG, pr.KODE AS KODEPRODUK, ks.PRODUK_ID,"
                             ."c.nama_customer AS NAMACUSTOMER, db.JMLSATHARGA, ks.JMLSATKONVERSI,"
                             ."ks.SATKONVERSI, db.HARGA*h.NDPBM AS RUPIAH, db.SATUAN_ID AS SATHARGA, TAX,"
@@ -1034,11 +1034,11 @@ class TransaksiGudang extends Model
                             ."DATE_FORMAT(h.TGL_NOPEN, '%d-%m-%Y') AS TGLNOPEN,"
                             ."DATE_FORMAT(bh.TGL_BONGKAR, '%d-%m-%Y') AS TGLBONGKAR,"
                             ."DATE_FORMAT(ks.TGL_KONVERSI, '%d-%m-%Y') AS TGLKONVERSI")
-                    ->leftJoin(DB::raw("konversistok ks"),"bd.KODEBARANG","=","ks.KODEBARANG")
-                    ->leftJoin(DB::raw("produk pr"),"pr.id","=","ks.PRODUK_ID")
-                    ->leftJoin(DB::raw("tbl_header_bongkar bh"),"bh.ID","=","bd.ID_HEADER")
-                    ->join(DB::raw("tbl_detail_barang db"), "db.ID","=","bd.KODEBARANG")
-                    ->join(DB::raw("tbl_penarikan_header h"), "h.ID","=","db.ID_HEADER")
+                    ->join(DB::raw("tbl_detail_barang db"), "h.ID","=","db.ID_HEADER")
+                    ->leftJoin(DB::raw("konversistok ks"),"db.ID","=","ks.KODEBARANG")
+                    ->leftJoin(DB::raw("tbl_detail_bongkar bd"), "db.ID","=","bd.KODEBARANG")
+                    ->leftJoin(DB::raw("tbl_header_bongkar bh"),"bh.ID","=","bd.ID_HEADER")                     
+                    ->leftJoin(DB::raw("produk pr"),"pr.id","=","ks.PRODUK_ID")                                                           
                     ->leftJoin(DB::raw("importir i"), "h.IMPORTIR", "=", "i.importir_id")
                     ->leftJoin(DB::raw("plbbandu_app15.tb_customer c"), "h.CUSTOMER", "=", "c.id_customer");
         if (trim($where) != ""){

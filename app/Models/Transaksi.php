@@ -2234,6 +2234,21 @@ class Transaksi extends Model
             return false;
         }
     }
+    public static function getDokAjuBiaya($nomor, $field)
+    {
+        $header = DB::table(DB::raw("tbl_penarikan_header p"))
+                    ->selectRaw("p.ID, p.NO_INV, c.nama_customer AS NAMACUSTOMER, JUMLAH_KEMASAN AS PARTY, "
+                               ."p.NOAJU, p.NOPEN, DATE_FORMAT(p.TGL_NOPEN, '%d-%m-%Y') AS TGLNOPEN")
+                    ->leftJoin(DB::raw("plbbandu_app15.tb_customer c"), "p.CUSTOMER","=","c.id_customer")
+                    ->where($field, $nomor)
+                    ->whereRaw("USERGUDANG IS NULL");
+        if ($header->count() > 0){
+            return $header->first();
+        }
+        else {
+            return false;
+        }
+    }
     public static function getRateDPP()
     {
         $rate = Rate::select("RATE")->orderBy("RATE")->get();
@@ -2582,7 +2597,7 @@ class Transaksi extends Model
     public static function saveAjuBiaya($action, $header, $detail)
     {
         $arrHeader = Array("TGL_AJU_BY" => trim($header["tglajubiaya"]) == "" ? Date("Y-m-d") : Date("Y-m-d", strtotime($header["tglajubiaya"])),
-                           "IMPORTIR" => nullval($header["importir"]),
+                           "IMPORTIR" => nullval($header["importir"]),                           
                            "TGL_REKAM" => trim($header["tglrekam"]) != "" ? Date("Y-m-d", strtotime($header["tglrekam"])) : NULL,
                            "TGL_VRF_BY" => trim($header["tglvrfbiaya"]) != "" ? Date("Y-m-d", strtotime($header["tglvrfbiaya"])) : NULL,
                            "TGL_BYR_BY" => trim($header["tglbyrbiaya"]) != "" ? Date("Y-m-d", strtotime($header["tglbyrbiaya"])) : NULL
@@ -2602,6 +2617,7 @@ class Transaksi extends Model
                 $arrDetail[] = Array("ID_HEADER" => $idtransaksi,
                                     "NO_BL" => nullval($item["NO_BL"]),
                                     "NO_INV_BY" => $item["NO_INV_BY"],
+                                    "JENIS_DOKUMEN" => $item["JENIS_DOKUMEN"],
                                     "NO_FAKTUR_BY" => $item["NO_FAKTUR_BY"],
                                     "TGL_INV_BY" => trim($item["TGL_INV_BY"]) != "" ? Date("Y-m-d", strtotime($item["TGL_INV_BY"])) : NULL,
                                     "TGL_FAKTUR_BY" => trim($item["TGL_FAKTUR_BY"]) != "" ? Date("Y-m-d", strtotime($item["TGL_FAKTUR_BY"])) : NULL,

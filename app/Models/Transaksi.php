@@ -2579,9 +2579,11 @@ class Transaksi extends Model
                 return false;
             }
             $detail = DB::table(DB::raw("detail_aju_biaya db"))
-                        ->selectRaw("db.*, d.NOPEN, d.NO_BL AS NOBL, d.NOAJU,"
+                        ->selectRaw("db.*, d.NOPEN, d.NO_BL AS NOBL, d.NOAJU, d.JUMLAH_KEMASAN as PARTY, "
+                                    ."c.nama_customer AS NAMACUSTOMER,"
                                     ."DATE_FORMAT(d.TGL_NOPEN, '%d-%m-%Y') AS TGLNOPEN")
                         ->join(DB::raw("tbl_penarikan_header d"), "db.NO_BL", "=", "d.ID")
+                        ->leftJoin(DB::raw("plbbandu_app15.tb_customer c"), "c.id_customer","=","d.CUSTOMER")
                         ->where("db.ID_HEADER", $id);
 
             $detail = $detail->get();

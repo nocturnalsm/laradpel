@@ -207,6 +207,8 @@
                                                     <th>Nopen<br>Tgl Nopen</th>
                                                     <th>No Inv By<br>Tgl Inv By</th>
                                                     <th>No Faktur By<br>Tgl Faktur By</th>
+                                                    <th>Customer</th>
+                                                    <th>Jml Kmsn</th>
                                                     <th>DPP</th>
                                                     <th>PPN</th>
                                                     <th>Sub Ttl By</th>
@@ -272,11 +274,12 @@
                 $('td:eq(2)', row).html(data.NOPEN + '<BR>' + data.TGLNOPEN);
                 $('td:eq(3)', row).html(data.NO_INV_BY + '<BR>' + data.TGL_INV_BY);
                 //$('td:eq(4)', row).html(data.NO_FAKTUR_BY + '<BR>' + data.TGL_FAKTUR_BY);
-                $('td:eq(4)', row).html(parseFloat(data.DPP).formatMoney(2,"",",","."));
-                $('td:eq(5)', row).html(parseFloat(data.PPN).formatMoney(2,"",",","."));
-                $('td:eq(6)', row).html((parseFloat(data.DPP) + parseFloat(data.PPN)).formatMoney(0,"",",","."));
+                $('td:eq(5)', row).html(parseFloat(data.PARTY).formatMoney(2,"",",","."));
+                $('td:eq(6)', row).html(parseFloat(data.DPP).formatMoney(2,"",",","."));
+                $('td:eq(7)', row).html(parseFloat(data.PPN).formatMoney(2,"",",","."));
+                $('td:eq(8)', row).html((parseFloat(data.DPP) + parseFloat(data.PPN)).formatMoney(0,"",",","."));
                 @can('ajubiaya.transaksi')
-                $('td:eq(8)', row).html('<a href="#modaldetail" class="edit" data-toggle="modal" id="' + data.ID +
+                $('td:eq(10)', row).html('<a href="#modaldetail" class="edit" data-toggle="modal" id="' + data.ID +
                                         '"><i class="fa fa-edit"></i></a>' +
                                         '&nbsp;&nbsp;<a class="del" id="' + data.ID + '"><i class="fa fa-trash"></i></a>'
                                         );
@@ -303,19 +306,25 @@
                 visible: false
             },
             { target: 5,
-                data: "DPP"
+                data: "NAMACUSTOMER",                
             },
             { target: 6,
-                data: "PPN"
+                data: "PARTY",                
             },
             { target: 7,
-                data: null
+                data: "DPP"
             },
             { target: 8,
+                data: "PPN"
+            },
+            { target: 9,
+                data: null
+            },
+            { target: 10,
                 data: null
             },
             @can('ajubiaya.transaksi')
-            { target: 9,
+            { target: 11,
                 data: null
             }
             @endcan

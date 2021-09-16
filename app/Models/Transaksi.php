@@ -23,6 +23,7 @@ use App\Models\Pembayaran;
 use App\Models\KodeAcc;
 use App\Models\Party;
 use App\Models\MutasiKas;
+use App\Models\AjuBiaya;
 
 function nullval($value)
 {
@@ -2676,22 +2677,27 @@ class Transaksi extends Model
             $where .= " AND i.IMPORTIR_ID = '" .$importir ."'";
         }
 
-        $data = DB::table(DB::raw("ajubiaya h"))
-                    ->selectRaw("h.ID, i.NAMA AS NAMAIMPORTIR, IFNULL(TOTAL_BIAYA,0) AS TOTAL_BIAYA,"
+        $data = AjuBiaya::with(["details" => function($query){
+                        $query->join(DB::raw("tbl_penarikan_header h"), "detail_aju_biaya.NO_BL", "=", "h.ID")
+                              ->leftJoin(DB::raw("plbbandu_app15.tb_customer c"), "c.id_customer","=", "h.CUSTOMER")
+                              ->selectRaw("detail_aju_biaya.*, NOPEN, NOAJU, NO_INV, "
+                                         ."IFNULL(DATE_FORMAT(TGL_NOPEN, '%d-%m-%Y'),'') AS TGLNOPEN,"
+                                         ."IFNULL(DATE_FORMAT(TGL_INV, '%d-%m-%Y'),'') AS TGLINV,"
+                                         ."c.nama_customer AS NAMACUSTOMER, JUMLAH_KEMASAN,"
+                                         ."SUBSTRING(detail_aju_biaya.JENIS_DOKUMEN, 4) AS JENIS_DOKUMEN,"
+                                         ."h.NO_BL, NO_INV, NO_VO"
+                                );
+                    }])
+                    ->withAggregate('details AS TOTAL_BIAYA', "SUM(DPP+PPN)")
+                    ->selectRaw("ajubiaya.ID, i.NAMA AS NAMAIMPORTIR, "
                             ."IFNULL(DATE_FORMAT(TGL_AJU_BY, '%d-%m-%Y'),'') AS TGL_AJU_BY,"
                             ."IFNULL(DATE_FORMAT(TGL_REKAM, '%d-%m-%Y'),'') AS TGL_REKAM,"
                             ."IFNULL(DATE_FORMAT(TGL_BYR_BY, '%d-%m-%Y'),'') AS TGL_BYR_BY,"
                             ."IFNULL(DATE_FORMAT(TGL_VRF_BY, '%d-%m-%Y'), '') AS TGL_VRF_BY")
-                    ->join(DB::raw("importir i"), "h.IMPORTIR", "=", "i.IMPORTIR_ID")
-                    ->leftJoinSub(
-                        DB::table("detail_aju_biaya")
-                          ->select("ID_HEADER", DB::raw("SUM(DPP+PPN) AS TOTAL_BIAYA"))
-                          ->groupBy("ID_HEADER"),
-                        "db", function($join){
-                            $join->on("db.ID_HEADER", "=", "h.ID");
-                        }
-                    )
+                    ->join(DB::raw("importir i"), "ajubiaya.IMPORTIR", "=", "i.IMPORTIR_ID")
+                    
                     ->orderBy("TGL_AJU_BY");
+
         if (trim($where) != ""){
             $data = $data->whereRaw($where);
         }

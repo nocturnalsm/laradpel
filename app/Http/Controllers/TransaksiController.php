@@ -3267,6 +3267,17 @@ class TransaksiController extends Controller {
 					$sheet->setCellValue('D' .$lastrow, 'Tgl Vrf By');
 					$sheet->setCellValue('E' .$lastrow, 'Tgl Byr By');
 					$sheet->setCellValue('F' .$lastrow, 'Ttl By');
+					$sheet->setCellValue('G' .$lastrow, 'Jns Dokumen');
+					$sheet->setCellValue('H' .$lastrow, 'Nomor');
+					$sheet->setCellValue('I' .$lastrow, 'Customer');
+					$sheet->setCellValue('J' .$lastrow, 'No Aju');
+					$sheet->setCellValue('K' .$lastrow, 'Nopen');
+					$sheet->setCellValue('L' .$lastrow, 'Tgl Nopen');					
+					$sheet->setCellValue('M' .$lastrow, 'Jml Kemasan');
+					$sheet->setCellValue('N' .$lastrow, 'No Inv By');
+					$sheet->setCellValue('O' .$lastrow, 'Tgl Inv By');
+					$sheet->setCellValue('P' .$lastrow, 'DPP');
+					$sheet->setCellValue('Q' .$lastrow, 'PPN');
 
 					foreach ($data as $dt){
 						$lastrow += 1;
@@ -3276,6 +3287,19 @@ class TransaksiController extends Controller {
 						$sheet->setCellValue('D' .$lastrow, $dt->TGL_VRF_BY);
 						$sheet->setCellValue('E' .$lastrow, $dt->TGL_BYR_BY);
 						$sheet->setCellValue('F' .$lastrow, $dt->TOTAL_BIAYA);
+						foreach($dt->details as $detail){
+							$sheet->setCellValue('G' .$lastrow, $detail->JENIS_DOKUMEN);
+							$sheet->setCellValue('H' .$lastrow, $detail->{"NO_" .$detail->JENIS_DOKUMEN});
+							$sheet->setCellValue('I' .$lastrow, $detail->NAMACUSTOMER);
+							$sheet->setCellValue('J' .$lastrow, $detail->NOAJU);
+							$sheet->setCellValue('K' .$lastrow, $detail->NOPEN);
+							$sheet->setCellValue('L' .$lastrow, $detail->TGLNOPEN);					
+							$sheet->setCellValue('M' .$lastrow, $detail->JUMLAH_KEMASAN);
+							$sheet->setCellValue('N' .$lastrow, $detail->NO_INV_BY);
+							$sheet->setCellValue('O' .$lastrow, $detail->TGL_INV_BY);
+							$sheet->setCellValue('P' .$lastrow, $detail->DPP);
+							$sheet->setCellValue('Q' .$lastrow, $detail->PPN);
+						}
 					}
 
 					return $this->exportXls($spreadsheet, "browse_ajubiaya");

@@ -11,4 +11,8 @@ class AjuBiaya extends Model
     protected $guarded = ['ID'];
     public $timestamps = false;
 
+    public function details()
+    {
+        return $this->hasMany(DetailAjuBiaya::class, "ID_HEADER", "ID");
+    }
 }

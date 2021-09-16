@@ -114,7 +114,40 @@
         {target: 4, data: "TGL_VRF_BY"}, {target: 5, data: "TGL_BYR_BY"}, {target: 6, data: "TOTAL_BIAYA"}
         ];
 
-        var grid = $("#grid").DataTable({responsive: false,
+        function format(d) {
+            // `d` is the original data object for the row            
+            let detail = '<table width="100%" class="row-detail">' +
+                '<thead>' +
+                    '<tr>' +
+                        '<th width="15%">Jenis Dok<br>Nomor</th>' +
+                        '<th width="20%">Customer</th>' +
+                        '<th width="15%">No Aju<br>Nopen</th>' +
+                        '<th width="10%">Tgl Nopen</th>' +
+                        '<th width="10%">Party</th>' +
+                        '<th width="10%">No Inv By<br>Tgl Inv By</th>' +
+                        '<th width="10%">DPP</th>' +
+                        '<th width="10%">PPN</th>' +
+                    '</tr>' + 
+                '</thead>' +
+                '<tbody>';
+                    $(d.details).map(function(key, item){                                                   
+                        detail += '<tr>' +
+                                    '<td width="15%">' + (item.JENIS_DOKUMEN || '') +'<br>' + (item["NO_" +item.JENIS_DOKUMEN] || '')+ '</td>' +
+                                    '<td width="20%">' + item.NAMACUSTOMER + '</td>' +
+                                    '<td width="15%">' + item.NOAJU + '<br>' + item.NOPEN +'</td>' +
+                                    '<td width="10%">' + item.TGLNOPEN + '</td>' +
+                                    '<td width="10%">' + item.JUMLAH_KEMASAN + '</td>' +
+                                    '<td width="10%">' + item.NO_INV_BY + '<br>' + item.TGL_INV_BY + '</td>' +
+                                    '<td width="10%">' + parseFloat(item.DPP).formatMoney(2,"",",",".") + '</td>' +
+                                    '<td width="10%">' + parseFloat(item.PPN).formatMoney(2,"",",",".") + '</td>' +
+                                   '</tr>';
+
+                    });                        
+                detail += '</tbody></table>';
+                return detail;
+        }
+
+        var grid = $("#grid").DataTable({responsive: true,
             dom: "rtip",
             "language":
             {
@@ -134,10 +167,18 @@
             rowCallback: function(row, data)
             {
                 $(row).attr("id-transaksi", data[0]);
+                $(row).find("td").css("background", "#dddddd");
                 $('td:eq(0)', row).html('<a title="Edit" href="/transaksi/pengajuanbiaya/' + data.ID + '"><i class="fa fa-edit"></i></a>');
                 $('td:eq(6)', row).html(parseFloat(data.TOTAL_BIAYA).formatMoney(0,"",",","."));
             }
-        });
+        }).on('draw.dt', function () {
+            grid.rows().every(function () {
+                this.child(format(this.data())).show();
+                this.nodes().to$().addClass('shown');
+                this.child().find('td:first-of-type').addClass('child-container')
+            });
+        });        
+        
         $("#preview").on("click", function(){
             $.ajax({
             method: "POST",

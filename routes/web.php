@@ -47,4 +47,7 @@ Route::group(['middleware' => ['auth']], function () {
 			}
 			return $controller->callAction($action,[request(), $id]);
 	});
+
+	Route::get('import', ['App\Http\Controllers\ImportController', 'index']);
+
 });

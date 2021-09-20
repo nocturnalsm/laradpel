@@ -114,7 +114,7 @@
             </div>
         </div>
     </div>
-    @if(auth()->user()->can('master.*'))
+    @can('master.show')
     <div class="col-md-4 col-sm-12 mb-6">
         <div class="card card-sm">
             <div class="card-header">
@@ -180,6 +180,6 @@
             </div>
         </div>
     </div>
-    @endif
+    @endcan
 </div>
 @endsection
